@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+    <!-- CONTENIDO -->
+    <div class="bg-white">
+        <div class="container" >
+            <div class="row">
+                <div class="col-md-6">
+                    <br><br><br><br>
+                    <h2>Contactanos</h2>
+                    <form action="#" method="POST">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo</label>
+                            <input type="email" class="form-control" id="correo" name="correo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono">
+                        </div>
+                        <div class="mb-3">
+                            <label for="asunto" class="form-label">Asunto</label>
+                            <input type="text" class="form-control" id="asunto" name="asunto" required>
+                        </div>
+                        <button type="submit" class="btn-morado">Enviar</button>
+                        <br><br><br><br>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <br><br><br><br><br><br>
+                    <img height="300px" src="{% static 'core/img/hahaha.png' %}" alt="">
+                    <p>Déjanos tus datos, te responderemos por correo o te llamaremos a tu teléfono dependiendo del asunto.</p>
+                </div>
+                </div>
+            </div>
+        </div>
+        <!-- FINAL DEL CONTENIDO -->
+
+{% endblock %}

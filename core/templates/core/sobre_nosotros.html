@@ -1,0 +1,104 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+
+        <!-- INICIO ENCABEZADO -->
+        <div class="">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5 mt-5">
+                        <div class="intro-excerpt">
+                            <h1 class="fw-bold text-center">SOBRE NOSTROS</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br><br>
+        </div>        
+        <!-- FIN ENCABEZADO -->
+
+        <!-- INICIO INFO -->
+        <div class="bg-white"> 
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5 mt-5">
+                        <div class="intro-excerpt">
+                            <h1 class="fw-bold mx-auto text-center">¿Quiénes somos?</h1>
+                        </div>
+                        <div class="text-center"> <!-- Agregado -->
+                            <p>Somos un grupo de estudiantes que brinda soluciones técnicas con el fin de lograr hacer de las situaciones más complicadas y estresantes un alivio.</p>
+                        </div>
+                    </div>                    
+                </div>
+
+                <div style="text-align: center;">
+                    <img src="{% static 'core/img/31-minutos.png' %}" alt="">
+                </div>
+                <br><br>
+                <div style="text-align: center;">
+                    <h1>NUESTRO EQUIPO</h1>
+                </div>
+            </div>
+            <br><br>
+        </div>
+    <!-- INICIO CARTAS -->
+    <div class="bg-white">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 mb-5">
+                    <div class="card bg-dark text-white rounded-3" style="background-image: url('{% static 'core/img/baki.png' %}');">
+                        <div class="card-body">
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text fw-bold">Nombre de la persona</p>
+                            <p class="card-text fw-bold">Rol</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-5">
+                    <div class="card bg-dark text-white rounded-3" style="background-image: url('{% static 'core/img/Jett_Artwork_Full.png' %}'); background-size: cover;">
+                        <div class="card-body">
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text fw-bold">Nombre de la persona</p>
+                            <p class="card-text fw-bold">Rol</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-5">
+                    <div class="card bg-dark text-white rounded-3" style="background-image: url('{% static 'core/img/mayunia.png' %}'); background-size: cover;">
+                        <div class="card-body">
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text fw-bold">Nombre de la persona</p>
+                            <p class="card-text fw-bold">Rol</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div style="text-align: center;">
+                <h1>Misión</h1>
+            </div>
+    
+            <div style="text-align: center;">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat deleniti odit ipsa beatae, quam explicabo natus sunt quo tempora officia, numquam, pariatur voluptatibus. Numquam aliquam veniam fuga voluptates. Debitis, quos?</p>
+            </div>
+            <br><br>
+        </div>
+
+        <div>
+            <div style="text-align: center;">
+                <h1>Visión</h1>
+            </div>
+    
+            <div style="text-align: center;">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat deleniti odit ipsa beatae, quam explicabo natus sunt quo tempora officia, numquam, pariatur voluptatibus. Numquam aliquam veniam fuga voluptates. Debitis, quos?</p>
+            </div>
+            <br><br>
+        </div>
+    </div>
+
+{% endblock %}

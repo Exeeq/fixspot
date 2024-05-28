@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FixSpot</title>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+
+        <!-- INICIO DEL NAVBAR -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark rounded-5 mb-5 mt-3" style="margin-left: 50px; margin-right: 50px;">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <a class="navbar-brand d-lg-none" href="#">
+                        <img src="img/fixspot-logo-sinfondo.png" alt="Logo" class="img-fluid" style="max-height: 60px;">
+                    </a>
+                    
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="#">Talleres</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="#">Mapa</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="container d-flex">
+                        <a class="navbar-brand d-none d-lg-block mx-auto" href="#">
+                            <img src="img/fixspot-logo-sinfondo.png" alt="Logo" class="img-fluid" style="max-height: 100px;">
+                        </a>
+                    </div>
+                
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="#">Contacto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="#" style="white-space: nowrap;">Sobre nosotros</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-white dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item custom-dropdown-item" href="#">Perfil</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="#">Configuraciones</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="#">Cerrar sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- FINAL DEL NAVBAR -->
+
+        <!-- INICIO ENCABEZADO -->
+        <div class="">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5 mt-5">
+                        <div class="intro-excerpt">
+                            <h1 class="fw-bold text-center">REALIZAR TICKETS</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br><br>
+        </div>
+        <!-- FIN ENCABEZADO -->
+
+        <!-- INICIO INFO -->
+        <div class="bg-white">
+            <div class="container">
+                <div class="row justify-content-center">
+                        <div class="col-lg-2 mb-3">
+                            <h6 class="fw-bold">ASUNTO</h6>
+                            <input type="text" class="form-control" placeholder="Ingrese la marca" aria-label="Marca" aria-describedby="marcaInput">
+                        </div>
+                        <div class="col-lg-2 mb-3">
+                            <h6 class="fw-bold">MODIFICACIÓN</h6>
+                            <input type="text" class="form-control" placeholder="Ingrese el modelo" aria-label="Modelo" aria-describedby="modeloInput">
+                        </div>
+                    </div>
+                        <div class="text-align: text-center">
+                            <button class="btn-morado">REALIZAR</button>
+                        </div>
+                </div>
+            </div> 
+            <br><br><br>           
+        </div>
+
+
+        <!-- FOOTER -->
+        <footer class="navbar navbar-expand-lg navbar-dark bg-dark rounded-5 mb-5 mt-3" style="margin-left: 50px; margin-right: 50px;">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="footer-logo">
+                    <a href="#">
+                        <img src="img/fixspot-logo-sinfondo.png" alt="Logo" class="img-fluid">
+                    </a>
+                </div>
+                <div class="footer-links">
+                    <ul class="list-unstyled d-flex mb-0">
+                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Talleres</a></li>
+                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Mapa</a></li>
+                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Contacto</a></li>
+                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Sobre nosotros</a></li>
+                    </ul>
+                </div>
+                <div class="footer-tagline text-end">
+                    <h1 class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Talleres mecánicos a tu alcance</a></h1>
+                </div>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </body>
+</html>

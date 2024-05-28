@@ -123,24 +123,27 @@ def tickets(request):
 
 
 def get_coordinates(request):
-    coordinates = None
-    if request.method == 'POST':
-        form = AddressForm(request.POST)
-        if form.is_valid():
-            address = form.cleaned_data['address']
-            api_key = 'TU_OPENCAGE_API_KEY'  # Reemplaza con tu API Key
-            base_url = 'https://api.opencagedata.com/geocode/v1/json'
-            params = {'q': address, 'key': api_key}
-            response = requests.get(base_url, params=params)
-            if response.status_code == 200:
-                data = response.json()
-                if data['results']:
-                    location = data['results'][0]['geometry']
-                    coordinates = {
-                        'lat': location['lat'],
-                        'lng': location['lng']
-                    }
-    else:
-        form = AddressForm()
+    try:
+        if request.method == 'POST':
+            form = AddressForm(request.POST)
+            if form.is_valid():
+                address = form.cleaned_data['address']
+                api_key = '855d3348e0ee4298b17b00e020377da5'
+                base_url = 'https://api.opencagedata.com/geocode/v1/json'
+                params = {'q': address, 'key': api_key}
+                response = requests.get(base_url, params=params)
+                if response.status_code == 200:
+                    data = response.json()
+                    if data['results']:
+                        location = data['results'][0]['geometry']
+                        coordinates = {
+                            'lat': location['lat'],
+                            'lng': location['lng']
+                        }
+                        return render(request, 'core/test.html', {'form': form, 'coordinates': coordinates})
+    except Exception as e:
+        print(e)
     
-    return render(request, 'core/test.html', {'form': form, 'coordinates': coordinates})
+    form = AddressForm()
+    return render(request, 'core/test.html', {'form': form})
+

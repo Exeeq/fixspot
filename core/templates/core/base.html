@@ -72,28 +72,28 @@
 
         {% block contenido %}
         {% endblock %}
-        <br>
-        <footer class="navbar navbar-expand-lg  bg-dark rounded-5 mb-5 mt-3 footer" style="margin-left: 50px; margin-right: 50px;">
-            <div class="container d-flex justify-content-between align-items-center">
-                <div class="footer-logo">
-                    <a href="#">
-                        <img src="{% static 'core/img/fixspot-logo-sinfondo.png' %}" alt="Logo" class="img-fluid w-50 h-50">
-                    </a>
+        <div class="bg-white">
+            <footer class="navbar navbar-expand-lg bg-dark rounded-5 mb-5 mt-3 footer" style="margin-left: 15px; margin-right: 15px;">
+                <div class="container d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center">
+                    <div class="footer-logo text-center mb-3 mb-lg-0">
+                        <a href="#">
+                            <img src="{% static 'core/img/fixspot-logo-sinfondo.png' %}" alt="Logo" class="img-fluid w-50 h-50">
+                        </a>
+                    </div>
+                    <div class="footer-links text-center mb-3 mb-lg-0">
+                        <ul class="list-unstyled d-flex mb-0">
+                            <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Talleres</a></li>
+                            <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Mapa</a></li>
+                            <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Contacto</a></li>
+                            <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Sobre nosotros</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-tagline text-center text-lg-end">
+                        <h1 class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold h3">Talleres mecánicos a tu alcance</a></h1>
+                    </div>
                 </div>
-                <div class="footer-links">
-                    <ul class="list-unstyled d-flex mb-0">
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Talleres</a></li>
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Mapa</a></li>
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Contacto</a></li>
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Sobre nosotros</a></li>
-                    </ul>
-                </div>
-                <div class="footer-tagline text-end">
-                    <h1 class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold h3">Talleres mecánicos a tu alcance</a></h1>
-                </div>
-            </div>
-        </footer>
-        <br>
+            </footer>
+        </div>
         
         
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

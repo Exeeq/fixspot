@@ -107,5 +107,15 @@ class Boleta(models.Model):
     def __str__(self):
         return self.nFolio
 
+class DetalleBoleta(models.Model):
+    idDetalle = models.AutoField(primary_key=True)
+    nombreDetalle = models.CharField(max_length=100, blank=False, null=False)
+    montoDetalle = models.IntegerField(blank=False, null=False)
+    cantidad = models.IntegerField(blank=False, null=False)
+    comentario = models.CharField(max_length=100, blank=False, null=False)
+    idAgenda = models.ForeignKey(Agenda, on_delete=models.CASCADE, blank=False, null=False) 
+    nFolio = models.ForeignKey(Boleta, on_delete=models.CASCADE, blank=False, null=False) 
 
+    def __str__(self):
+        return self.nombreDetalle
 

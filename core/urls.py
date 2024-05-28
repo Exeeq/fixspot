@@ -1,7 +1,24 @@
 from django.urls import path, include
 from .views import *
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'roles', RolUsuarioViewSet)
+router.register(r'regiones', RegionViewSet)
+router.register(r'comunas', ComunaViewSet)
+router.register(r'usuarios', UsuarioCustomViewSet)
+router.register(r'talleres', TallerViewSet)
+router.register(r'marcas', MarcaViewSet)
+router.register(r'tipos-vehiculo', TipoVehiculoViewSet)
+router.register(r'vehiculos', VehiculoViewSet)
+router.register(r'tipos-agenda', TipoAgendaViewSet)
+router.register(r'agendas', AgendaViewSet)
+router.register(r'boletas', BoletaViewSet)
+router.register(r'detalles-boleta', DetalleBoletaViewSet)
 
 urlpatterns = [
+    path('api/', include(router.urls)),
+    
     path('', index, name="index"),
     path('administrar_reservas', administrar_reservas, name="administrar_reservas"),
     path('administrar_talleres', administrar_talleres, name="administrar_talleres"),

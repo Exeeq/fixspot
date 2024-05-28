@@ -5,6 +5,57 @@ from .forms import AddressForm
 from .models import *
 from django.http import JsonResponse
 from .forms import *
+from rest_framework import viewsets
+from .serializers import *
+
+#SERIALIZERS (API):
+class RolUsuarioViewSet(viewsets.ModelViewSet):
+    queryset = rolUsuario.objects.all()
+    serializer_class = RolUsuarioSerializer
+
+class RegionViewSet(viewsets.ModelViewSet):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+
+class ComunaViewSet(viewsets.ModelViewSet):
+    queryset = Comuna.objects.all()
+    serializer_class = ComunaSerializer
+
+class UsuarioCustomViewSet(viewsets.ModelViewSet):
+    queryset = UsuarioCustom.objects.all()
+    serializer_class = UsuarioCustomSerializer
+
+class TallerViewSet(viewsets.ModelViewSet):
+    queryset = Taller.objects.all()
+    serializer_class = TallerSerializer
+
+class MarcaViewSet(viewsets.ModelViewSet):
+    queryset = Marca.objects.all()
+    serializer_class = MarcaSerializer
+
+class TipoVehiculoViewSet(viewsets.ModelViewSet):
+    queryset = TipoVehiculo.objects.all()
+    serializer_class = TipoVehiculoSerializer
+
+class VehiculoViewSet(viewsets.ModelViewSet):
+    queryset = Vehiculo.objects.all()
+    serializer_class = VehiculoSerializer
+
+class TipoAgendaViewSet(viewsets.ModelViewSet):
+    queryset = TipoAgenda.objects.all()
+    serializer_class = TipoAgendaSerializer
+
+class AgendaViewSet(viewsets.ModelViewSet):
+    queryset = Agenda.objects.all()
+    serializer_class = AgendaSerializer
+
+class BoletaViewSet(viewsets.ModelViewSet):
+    queryset = Boleta.objects.all()
+    serializer_class = BoletaSerializer
+
+class DetalleBoletaViewSet(viewsets.ModelViewSet):
+    queryset = DetalleBoleta.objects.all()
+    serializer_class = DetalleBoletaSerializer
 
 def index(request):
 	return render(request, 'core/index.html')
@@ -92,4 +143,4 @@ def get_coordinates(request):
     else:
         form = AddressForm()
     
-    return render(request, 'core/te.html', {'form': form, 'coordinates': coordinates})
+    return render(request, 'core/test.html', {'form': form, 'coordinates': coordinates})

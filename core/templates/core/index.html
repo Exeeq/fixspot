@@ -3,114 +3,114 @@
 
 {% block contenido %}
 
-        <!-- INICIO ENCABEZADO -->
-        <div class="">
-            <div class="container">
-                <div class="row justify-content-between">
-                    <div class="col-lg-5 mt-5">
-                        <div class="intro-excerpt ">
-                            <h1 class="fw-bold">ENCUENTRA TALLERES <span clsas="d-block">MECÁNICOS CERCANOS </span></h1>
-                            <h5 class="mb-4 text-black-50 ">La forma más fácil y eficaz de arreglar los problemas de <span clsas="d-block">tu vehículo. </span></h5>
-                        </div>
+    <!-- INICIO ENCABEZADO -->
+    <div class="">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-5 mt-5">
+                    <div class="intro-excerpt ">
+                        <h1 class="fw-bold">ENCUENTRA TALLERES <span class="d-block">MECÁNICOS CERCANOS </span></h1>
+                        <h5 class="mb-4 text-black-50 ">La forma más fácil y eficaz de arreglar los problemas de <span class="d-block">tu vehículo. </span></h5>
                     </div>
-                    <div class="col-lg-5 mt-4">
-                        <div class="hero-img-wrap">
-                            <img src="{% static 'core/img/mecanico-dibujo.png' %}" class="img-fluid" style="max-height: 300px;">
-                        </div>
+                </div>
+                <div class="col-lg-5 mt-4">
+                    <div class="hero-img-wrap">
+                        <img src="{% static 'core/img/mecanico-dibujo.png' %}" class="img-fluid " style="max-height: 400px;">
                     </div>
                 </div>
             </div>
-            <br><br><br>
         </div>
-        <!-- FIN ENCABEZADO -->
+        <br><br><br>
+    </div>
+    <!-- FIN ENCABEZADO -->
 
-        <!-- INICIO INFO -->
-        <div class="bg-white"> 
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5 mt-5">
-                        <div class="intro-excerpt">
-                            <h1 class="fw-bold mx-auto text-center">¿QUÉ HACEMOS POR TI?</h1>
-                        </div>
-                    </div>
-                </div>
-                <br><br>
-                <div class="row justify-content-between ">
-                    <div class="col-lg-5 mt-2">
-                        <div class="d-flex flex-column align-items-center">
-                            <i class="fas fa-solid fa-screwdriver-wrench fa-3x"></i> 
-                            <h6 class="text-center text-black">Te ayudamos a encontrar un <br> taller seguro cerca de ti.</h6>
-                        </div>
-                    </div>
-                    <div class="col-lg-5 mt-">
-                        <div class="d-flex flex-column align-items-center">
-                            <i class="fas fa-solid fa-clock fa-3x"></i> 
-                            <h6 class="text-center text-black">Te ahorramos tiempo y <br> Preocupación.</h6>
-                        </div>
+    <!-- INICIO INFO -->
+    <div class="bg-white"> 
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-5 mt-5">
+                    <div class="intro-excerpt">
+                        <h1 class="fw-bold mx-auto text-center">¿QUÉ HACEMOS POR TI?</h1>
                     </div>
                 </div>
             </div>
-            <br><br><br><br><br><br><br>
+            <br><br>
+            <div class="row justify-content-between ">
+                <div class="col-lg-5 mt-2">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="fas fa-solid fa-screwdriver-wrench fa-3x"></i> 
+                        <h6 class="text-center text-black">Te ayudamos a encontrar un <br> taller seguro cerca de ti.</h6>
+                    </div>
+                </div>
+                <div class="col-lg-5 mt-">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="fas fa-solid fa-clock fa-3x"></i> 
+                        <h6 class="text-center text-black">Te ahorramos tiempo y <br> Preocupación.</h6>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- FIN INFO -->
+        <br><br><br><br><br><br><br>
+    </div>
+    <!-- FIN INFO -->
 
     <!-- INICIO CARTAS -->
     <div class="bg-white">
-        <div class="container mb-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-4 mb-5">
-                    <div class="card bg-dark text-white rounded-3" style="background-image: url('{% static 'core/img/taller1.webp' %}');">
+        <div class="container mb-5 shadow-lg">
+            <div class="row justify-content-center bg-cards-pers">
+                <div class="col-lg-4 mb-3 mt-3">
+                    <div class="card border-0 shadow-lg bg-dark">
+                        <img src="{% static 'core/img/taller1-500x500.png' %}" class="card-img-top w-100 h-100" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title">Carta 1</h5>
-                        </div>
-                        <div class="card-footer">
-                            <p class="card-text fw-bold">Texto de la carta 1</p>
+                            <h5 class="card-title fw-bold text-white">Encuentra fácil</h5>
+                            <p class="text-white">¡Los talleres mecánicos más cerca que antes!</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 mb-5">
-                    <div class="card bg-dark text-white rounded-3" style="background-image: url('{% static 'core/img/taller2-500x500.png' %}'); background-size: cover;">
+                <div class="col-lg-4 mb-3 mt-3">
+                    <div class="card border-0 shadow-lg bg-dark">
+                        <img src="{% static 'core/img/taller2-500x500.avif' %}" class="card-img-top w-100 h-100" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title">Carta 2</h5>
-                        </div>
-                        <div class="card-footer">
-                            <p class="card-text fw-bold">Texto de la carta 2</p>
+                            <h5 class="card-title fw-bold text-white">Reparaciones rápidas</h5>
+                            <p class="text-white">¡Repara tus vehículos de forma rápida!</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 mb-5">
-                    <div class="card bg-dark text-white rounded-3" style="background-image: url('{% static 'core/img/taller3-500x500.png' %}'); background-size: cover;">
+                <div class="col-lg-4 mb-3 mt-3">
+                    <div class="card border-0 shadow-lg bg-dark">
+                        <img src="{% static 'core/img/taller3-500x500.jpg' %}" class="card-img-top w-100 h-100" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title">Carta 3</h5>
-                        </div>
-                        <div class="card-footer">
-                            <p class="card-text fw-bold">Texto de la carta 3</p>
+                            <h5 class="card-title fw-bold text-white">Seguro y confiable</h5>
+                            <p class="text-white">¡Realiza tus pagos en línea de forma segura!</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <br><br><br><br><br>
+        <br><br>
     </div>
 
     <!-- Inicio necesitas ayudas -->
-    <div class="bg-white mb-5">
+    <div class="bg-white"> 
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 mt-6">
-                    <h3 class="fw-bold"> ¿NECESITAS AYUDA? </h3>
-                    <p> ¿Tienes algún problema con algún tallero deseas reportar sobre algo? No dudes en ponerte en contactocon nuestro soporte en línea.</p>
-                    <button class="btn rounded-pill btn-background btn-lg">Contacto</button>
+            <br><br>
+            <div class="row justify-content-between ">
+                <div class="col-lg-5 ">
+                    <div class="d-flex flex-column align-items-start">
+                        <h1 class="text-start text-black fw-bold">¿Necesitas ayuda?</h1>
+                        <p class="text-start text-black h6">Puedes contactarse con uno de nuestros ejecutivos para que <br> te preste ayuda con lo que necesites.</p>
+                        <a href="{% url 'contactanos' %}" type="button" class="btn btn-primary mt-3 rounded-5 ">CONTACTARSE</a>
+                    </div>
                 </div>
-                    
-                <div class="col-lg-6 mb-5">
-                    <img class="w-75 h-100" src="{% static 'core/img/Rayo_McQueen_CAeeC.png' %}" alt="">
+                <div class="col-lg-5 mt-">
+                    <div class="d-flex flex-column align-items-center">
+                        <img src="{% static 'core/img/soporte_index.png' %}" class="w-50 h-auto" alt="">
+                    </div>
                 </div>
-
             </div>
         </div>
+        <br><br><br><br><br><br><br>
     </div>
-
 
 {% endblock contenido %}
 
@@ -119,6 +119,3 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>   
 {% endblock %}
-    
-        
-        

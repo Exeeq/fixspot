@@ -147,3 +147,6 @@ def get_coordinates(request):
     form = AddressForm()
     return render(request, 'core/test.html', {'form': form})
 
+def administracion(request):
+    return render(request, 'core/administracion.html')
+

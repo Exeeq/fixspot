@@ -128,11 +128,15 @@ body {
 }
 
 .btn-primary {
-    background-color: #6a3b97;
-    border-color: #6a3b97;
+    background-color: #7340a3;
+    border-color: #7340a3;
 
 }
 
 .bg-cards-pers {
     background-color: rgb(201, 201, 201);
+}
+
+.bg-page {
+    background-color: rgb(248, 248, 248);
 }

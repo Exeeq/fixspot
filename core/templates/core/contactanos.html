@@ -2,42 +2,54 @@
 {% load static %}
 
 {% block contenido %}
-    <!-- CONTENIDO -->
-    <div class="bg-white">
-        <div class="container" >
-            <div class="row">
-                <div class="col-md-6">
-                    <br><br><br><br>
-                    <h2>Contactanos</h2>
-                    <form action="#" method="POST">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Correo</label>
-                            <input type="email" class="form-control" id="correo" name="correo" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="telefono" name="telefono">
-                        </div>
-                        <div class="mb-3">
-                            <label for="asunto" class="form-label">Asunto</label>
-                            <input type="text" class="form-control" id="asunto" name="asunto" required>
-                        </div>
-                        <button type="submit" class="btn-morado">Enviar</button>
-                        <br><br><br><br>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                    <br><br><br><br><br><br>
-                    <img height="300px" src="{% static 'core/img/hahaha.png' %}" alt="">
-                    <p>Déjanos tus datos, te responderemos por correo o te llamaremos a tu teléfono dependiendo del asunto.</p>
-                </div>
+<!-- INICIO ENCABEZADO -->
+<div class="">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 mt-5">
+                <div class="intro-excerpt">
+                    <h1 class="fw-bold text-center">CONTÁCTANOS</h1>
                 </div>
             </div>
         </div>
-        <!-- FINAL DEL CONTENIDO -->
+    </div>
+    <br><br><br>
+</div>        
+<!-- FIN ENCABEZADO -->
 
+<!-- CONTENIDO -->
+<div class="bg-page">
+    <br><br>
+    <div class="container mb-5 mt-5 shadow-lg">
+        <div class="row">
+            <div class="col-md-6">
+                <form action="#" method="POST" class="p-4 shadow-lg bg-white rounded-4">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label fw-bold">Nombre</label>
+                        <input type="text" class="form-control form-control-lg rounded-5 shadow-sm" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="correo" class="form-label fw-bold">Correo</label>
+                        <input type="email" class="form-control form-control-lg rounded-5 shadow-sm" id="correo" name="correo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label fw-bold">Teléfono</label>
+                        <input type="tel" class="form-control form-control-lg rounded-5 shadow-sm" id="telefono" name="telefono">
+                    </div>
+                    <div class="mb-3">
+                        <label for="asunto" class="form-label fw-bold">Asunto</label>
+                        <input type="text" class="form-control form-control-lg rounded-5 shadow-sm" id="asunto" name="asunto" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill mt-5 d-flex text-center mx-auto">Enviar mensaje</button>
+                </form>
+            </div>
+            <div class="col-md-6 d-flex flex-column align-items-center">
+                <img class="w-100 h-auto rounded-3 mb-3" src="{% static 'core/img/contactus.webp' %}" alt="Contact Us">
+                <p class="text-center fs-5">Déjanos tus datos, te responderemos por correo o te llamaremos a tu teléfono dependiendo del asunto.</p>
+            </div>
+        </div>
+    </div>
+    <br><br><br><br>
+</div>
+<!-- FINAL DEL CONTENIDO -->
 {% endblock %}

@@ -57,10 +57,12 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end custom-dropdown text-center bg-dark" aria-labelledby="userDropdown">
                                 {% if user.is_authenticated %}
-                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a></li>
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold text-uppercase" href="">{{ user.pnombre }} {{ user.ap_paterno }} </a></li>
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administracion' %}"><i class="fa-solid fa-lock"></i> ADMINISTRACIÓN </a></li>
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN </a></li>
                                 {% else %}
-                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'login' %}">Iniciar sesión</a></li>
-                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'register' %}">Registrarse</a></li>
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i> INICIAR SESIÓN </a></li>
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'register' %}"><i class="fa-solid fa-cash-register"></i> REGISTRARSE </a></li>
                                 {% endif %}
                             </ul>
                         </li>
@@ -72,7 +74,7 @@
 
         {% block contenido %}
         {% endblock %}
-        <div class="bg-white">
+        <div class="bg-page">
             <footer class="navbar navbar-expand-lg bg-dark rounded-5 mb-5 mt-3 footer" style="margin-left: 15px; margin-right: 15px;">
                 <div class="container d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center">
                     <div class="footer-logo text-center mb-3 mb-lg-0">
@@ -96,12 +98,12 @@
         </div>
         
         
+    
+
+            {% block js %}
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-
-            {% block js %}
-            
             {% endblock %}
         </body>
     </html>

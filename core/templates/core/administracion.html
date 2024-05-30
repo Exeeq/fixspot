@@ -8,7 +8,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-5 mt-5">
                 <div class="intro-excerpt">
-                    <h1 class="fw-bold text-center">ADMINISTRACIÓN</h1>
+                    <h1 class="fw-bold text-center">PANEL DE ADMINISTRACIÓN DE FIXSPOT</h1>
                 </div>
             </div>
         </div>
@@ -18,45 +18,46 @@
 <!-- FIN ENCABEZADO -->
 
 <!-- Inicio panel de administración -->
-<div class="bg-page ">
-    <br><br>
-    <div class="container mx-auto align-items-center ">
-        <div class="row justify-content-center ">
+<div class="bg-page">
+    <br><br><br><br>
+    <div class="container mx-auto align-items-center">
+        <div class="row justify-content-center">
             <!-- Card 1 -->
-            <div class="col-md-4 mb-4 ">
-                <div class="card mb-4 shadow-lg rounded-5">
-                    <div class="card-body text-center bg-dark rounded-5">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="card mb-4 shadow-lg rounded-5 flex-fill">
+                    <div class="card-body text-center bg-dark rounded-5 d-flex flex-column">
                         <i class="fas fa-users fa-3x mb-3 text-white"></i>
                         <h5 class="card-title text-white">Gestión de Usuarios</h5>
-                        <p class="text-white ">Administrar usuarios y sus roles.</p>
-                        <a href="#" class="btn btn-primary">Ir</a>
+                        <p class="text-white flex-grow-1">Administrar usuarios y sus roles.</p>
+                        <a href="#" class="btn btn-primary mt-auto">Ir</a>
                     </div>
                 </div>
             </div>
             <!-- Card 2 -->
-            <div class="col-md-4 mb-4 rounded-5">
-                <div class="card mb-4 shadow-lg rounded-5">
-                    <div class="card-body text-center bg-dark rounded-5">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="card mb-4 shadow-lg rounded-5 flex-fill">
+                    <div class="card-body text-center bg-dark rounded-5 d-flex flex-column">
                         <i class="fas fa-users fa-3x mb-3 text-white"></i>
-                        <h5 class="card-title text-white">Gestión de Usuarios</h5>
-                        <p class="text-white ">Administrar usuarios y sus roles.</p>
-                        <a href="#" class="btn btn-primary">Ir</a>
+                        <h5 class="card-title text-white">Gestión de talleres</h5>
+                        <p class="text-white flex-grow-1">Ver, crear, modificar y eliminar talleres.</p>
+                        <a href="{% url 'administrar_talleres' %}" class="btn btn-primary mt-auto">Ir</a>
                     </div>
                 </div>
             </div>
             <!-- Card 3 -->
-            <div class="col-md-4 mb-4 rounded-5">
-                <div class="card mb-4 shadow-lg rounded-5 rounded-5">
-                    <div class="card-body text-center bg-dark rounded-5">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="card mb-4 shadow-lg rounded-5 flex-fill">
+                    <div class="card-body text-center bg-dark rounded-5 d-flex flex-column">
                         <i class="fas fa-users fa-3x mb-3 text-white"></i>
                         <h5 class="card-title text-white">Gestión de Usuarios</h5>
-                        <p class="text-white ">Administrar usuarios y sus roles.</p>
-                        <a href="#" class="btn btn-primary">Ir</a>
+                        <p class="text-white flex-grow-1">Administrar usuarios y sus roles.</p>
+                        <a href="#" class="btn btn-primary mt-auto">Ir</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
+    <br><br><br><br><br><br>
 </div>
 
 {% endblock contenido %}

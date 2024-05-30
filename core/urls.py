@@ -19,9 +19,8 @@ router.register(r'detalles-boleta', DetalleBoletaViewSet)
 urlpatterns = [
     path('api/', include(router.urls)),
     
-    path('/', index, name="index"),
+    path('', index, name="index"),
     path('administrar_reservas/', administrar_reservas, name="administrar_reservas"),
-    path('administrar_talleres/', administrar_talleres, name="administrar_talleres"),
     path('agendar_hora/', agendar_hora, name="agendar_hora"),
     path('agendar/', agendar, name="agendar"),
     path('contactanos/', contactanos, name="contactanos"),
@@ -38,5 +37,13 @@ urlpatterns = [
     path('tickets/', tickets, name="tickets"),
     path('test/', get_coordinates, name="test"),
 
+    #PANEL DE ADMINISTRACIÓN
     path('administracion/', administracion, name="administracion"),
+    
+    #ADMINISTRAR TALLERES (CRUD):
+    path('administrar_talleres/', administrar_talleres, name="administrar_talleres"),
+    path('crear_taller/', crear_taller, name="crear_taller"),
+    path('modificar_taller/<int:id_taller>/', modificar_taller, name="modificar_taller"),
+    path('eliminar_taller/<int:id_taller>/', eliminar_taller, name='eliminar_taller'),
+
 ]

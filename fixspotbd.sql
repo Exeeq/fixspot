@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-05-2024 a las 02:39:14
+-- Tiempo de generación: 31-05-2024 a las 01:30:37
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -130,7 +130,11 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (61, 'Can add agenda', 16, 'add_agenda'),
 (62, 'Can change agenda', 16, 'change_agenda'),
 (63, 'Can delete agenda', 16, 'delete_agenda'),
-(64, 'Can view agenda', 16, 'view_agenda');
+(64, 'Can view agenda', 16, 'view_agenda'),
+(65, 'Can add detalle boleta', 17, 'add_detalleboleta'),
+(66, 'Can change detalle boleta', 17, 'change_detalleboleta'),
+(67, 'Can delete detalle boleta', 17, 'delete_detalleboleta'),
+(68, 'Can view detalle boleta', 17, 'view_detalleboleta');
 
 -- --------------------------------------------------------
 
@@ -238,6 +242,23 @@ INSERT INTO `core_comuna` (`idComuna`, `nombreComuna`, `idRegion_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `core_detalleboleta`
+--
+
+DROP TABLE IF EXISTS `core_detalleboleta`;
+CREATE TABLE `core_detalleboleta` (
+  `idDetalle` int(11) NOT NULL,
+  `nombreDetalle` varchar(100) NOT NULL,
+  `montoDetalle` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `comentario` varchar(100) NOT NULL,
+  `idAgenda_id` int(11) NOT NULL,
+  `nFolio_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `core_marca`
 --
 
@@ -300,8 +321,15 @@ CREATE TABLE `core_taller` (
   `direccion` varchar(100) NOT NULL,
   `telefono` varchar(15) NOT NULL,
   `idComuna_id` int(11) DEFAULT NULL,
-  `idUsuario_id` int(11) DEFAULT NULL
+  `idUsuario_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_taller`
+--
+
+INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `direccion`, `telefono`, `idComuna_id`, `idUsuario_id`) VALUES
+(3, 'El Zapato', 'Sargento Menadier, 123', '+569 5319 2023', 33, 2);
 
 -- --------------------------------------------------------
 
@@ -335,7 +363,7 @@ CREATE TABLE `core_tipovehiculo` (
 
 DROP TABLE IF EXISTS `core_usuariocustom`;
 CREATE TABLE `core_usuariocustom` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `password` varchar(128) NOT NULL,
   `last_login` datetime(6) DEFAULT NULL,
   `is_superuser` tinyint(1) NOT NULL,
@@ -360,7 +388,7 @@ CREATE TABLE `core_usuariocustom` (
 --
 
 INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `is_staff`, `is_active`, `date_joined`, `run`, `email`, `telefono`, `pnombre`, `ap_paterno`, `direccion`, `idComuna_id`, `idRol_id`) VALUES
-(2, 'pbkdf2_sha256$216000$ZXPZt5WYZzL4$rx7nAliPXOEGi0O/AOLQznaGkuiw/PSOWmj/H2QiZAc=', '2024-05-28 00:36:47.013985', 1, 'admin', '', '', 1, 1, '2024-05-28 00:32:17.739689', '', 'admin@ferremas.cl', '', '', '', '', NULL, NULL);
+(2, 'pbkdf2_sha256$720000$WntgIfcEPVWRiAbkIH76aS$Nrek+eAD5TSa6CtifZLfcID/lRYAwmWaLAJ4vjYv21E=', '2024-05-30 21:31:46.487744', 1, 'admin', '', '', 1, 1, '2024-05-28 00:32:17.739689', '', 'admin@ferremas.cl', '', 'Administrador', '.', '', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -371,7 +399,7 @@ INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`
 DROP TABLE IF EXISTS `core_usuariocustom_groups`;
 CREATE TABLE `core_usuariocustom_groups` (
   `id` int(11) NOT NULL,
-  `usuariocustom_id` int(11) NOT NULL,
+  `usuariocustom_id` bigint(20) NOT NULL,
   `group_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -384,7 +412,7 @@ CREATE TABLE `core_usuariocustom_groups` (
 DROP TABLE IF EXISTS `core_usuariocustom_user_permissions`;
 CREATE TABLE `core_usuariocustom_user_permissions` (
   `id` int(11) NOT NULL,
-  `usuariocustom_id` int(11) NOT NULL,
+  `usuariocustom_id` bigint(20) NOT NULL,
   `permission_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -403,7 +431,7 @@ CREATE TABLE `core_vehiculo` (
   `anno` int(11) NOT NULL,
   `idMarca_id` int(11) NOT NULL,
   `idTipoVehiculo_id` int(11) NOT NULL,
-  `idUsuario_id` int(11) DEFAULT NULL
+  `idUsuario_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -421,7 +449,7 @@ CREATE TABLE `django_admin_log` (
   `action_flag` smallint(5) UNSIGNED NOT NULL CHECK (`action_flag` >= 0),
   `change_message` longtext NOT NULL,
   `content_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -449,6 +477,7 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (16, 'core', 'agenda'),
 (7, 'core', 'boleta'),
 (8, 'core', 'comuna'),
+(17, 'core', 'detalleboleta'),
 (9, 'core', 'marca'),
 (10, 'core', 'region'),
 (11, 'core', 'rolusuario'),
@@ -496,7 +525,11 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (16, 'admin', '0001_initial', '2024-05-28 00:02:08.447030'),
 (17, 'admin', '0002_logentry_remove_auto_add', '2024-05-28 00:02:08.511307'),
 (18, 'admin', '0003_logentry_add_action_flag_choices', '2024-05-28 00:02:08.522301'),
-(19, 'sessions', '0001_initial', '2024-05-28 00:02:08.534188');
+(19, 'sessions', '0001_initial', '2024-05-28 00:02:08.534188'),
+(20, 'core', '0002_detalleboleta', '2024-05-30 21:32:27.334149'),
+(21, 'core', '0003_delete_detalleboleta', '2024-05-30 21:32:27.340753'),
+(22, 'core', '0004_detalleboleta', '2024-05-30 21:32:27.407725'),
+(23, 'core', '0005_alter_usuariocustom_id', '2024-05-30 21:32:28.208800');
 
 -- --------------------------------------------------------
 
@@ -510,6 +543,13 @@ CREATE TABLE `django_session` (
   `session_data` longtext NOT NULL,
   `expire_date` datetime(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `django_session`
+--
+
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+('rei8lpt1i9trh9xnwse6hynrficepl4t', '.eJxVjEEOwiAQRe_C2pAOU6Dj0r1nIMCAVA0kpV0Z765NutDtf-_9l3B-W4vbelrczOIslDj9bsHHR6o74LuvtyZjq-syB7kr8qBdXhun5-Vw_w6K7-VbY2TwWRFBhJhREwONg54sKUoUMqI2ozaIyGyTGrInTiHYSQMgKCPeH9IvNyE:1sCnNC:LHb9X1HQ5PEiQX9AVDi9_Vx5rtAcH7cjw9gAL-twkKQ', '2024-06-13 21:31:46.489247');
 
 --
 -- Índices para tablas volcadas
@@ -558,6 +598,14 @@ ALTER TABLE `core_boleta`
 ALTER TABLE `core_comuna`
   ADD PRIMARY KEY (`idComuna`),
   ADD KEY `core_comuna_idRegion_id_8eb1d498_fk_core_region_idRegion` (`idRegion_id`);
+
+--
+-- Indices de la tabla `core_detalleboleta`
+--
+ALTER TABLE `core_detalleboleta`
+  ADD PRIMARY KEY (`idDetalle`),
+  ADD KEY `core_detalleboleta_idAgenda_id_60e5f8b7_fk_core_agenda_idAgenda` (`idAgenda_id`),
+  ADD KEY `core_detalleboleta_nFolio_id_0442b1b5_fk_core_boleta_nFolio` (`nFolio_id`);
 
 --
 -- Indices de la tabla `core_marca`
@@ -679,7 +727,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT de la tabla `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT de la tabla `core_agenda`
@@ -698,6 +746,12 @@ ALTER TABLE `core_boleta`
 --
 ALTER TABLE `core_comuna`
   MODIFY `idComuna` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+
+--
+-- AUTO_INCREMENT de la tabla `core_detalleboleta`
+--
+ALTER TABLE `core_detalleboleta`
+  MODIFY `idDetalle` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `core_marca`
@@ -721,7 +775,7 @@ ALTER TABLE `core_rolusuario`
 -- AUTO_INCREMENT de la tabla `core_taller`
 --
 ALTER TABLE `core_taller`
-  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `core_tipoagenda`
@@ -739,7 +793,7 @@ ALTER TABLE `core_tipovehiculo`
 -- AUTO_INCREMENT de la tabla `core_usuariocustom`
 --
 ALTER TABLE `core_usuariocustom`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `core_usuariocustom_groups`
@@ -769,13 +823,13 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT de la tabla `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Restricciones para tablas volcadas
@@ -809,11 +863,18 @@ ALTER TABLE `core_comuna`
   ADD CONSTRAINT `core_comuna_idRegion_id_8eb1d498_fk_core_region_idRegion` FOREIGN KEY (`idRegion_id`) REFERENCES `core_region` (`idRegion`);
 
 --
+-- Filtros para la tabla `core_detalleboleta`
+--
+ALTER TABLE `core_detalleboleta`
+  ADD CONSTRAINT `core_detalleboleta_idAgenda_id_60e5f8b7_fk_core_agenda_idAgenda` FOREIGN KEY (`idAgenda_id`) REFERENCES `core_agenda` (`idAgenda`),
+  ADD CONSTRAINT `core_detalleboleta_nFolio_id_0442b1b5_fk_core_boleta_nFolio` FOREIGN KEY (`nFolio_id`) REFERENCES `core_boleta` (`nFolio`);
+
+--
 -- Filtros para la tabla `core_taller`
 --
 ALTER TABLE `core_taller`
   ADD CONSTRAINT `core_taller_idComuna_id_4af1bf31_fk_core_comuna_idComuna` FOREIGN KEY (`idComuna_id`) REFERENCES `core_comuna` (`idComuna`),
-  ADD CONSTRAINT `core_taller_idUsuario_id_d1356fab_fk_core_usuariocustom_id` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`);
+  ADD CONSTRAINT `core_taller_idUsuario_id_d1356fab_fk` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `core_usuariocustom`
@@ -826,15 +887,15 @@ ALTER TABLE `core_usuariocustom`
 -- Filtros para la tabla `core_usuariocustom_groups`
 --
 ALTER TABLE `core_usuariocustom_groups`
-  ADD CONSTRAINT `core_usuariocustom_g_usuariocustom_id_5965550d_fk_core_usua` FOREIGN KEY (`usuariocustom_id`) REFERENCES `core_usuariocustom` (`id`),
-  ADD CONSTRAINT `core_usuariocustom_groups_group_id_8dcd6d1a_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`);
+  ADD CONSTRAINT `core_usuariocustom_groups_group_id_8dcd6d1a_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
+  ADD CONSTRAINT `core_usuariocustom_groups_usuariocustom_id_5965550d_fk` FOREIGN KEY (`usuariocustom_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `core_usuariocustom_user_permissions`
 --
 ALTER TABLE `core_usuariocustom_user_permissions`
   ADD CONSTRAINT `core_usuariocustom_u_permission_id_37c6eea2_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
-  ADD CONSTRAINT `core_usuariocustom_u_usuariocustom_id_a30f26bf_fk_core_usua` FOREIGN KEY (`usuariocustom_id`) REFERENCES `core_usuariocustom` (`id`);
+  ADD CONSTRAINT `core_usuariocustom_user_permissions_usuariocustom_id_a30f26bf_fk` FOREIGN KEY (`usuariocustom_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `core_vehiculo`
@@ -842,14 +903,14 @@ ALTER TABLE `core_usuariocustom_user_permissions`
 ALTER TABLE `core_vehiculo`
   ADD CONSTRAINT `core_vehiculo_idMarca_id_c736a35f_fk_core_marca_idMarca` FOREIGN KEY (`idMarca_id`) REFERENCES `core_marca` (`idMarca`),
   ADD CONSTRAINT `core_vehiculo_idTipoVehiculo_id_69f4a65b_fk_core_tipo` FOREIGN KEY (`idTipoVehiculo_id`) REFERENCES `core_tipovehiculo` (`idTipo`),
-  ADD CONSTRAINT `core_vehiculo_idUsuario_id_f26e460a_fk_core_usuariocustom_id` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`);
+  ADD CONSTRAINT `core_vehiculo_idUsuario_id_f26e460a_fk` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
-  ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_core_usuariocustom_id` FOREIGN KEY (`user_id`) REFERENCES `core_usuariocustom` (`id`);
+  ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk` FOREIGN KEY (`user_id`) REFERENCES `core_usuariocustom` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

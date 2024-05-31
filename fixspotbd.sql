@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-05-2024 a las 01:30:37
+-- Tiempo de generación: 01-06-2024 a las 01:16:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `fixspotbd`
 --
-CREATE DATABASE IF NOT EXISTS `fixspotbd` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `fixspotbd`;
 
 -- --------------------------------------------------------
 
@@ -29,7 +27,6 @@ USE `fixspotbd`;
 -- Estructura de tabla para la tabla `auth_group`
 --
 
-DROP TABLE IF EXISTS `auth_group`;
 CREATE TABLE `auth_group` (
   `id` int(11) NOT NULL,
   `name` varchar(150) NOT NULL
@@ -41,7 +38,6 @@ CREATE TABLE `auth_group` (
 -- Estructura de tabla para la tabla `auth_group_permissions`
 --
 
-DROP TABLE IF EXISTS `auth_group_permissions`;
 CREATE TABLE `auth_group_permissions` (
   `id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
@@ -54,7 +50,6 @@ CREATE TABLE `auth_group_permissions` (
 -- Estructura de tabla para la tabla `auth_permission`
 --
 
-DROP TABLE IF EXISTS `auth_permission`;
 CREATE TABLE `auth_permission` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -142,7 +137,6 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 -- Estructura de tabla para la tabla `core_agenda`
 --
 
-DROP TABLE IF EXISTS `core_agenda`;
 CREATE TABLE `core_agenda` (
   `idAgenda` int(11) NOT NULL,
   `fechaAgenda` date NOT NULL,
@@ -159,7 +153,6 @@ CREATE TABLE `core_agenda` (
 -- Estructura de tabla para la tabla `core_boleta`
 --
 
-DROP TABLE IF EXISTS `core_boleta`;
 CREATE TABLE `core_boleta` (
   `nFolio` int(11) NOT NULL,
   `fecha` date NOT NULL,
@@ -174,7 +167,6 @@ CREATE TABLE `core_boleta` (
 -- Estructura de tabla para la tabla `core_comuna`
 --
 
-DROP TABLE IF EXISTS `core_comuna`;
 CREATE TABLE `core_comuna` (
   `idComuna` int(11) NOT NULL,
   `nombreComuna` varchar(80) NOT NULL,
@@ -245,7 +237,6 @@ INSERT INTO `core_comuna` (`idComuna`, `nombreComuna`, `idRegion_id`) VALUES
 -- Estructura de tabla para la tabla `core_detalleboleta`
 --
 
-DROP TABLE IF EXISTS `core_detalleboleta`;
 CREATE TABLE `core_detalleboleta` (
   `idDetalle` int(11) NOT NULL,
   `nombreDetalle` varchar(100) NOT NULL,
@@ -262,7 +253,6 @@ CREATE TABLE `core_detalleboleta` (
 -- Estructura de tabla para la tabla `core_marca`
 --
 
-DROP TABLE IF EXISTS `core_marca`;
 CREATE TABLE `core_marca` (
   `idMarca` int(11) NOT NULL,
   `nombreMarca` varchar(32) NOT NULL
@@ -274,7 +264,6 @@ CREATE TABLE `core_marca` (
 -- Estructura de tabla para la tabla `core_region`
 --
 
-DROP TABLE IF EXISTS `core_region`;
 CREATE TABLE `core_region` (
   `idRegion` int(11) NOT NULL,
   `nombreRegion` varchar(80) NOT NULL
@@ -293,7 +282,6 @@ INSERT INTO `core_region` (`idRegion`, `nombreRegion`) VALUES
 -- Estructura de tabla para la tabla `core_rolusuario`
 --
 
-DROP TABLE IF EXISTS `core_rolusuario`;
 CREATE TABLE `core_rolusuario` (
   `idRol` int(11) NOT NULL,
   `nombreRol` varchar(20) NOT NULL
@@ -314,22 +302,23 @@ INSERT INTO `core_rolusuario` (`idRol`, `nombreRol`) VALUES
 -- Estructura de tabla para la tabla `core_taller`
 --
 
-DROP TABLE IF EXISTS `core_taller`;
 CREATE TABLE `core_taller` (
   `idTaller` int(11) NOT NULL,
   `nombreTaller` varchar(46) NOT NULL,
   `direccion` varchar(100) NOT NULL,
   `telefono` varchar(15) NOT NULL,
   `idComuna_id` int(11) DEFAULT NULL,
-  `idUsuario_id` bigint(20) DEFAULT NULL
+  `idUsuario_id` bigint(20) DEFAULT NULL,
+  `descripcion` longtext DEFAULT NULL,
+  `imagen` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `core_taller`
 --
 
-INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `direccion`, `telefono`, `idComuna_id`, `idUsuario_id`) VALUES
-(3, 'El Zapato', 'Sargento Menadier, 123', '+569 5319 2023', 33, 2);
+INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `direccion`, `telefono`, `idComuna_id`, `idUsuario_id`, `descripcion`, `imagen`) VALUES
+(3, 'El Zapato', 'Sargento Menadier, 123', '+569 5319 2023', 33, 2, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -337,7 +326,6 @@ INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `direccion`, `telefono`, 
 -- Estructura de tabla para la tabla `core_tipoagenda`
 --
 
-DROP TABLE IF EXISTS `core_tipoagenda`;
 CREATE TABLE `core_tipoagenda` (
   `idTipo` int(11) NOT NULL,
   `nombreTipo` varchar(32) NOT NULL
@@ -349,7 +337,6 @@ CREATE TABLE `core_tipoagenda` (
 -- Estructura de tabla para la tabla `core_tipovehiculo`
 --
 
-DROP TABLE IF EXISTS `core_tipovehiculo`;
 CREATE TABLE `core_tipovehiculo` (
   `idTipo` int(11) NOT NULL,
   `nombreTipo` varchar(32) NOT NULL
@@ -361,7 +348,6 @@ CREATE TABLE `core_tipovehiculo` (
 -- Estructura de tabla para la tabla `core_usuariocustom`
 --
 
-DROP TABLE IF EXISTS `core_usuariocustom`;
 CREATE TABLE `core_usuariocustom` (
   `id` bigint(20) NOT NULL,
   `password` varchar(128) NOT NULL,
@@ -396,7 +382,6 @@ INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`
 -- Estructura de tabla para la tabla `core_usuariocustom_groups`
 --
 
-DROP TABLE IF EXISTS `core_usuariocustom_groups`;
 CREATE TABLE `core_usuariocustom_groups` (
   `id` int(11) NOT NULL,
   `usuariocustom_id` bigint(20) NOT NULL,
@@ -409,7 +394,6 @@ CREATE TABLE `core_usuariocustom_groups` (
 -- Estructura de tabla para la tabla `core_usuariocustom_user_permissions`
 --
 
-DROP TABLE IF EXISTS `core_usuariocustom_user_permissions`;
 CREATE TABLE `core_usuariocustom_user_permissions` (
   `id` int(11) NOT NULL,
   `usuariocustom_id` bigint(20) NOT NULL,
@@ -422,7 +406,6 @@ CREATE TABLE `core_usuariocustom_user_permissions` (
 -- Estructura de tabla para la tabla `core_vehiculo`
 --
 
-DROP TABLE IF EXISTS `core_vehiculo`;
 CREATE TABLE `core_vehiculo` (
   `idVehiculo` int(11) NOT NULL,
   `patente` varchar(6) NOT NULL,
@@ -440,7 +423,6 @@ CREATE TABLE `core_vehiculo` (
 -- Estructura de tabla para la tabla `django_admin_log`
 --
 
-DROP TABLE IF EXISTS `django_admin_log`;
 CREATE TABLE `django_admin_log` (
   `id` int(11) NOT NULL,
   `action_time` datetime(6) NOT NULL,
@@ -458,7 +440,6 @@ CREATE TABLE `django_admin_log` (
 -- Estructura de tabla para la tabla `django_content_type`
 --
 
-DROP TABLE IF EXISTS `django_content_type`;
 CREATE TABLE `django_content_type` (
   `id` int(11) NOT NULL,
   `app_label` varchar(100) NOT NULL,
@@ -494,7 +475,6 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 -- Estructura de tabla para la tabla `django_migrations`
 --
 
-DROP TABLE IF EXISTS `django_migrations`;
 CREATE TABLE `django_migrations` (
   `id` int(11) NOT NULL,
   `app` varchar(255) NOT NULL,
@@ -529,7 +509,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (20, 'core', '0002_detalleboleta', '2024-05-30 21:32:27.334149'),
 (21, 'core', '0003_delete_detalleboleta', '2024-05-30 21:32:27.340753'),
 (22, 'core', '0004_detalleboleta', '2024-05-30 21:32:27.407725'),
-(23, 'core', '0005_alter_usuariocustom_id', '2024-05-30 21:32:28.208800');
+(23, 'core', '0005_alter_usuariocustom_id', '2024-05-30 21:32:28.208800'),
+(24, 'core', '0006_taller_descripcion_taller_imagen', '2024-05-31 22:56:53.184188');
 
 -- --------------------------------------------------------
 
@@ -537,7 +518,6 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 -- Estructura de tabla para la tabla `django_session`
 --
 
-DROP TABLE IF EXISTS `django_session`;
 CREATE TABLE `django_session` (
   `session_key` varchar(40) NOT NULL,
   `session_data` longtext NOT NULL,
@@ -829,7 +809,7 @@ ALTER TABLE `django_content_type`
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Restricciones para tablas volcadas

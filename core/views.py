@@ -255,8 +255,15 @@ def tickets(request):
 	return render(request, 'core/tickets.html')
 
 
+# views.py
+from django.shortcuts import render
+from .forms import AddressForm
+import requests
+
 def get_coordinates(request):
     try:
+        error_message=""
+        success_message=""
         if request.method == 'POST':
             form = AddressForm(request.POST)
             if form.is_valid():
@@ -267,18 +274,55 @@ def get_coordinates(request):
                 response = requests.get(base_url, params=params)
                 if response.status_code == 200:
                     data = response.json()
+                    print(data)  # Imprimir la respuesta JSON para depuración
                     if data['results']:
                         location = data['results'][0]['geometry']
-                        coordinates = {
-                            'lat': location['lat'],
-                            'lng': location['lng']
-                        }
-                        return render(request, 'core/test.html', {'form': form, 'coordinates': coordinates})
+                        address_details = data['results'][0]['components']
+
+                        # Verificar si la dirección está en la Región Metropolitana
+                        if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
+                            coordinates = {
+                                'lat': location['lat'],
+                                'lng': location['lng']
+                            }
+                            success_message = "La dirección seleccionada es válida"
+                            return render(request, 'core/test.html', {'form': form, 'coordinates': coordinates, 'success_message':success_message})
+                        else:
+                            error_message = "La dirección seleccionada no está en la Región Metropolitana."
+                            return render(request, 'core/test.html', {'form': form, 'error_message': error_message})
     except Exception as e:
         print(e)
     
     form = AddressForm()
     return render(request, 'core/test.html', {'form': form})
+
+
+
+def autocomplete_address(request):
+    if 'term' in request.GET:
+        search_term = request.GET.get('term')
+        url = 'https://nominatim.openstreetmap.org/search'
+        params = {
+            'q': search_term,
+            'format': 'json',
+            'addressdetails': 1,
+            'limit': 5,
+        }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+        }
+        try:
+            response = requests.get(url, params=params, headers=headers)
+            response.raise_for_status()  # Will raise an HTTPError for bad responses
+            suggestions = response.json()
+            results = []
+            for suggestion in suggestions:
+                results.append(suggestion['display_name'])
+            return JsonResponse(results, safe=False)
+        except requests.RequestException as e:
+            print(f"Error during requests to {url}: {str(e)}")
+            return JsonResponse([], safe=False)
+    return JsonResponse([], safe=False)
 
 def administracion(request):
     return render(request, 'core/administracion.html')

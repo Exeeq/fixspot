@@ -35,8 +35,6 @@ urlpatterns = [
     path('sobre_nosotros/', sobre_nosotros, name="sobre_nosotros"),
     path('talleres/', talleres, name="talleres"),
     path('tickets/', tickets, name="tickets"),
-    path('test/', get_coordinates, name="test"),
-
     #PANEL DE ADMINISTRACIÓN
     path('administracion/', administracion, name="administracion"),
     
@@ -46,4 +44,7 @@ urlpatterns = [
     path('modificar_taller/<int:id_taller>/', modificar_taller, name="modificar_taller"),
     path('eliminar_taller/<int:id_taller>/', eliminar_taller, name='eliminar_taller'),
 
+    # testeo
+    path('test/', get_coordinates, name="test"),
+    path('autocomplete_address/', autocomplete_address, name='autocomplete_address'),
 ]

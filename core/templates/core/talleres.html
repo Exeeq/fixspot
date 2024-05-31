@@ -21,36 +21,43 @@
     <div class="bg-page">
         <br><br><br>
         <div class="container mt-5 mb-5">
-            <div class="row justify-content-center align-items-center">
-                <div class="col-lg-12">
+            {% for taller in talleres %}
+            <div class="row mb-4">
+                <div class="col-lg-6">
                     <div class="card bg-dark text-white shadow-lg rounded-5 shadow-lg">
-                        <div class="row">
-                            <div class="col-lg-6 ">
-                                <div class="card-body h-100 d-flex flex-column justify-content-center ">
-                                    <div class="mb-3 bg-purple rounded-3 p-3 text-center">
-                                        <h3 class="card-title text-uppercase fw-bold">Taller ultra mega nítido</h3>
-                                    </div>
-                                    <div class="mb-3 bg-purple rounded-5 p-3">
-                                        <p class="mb-0 text-start fw-bold">Dirección:</p>
-                                    </div>
-                                    <div class="mb-3 bg-purple rounded-5 p-3">
-                                        <p class="mb-0 text-start fw-bold">Encargado:</p>
-                                    </div>
-                                    <div class="mb-3 bg-purple rounded-5 p-3">
-                                        <p class="mb-0 text-start fw-bold">Teléfono:</p>
-                                    </div>
-                                </div>
+                        <div class="card-body">
+                            <div class="mb-3 bg-purple rounded-5 p-3">
+                                <h3 class="card-title text-uppercase fw-bold text-center">{{ taller.nombreTaller }}</h3>
                             </div>
-                            <div class="col-lg-6 d-flex align-items-center justify-content-center p-4">
-                                <div class="position-relative w-100 h-auto">
-                                    <img src="{% static 'core/img/taller.png' %}" alt="Descripción de la imagen" class="img-fluid rounded-3 w-100 h-100" style="object-fit: cover;">
-                                    <button class="btn btn-primary rounded-pill position-absolute bottom-0 start-50 translate-middle-x mb-3">Agendar ahora</button>
-                                </div>
+                            <div class="mb-3 bg-purple rounded-5 p-3">
+                                <p class="mb-0 text-start fw-bold">Encargado taller:</p>
+                                <p class="mb-0 text-start">{{ taller.encargado  }}</p>
                             </div>
+                            <div class="mb-3 bg-purple rounded-5 p-3">
+                                <p class="mb-0 text-start fw-bold">Descripción:</p>
+                                <p class="mb-0 text-start">{{ taller.descripcion }}</p>
+                            </div>
+                            <div class="mb-3 bg-purple rounded-5 p-3">
+                                <p class="mb-0 text-start fw-bold">Dirección:</p>
+                                <p class="mb-0 text-start">{{ taller.direccion }}, {{taller.comuna}}</p>
+                            </div>
+                            <div class="mb-3 bg-purple rounded-5 p-3">
+                                <p class="mb-0 text-start fw-bold">Teléfono:</p>
+                                <p class="mb-0 text-start">{{ taller.telefono }}</p>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary rounded-pill mt-3">Agendar ahora</button>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-6">
+                    <img src="{{ taller.imagen }}" alt="{{ taller.nombreTaller }}" class="img-fluid rounded-3 w-100 h-100" style="object-fit: cover;">
+                </div>
             </div>
+            <br><br>
+            {% endfor %}
         </div>
         <br><br><br><br>
     </div>

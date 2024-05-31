@@ -118,6 +118,12 @@ body {
 
 }
 
+.btn-primary:hover {
+    background-color: #61358b;
+    border-color: #61358b;
+
+}
+
 .bg-cards-pers {
     background-color: rgb(201, 201, 201);
 }

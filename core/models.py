@@ -40,10 +40,12 @@ class UsuarioCustom(AbstractUser):
 class Taller(models.Model):
     idTaller = models.AutoField(primary_key=True)
     nombreTaller = models.CharField(max_length=46, blank=False, null=False)
-    direccion = models.CharField(blank=False, null=False, max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    direccion = models.CharField(max_length=100, blank=False, null=False)
     telefono = models.CharField(max_length=15, blank=False, null=False)
-    idUsuario = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=True, null=True)
-    idComuna = models.ForeignKey(Comuna, on_delete=models.CASCADE, blank=True, null=True)
+    imagen = models.ImageField(upload_to='taller_imagenes/', blank=True, null=True)
+    idUsuario = models.ForeignKey('UsuarioCustom', on_delete=models.CASCADE, blank=True, null=True)
+    idComuna = models.ForeignKey('Comuna', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.nombreTaller

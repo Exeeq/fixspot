@@ -8,6 +8,7 @@ from .forms import *
 from rest_framework import viewsets
 from .serializers import *
 from django.http import HttpResponse
+from django.conf import settings
 
 #SERIALIZERS (API):
 class RolUsuarioViewSet(viewsets.ModelViewSet):
@@ -58,6 +59,7 @@ class DetalleBoletaViewSet(viewsets.ModelViewSet):
     queryset = DetalleBoleta.objects.all()
     serializer_class = DetalleBoletaSerializer
 
+
 def index(request):
 	return render(request, 'core/index.html')
 
@@ -93,23 +95,30 @@ def administrar_talleres(request):
 
 def crear_taller(request):
     if request.method == 'POST':
-        form = TallerForm(request.POST)
+        form = TallerForm(request.POST, request.FILES)
         if form.is_valid():
             nombreTaller = form.cleaned_data['nombreTaller']
+            descripcion = form.cleaned_data['descripcion']
             direccion = form.cleaned_data['direccion']
             telefono = form.cleaned_data['telefono']
             idComuna = form.cleaned_data['comuna']
             idUsuario = form.cleaned_data['encargadoTaller']
+            imagen = form.cleaned_data['imagen']
 
             data = {
                 'nombreTaller': nombreTaller,
+                'descripcion': descripcion,
                 'direccion': direccion,
                 'telefono': telefono,
                 'idComuna': idComuna,
                 'idUsuario': idUsuario,
             }
-            
-            response = requests.post('http://localhost:8000/api/talleres/', json=data)
+
+            files = {}
+            if imagen:
+                files['imagen'] = imagen
+
+            response = requests.post('http://localhost:8000/api/talleres/', data=data, files=files)
             if response.status_code == 201:  
                 return redirect('administrar_talleres')  
             else:
@@ -124,18 +133,22 @@ def modificar_taller(request, id_taller):
     if response.status_code == 200:
         taller_data = response.json()
         if request.method == 'POST':
-            form = TallerForm(request.POST)
+            form = TallerForm(request.POST, request.FILES)
             if form.is_valid():
-                # Actualizar los datos del taller con los datos del formulario
                 taller_data.update({
                     'nombreTaller': form.cleaned_data['nombreTaller'],
+                    'descripcion': form.cleaned_data['descripcion'],
                     'direccion': form.cleaned_data['direccion'],
                     'telefono': form.cleaned_data['telefono'],
                     'idComuna': form.cleaned_data['comuna'],
                     'idUsuario': form.cleaned_data['encargadoTaller'],
                 })
 
-                response = requests.put(f'http://localhost:8000/api/talleres/{id_taller}/', json=taller_data)
+                files = {}
+                if form.cleaned_data['imagen']:
+                    files['imagen'] = form.cleaned_data['imagen']
+
+                response = requests.put(f'http://localhost:8000/api/talleres/{id_taller}/', data=taller_data, files=files)
                 if response.status_code == 200:
                     return redirect('administrar_talleres')
                 else:
@@ -143,15 +156,18 @@ def modificar_taller(request, id_taller):
         else:
             form = TallerForm(initial={
                 'nombreTaller': taller_data.get('nombreTaller', ''),
+                'descripcion': taller_data.get('descripcion', ''),
                 'direccion': taller_data.get('direccion', ''),
                 'telefono': taller_data.get('telefono', ''),
                 'comuna': taller_data.get('idComuna', ''),
                 'encargadoTaller': taller_data.get('idUsuario', ''),
             })
+            form.fields['imagen'].widget.attrs['data-initial-preview'] = [taller_data.get('imagen')]
+            form.fields['imagen'].widget.attrs['data-initial-caption'] = [taller_data.get('nombreTaller')]
         return render(request, 'core/modificar_taller.html', {'form': form})
     else:
         return HttpResponse("Taller no encontrado", status=404)
-
+    
 def eliminar_taller(request, id_taller):
     response = requests.delete(f'http://localhost:8000/api/talleres/{id_taller}/')
     if response.status_code == 204:
@@ -209,7 +225,31 @@ def sobre_nosotros(request):
 	return render(request, 'core/sobre_nosotros.html')
 
 def talleres(request):
-	return render(request, 'core/talleres.html')
+    def get_user_details(user_id):
+        response = requests.get(f'http://localhost:8000/api/usuarios/{user_id}/')
+        if response.status_code == 200:
+            usuario = response.json()
+            return f"{usuario['pnombre']} {usuario['ap_paterno']}"
+        return "No disponible"
+    
+    def get_comuna_details(comuna_id):
+        response = requests.get(f'http://localhost:8000/api/comunas/{comuna_id}/')
+        if response.status_code == 200:
+            comuna = response.json()
+            return comuna['nombreComuna']  
+        return "No disponible"
+
+    response = requests.get('http://localhost:8000/api/talleres/')
+    
+    if response.status_code == 200:
+        talleres = response.json() 
+        for taller in talleres:
+            taller['encargado'] = get_user_details(taller['idUsuario'])
+            taller['comuna'] = get_comuna_details(taller['idComuna'])
+    else:
+        talleres = []  
+    
+    return render(request, 'core/talleres.html', {'talleres': talleres})
 
 def tickets(request):
 	return render(request, 'core/tickets.html')

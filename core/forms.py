@@ -24,11 +24,13 @@ class RegisterForm(UserCreationForm):
 #FORMULARIO TALLER:
 class TallerForm(forms.Form):
     nombreTaller = forms.CharField(label='Nombre del taller', help_text='Ejemplo: Taller de Roberto')
-    direccion = forms.CharField(label='Dirección', widget=forms.TextInput(attrs={'placeholder': 'Calle, número'}))
+    descripcion = forms.CharField(label='Descripción', widget=forms.Textarea(attrs={'rows': 3}))
+    direccion = forms.CharField(label='Dirección', widget=forms.TextInput(attrs={'placeholder': 'Calle número'}))
     telefono = forms.CharField(label='Teléfono', widget=forms.TextInput(attrs={'placeholder': '+569 **** ****'}))
     comuna = forms.ChoiceField(label='Comuna', choices=[], initial='', required=True)
     encargadoTaller = forms.ChoiceField(label='Usuario', choices=[], initial='', required=True)
-    
+    imagen = forms.ImageField(label='Imagen', required=False)
+
     def __init__(self, *args, **kwargs):
         super(TallerForm, self).__init__(*args, **kwargs)
         self.fields['comuna'].choices = self.get_comuna_choices()

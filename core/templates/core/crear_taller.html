@@ -20,11 +20,14 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <form method="post" class="p-4 shadow-lg bg-white rounded-4">
+                <form method="post" enctype="multipart/form-data" class="p-4 shadow-lg bg-white rounded-4">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="mb-3">
                         {{ form.nombreTaller|as_crispy_field }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.descripcion|as_crispy_field }}
                     </div>
                     <div class="mb-3">
                         {{ form.direccion|as_crispy_field }}
@@ -37,6 +40,9 @@
                     </div>
                     <div class="mb-3">
                         {{ form.encargadoTaller|as_crispy_field }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.imagen|as_crispy_field }}
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg rounded-pill mt-5 d-flex text-center mx-auto">Guardar</button>
                 </form>

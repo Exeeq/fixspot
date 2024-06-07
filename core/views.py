@@ -154,19 +154,31 @@ def modificar_taller(request, id_taller):
                 else:
                     return HttpResponse("Error al actualizar el taller", status=response.status_code)
         else:
-            form = TallerForm(initial={
+            initial_data = {
                 'nombreTaller': taller_data.get('nombreTaller', ''),
                 'descripcion': taller_data.get('descripcion', ''),
                 'direccion': taller_data.get('direccion', ''),
                 'telefono': taller_data.get('telefono', ''),
                 'comuna': taller_data.get('idComuna', ''),
                 'encargadoTaller': taller_data.get('idUsuario', ''),
-            })
-            form.fields['imagen'].widget.attrs['data-initial-preview'] = [taller_data.get('imagen')]
-            form.fields['imagen'].widget.attrs['data-initial-caption'] = [taller_data.get('nombreTaller')]
-        return render(request, 'core/modificar_taller.html', {'form': form})
+            }
+            form = TallerForm(initial=initial_data)
+
+            image_url = taller_data.get('imagen')
+            initial_preview = []
+            initial_caption = ""
+            if image_url:
+                initial_preview = [image_url]
+                initial_caption = taller_data.get('nombreTaller')
+
+        return render(request, 'core/modificar_taller.html', {
+            'form': form,
+            'initial_preview': initial_preview,
+            'initial_caption': initial_caption,
+        })
     else:
         return HttpResponse("Taller no encontrado", status=404)
+
     
 def eliminar_taller(request, id_taller):
     response = requests.delete(f'http://localhost:8000/api/talleres/{id_taller}/')

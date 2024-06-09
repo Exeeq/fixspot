@@ -52,4 +52,6 @@ urlpatterns = [
     path('agendar_hora/<int:id_taller>/', agendar_hora, name='agendar_hora'),
 
     path('annadir_vehiculo/', annadir_vehiculo, name="annadir_vehiculo"),
+    path('modificar_vehiculo/<int:vehiculo_id>/', modificar_vehiculo, name='modificar_vehiculo'),
+    path('eliminar_vehiculo/<int:vehiculo_id>/', eliminar_vehiculo, name="eliminar_vehiculo")
 ]

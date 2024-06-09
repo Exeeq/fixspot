@@ -347,14 +347,14 @@ def agendar_hora(request, id_taller):
         return redirect('talleres')
 
     if request.method == 'POST':
-        form = AgendaForm(request.POST)
+        form = AgendaForm(request.POST, user=request.user)
         if form.is_valid():
             agenda = form.save(commit=False)
             agenda.idTaller = taller
             agenda.save()
             return redirect('mis_reservas')  
     else:
-        form = AgendaForm()
+        form = AgendaForm(user=request.user)
 
     return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
@@ -372,3 +372,25 @@ def annadir_vehiculo(request):
             return redirect('mis_vehiculos')
 
     return render(request, 'core/annadir_vehiculo.html', {'form': form})
+
+def modificar_vehiculo(request, vehiculo_id):
+    # Obtener el vehículo a modificar
+    vehiculo = Vehiculo.objects.get(idVehiculo=vehiculo_id)
+
+    if request.method == 'POST':
+        # Si el formulario se envió con datos, procesarlos
+        form = VehiculoForm(request.POST, instance=vehiculo)
+        if form.is_valid():
+            form.save()  # Guardar los cambios en el vehículo
+            return redirect('mis_vehiculos')  # Redirigir a la página de mis vehículos
+    else:
+        # Si es una solicitud GET, prellenar el formulario con los datos del vehículo
+        form = VehiculoForm(instance=vehiculo)
+
+    return render(request, 'core/modificar_vehiculo.html', {'form': form})
+
+def eliminar_vehiculo(request, vehiculo_id):
+    vehiculo = Vehiculo.objects.get(idVehiculo = vehiculo_id)
+    vehiculo.delete()
+    return redirect('mis_vehiculos')
+   

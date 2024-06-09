@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-06-2024 a las 01:16:18
+-- Tiempo de generación: 09-06-2024 a las 19:56:03
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,21 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `fixspotbd`
 --
+CREATE DATABASE IF NOT EXISTS `fixspotbd` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `fixspotbd`;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `authtoken_token`
+--
+
+DROP TABLE IF EXISTS `authtoken_token`;
+CREATE TABLE `authtoken_token` (
+  `key` varchar(40) NOT NULL,
+  `created` datetime(6) NOT NULL,
+  `user_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -27,6 +42,7 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `auth_group`
 --
 
+DROP TABLE IF EXISTS `auth_group`;
 CREATE TABLE `auth_group` (
   `id` int(11) NOT NULL,
   `name` varchar(150) NOT NULL
@@ -38,6 +54,7 @@ CREATE TABLE `auth_group` (
 -- Estructura de tabla para la tabla `auth_group_permissions`
 --
 
+DROP TABLE IF EXISTS `auth_group_permissions`;
 CREATE TABLE `auth_group_permissions` (
   `id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
@@ -50,6 +67,7 @@ CREATE TABLE `auth_group_permissions` (
 -- Estructura de tabla para la tabla `auth_permission`
 --
 
+DROP TABLE IF EXISTS `auth_permission`;
 CREATE TABLE `auth_permission` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -129,7 +147,15 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (65, 'Can add detalle boleta', 17, 'add_detalleboleta'),
 (66, 'Can change detalle boleta', 17, 'change_detalleboleta'),
 (67, 'Can delete detalle boleta', 17, 'delete_detalleboleta'),
-(68, 'Can view detalle boleta', 17, 'view_detalleboleta');
+(68, 'Can view detalle boleta', 17, 'view_detalleboleta'),
+(69, 'Can add Token', 18, 'add_token'),
+(70, 'Can change Token', 18, 'change_token'),
+(71, 'Can delete Token', 18, 'delete_token'),
+(72, 'Can view Token', 18, 'view_token'),
+(73, 'Can add Token', 19, 'add_tokenproxy'),
+(74, 'Can change Token', 19, 'change_tokenproxy'),
+(75, 'Can delete Token', 19, 'delete_tokenproxy'),
+(76, 'Can view Token', 19, 'view_tokenproxy');
 
 -- --------------------------------------------------------
 
@@ -137,6 +163,7 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 -- Estructura de tabla para la tabla `core_agenda`
 --
 
+DROP TABLE IF EXISTS `core_agenda`;
 CREATE TABLE `core_agenda` (
   `idAgenda` int(11) NOT NULL,
   `fechaAgenda` date NOT NULL,
@@ -153,6 +180,7 @@ CREATE TABLE `core_agenda` (
 -- Estructura de tabla para la tabla `core_boleta`
 --
 
+DROP TABLE IF EXISTS `core_boleta`;
 CREATE TABLE `core_boleta` (
   `nFolio` int(11) NOT NULL,
   `fecha` date NOT NULL,
@@ -167,6 +195,7 @@ CREATE TABLE `core_boleta` (
 -- Estructura de tabla para la tabla `core_comuna`
 --
 
+DROP TABLE IF EXISTS `core_comuna`;
 CREATE TABLE `core_comuna` (
   `idComuna` int(11) NOT NULL,
   `nombreComuna` varchar(80) NOT NULL,
@@ -237,6 +266,7 @@ INSERT INTO `core_comuna` (`idComuna`, `nombreComuna`, `idRegion_id`) VALUES
 -- Estructura de tabla para la tabla `core_detalleboleta`
 --
 
+DROP TABLE IF EXISTS `core_detalleboleta`;
 CREATE TABLE `core_detalleboleta` (
   `idDetalle` int(11) NOT NULL,
   `nombreDetalle` varchar(100) NOT NULL,
@@ -253,10 +283,42 @@ CREATE TABLE `core_detalleboleta` (
 -- Estructura de tabla para la tabla `core_marca`
 --
 
+DROP TABLE IF EXISTS `core_marca`;
 CREATE TABLE `core_marca` (
   `idMarca` int(11) NOT NULL,
   `nombreMarca` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_marca`
+--
+
+INSERT INTO `core_marca` (`idMarca`, `nombreMarca`) VALUES
+(1, 'Toyota'),
+(2, 'Honda'),
+(3, 'Ford'),
+(4, 'Chevrolet'),
+(5, 'Nissan'),
+(6, 'Volkswagen'),
+(7, 'Hyundai'),
+(8, 'Kia'),
+(9, 'Mercedes-Benz'),
+(10, 'BMW'),
+(11, 'Mazda'),
+(12, 'Subaru'),
+(13, 'Audi'),
+(14, 'Jeep'),
+(15, 'Tesla'),
+(16, 'Volvo'),
+(17, 'Porsche'),
+(18, 'Land Rover'),
+(19, 'Jaguar'),
+(20, 'Ferrari'),
+(21, 'Lamborghini'),
+(22, 'Mitsubishi'),
+(23, 'Peugeot'),
+(24, 'Renault'),
+(25, 'Citroën');
 
 -- --------------------------------------------------------
 
@@ -264,6 +326,7 @@ CREATE TABLE `core_marca` (
 -- Estructura de tabla para la tabla `core_region`
 --
 
+DROP TABLE IF EXISTS `core_region`;
 CREATE TABLE `core_region` (
   `idRegion` int(11) NOT NULL,
   `nombreRegion` varchar(80) NOT NULL
@@ -282,6 +345,7 @@ INSERT INTO `core_region` (`idRegion`, `nombreRegion`) VALUES
 -- Estructura de tabla para la tabla `core_rolusuario`
 --
 
+DROP TABLE IF EXISTS `core_rolusuario`;
 CREATE TABLE `core_rolusuario` (
   `idRol` int(11) NOT NULL,
   `nombreRol` varchar(20) NOT NULL
@@ -302,6 +366,7 @@ INSERT INTO `core_rolusuario` (`idRol`, `nombreRol`) VALUES
 -- Estructura de tabla para la tabla `core_taller`
 --
 
+DROP TABLE IF EXISTS `core_taller`;
 CREATE TABLE `core_taller` (
   `idTaller` int(11) NOT NULL,
   `nombreTaller` varchar(46) NOT NULL,
@@ -318,7 +383,7 @@ CREATE TABLE `core_taller` (
 --
 
 INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `direccion`, `telefono`, `idComuna_id`, `idUsuario_id`, `descripcion`, `imagen`) VALUES
-(3, 'El Zapato', 'Sargento Menadier, 123', '+569 5319 2023', 33, 2, NULL, NULL);
+(3, 'El Zapato', 'Sargento Menadier, 123', '+569 5319 2023', 33, 2, 'Taller dedicada a la alineación, balanceo y cambio de aceite.', 'taller_imagenes/adult-automobile-body-422197_9EgvZG8_EFvIapC.jpg');
 
 -- --------------------------------------------------------
 
@@ -326,10 +391,26 @@ INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `direccion`, `telefono`, 
 -- Estructura de tabla para la tabla `core_tipoagenda`
 --
 
+DROP TABLE IF EXISTS `core_tipoagenda`;
 CREATE TABLE `core_tipoagenda` (
   `idTipo` int(11) NOT NULL,
   `nombreTipo` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_tipoagenda`
+--
+
+INSERT INTO `core_tipoagenda` (`idTipo`, `nombreTipo`) VALUES
+(1, 'Mantenimiento Preventivo'),
+(2, 'Reparación'),
+(3, 'Inspección Técnica'),
+(4, 'Instalación de Accesorios'),
+(5, 'Diagnóstico'),
+(6, 'Lavado y Detallado'),
+(7, 'Alineación y Balanceo'),
+(8, 'Cambio de Neumáticos'),
+(9, 'Atención de Garantía');
 
 -- --------------------------------------------------------
 
@@ -337,10 +418,32 @@ CREATE TABLE `core_tipoagenda` (
 -- Estructura de tabla para la tabla `core_tipovehiculo`
 --
 
+DROP TABLE IF EXISTS `core_tipovehiculo`;
 CREATE TABLE `core_tipovehiculo` (
   `idTipo` int(11) NOT NULL,
   `nombreTipo` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_tipovehiculo`
+--
+
+INSERT INTO `core_tipovehiculo` (`idTipo`, `nombreTipo`) VALUES
+(1, 'Sedán'),
+(2, 'Hatchback'),
+(3, 'SUV'),
+(4, 'Coupé'),
+(5, 'Convertible'),
+(6, 'Camioneta'),
+(7, 'VAN'),
+(8, 'Wagon'),
+(9, 'Pick-Up'),
+(10, 'Minivan'),
+(11, 'Deportivo'),
+(12, 'Eléctrico'),
+(13, 'Híbrido'),
+(14, 'Todoterreno'),
+(15, 'Motocicleta');
 
 -- --------------------------------------------------------
 
@@ -348,6 +451,7 @@ CREATE TABLE `core_tipovehiculo` (
 -- Estructura de tabla para la tabla `core_usuariocustom`
 --
 
+DROP TABLE IF EXISTS `core_usuariocustom`;
 CREATE TABLE `core_usuariocustom` (
   `id` bigint(20) NOT NULL,
   `password` varchar(128) NOT NULL,
@@ -374,7 +478,8 @@ CREATE TABLE `core_usuariocustom` (
 --
 
 INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `is_staff`, `is_active`, `date_joined`, `run`, `email`, `telefono`, `pnombre`, `ap_paterno`, `direccion`, `idComuna_id`, `idRol_id`) VALUES
-(2, 'pbkdf2_sha256$720000$WntgIfcEPVWRiAbkIH76aS$Nrek+eAD5TSa6CtifZLfcID/lRYAwmWaLAJ4vjYv21E=', '2024-05-30 21:31:46.487744', 1, 'admin', '', '', 1, 1, '2024-05-28 00:32:17.739689', '', 'admin@ferremas.cl', '', 'Administrador', '.', '', NULL, NULL);
+(2, 'pbkdf2_sha256$720000$WntgIfcEPVWRiAbkIH76aS$Nrek+eAD5TSa6CtifZLfcID/lRYAwmWaLAJ4vjYv21E=', '2024-06-09 17:55:29.543702', 1, 'admin', '', '', 1, 1, '2024-05-28 00:32:17.739689', '', 'admin@ferremas.cl', '', 'Administrador', '.', '', NULL, 3),
+(3, 'pbkdf2_sha256$720000$kCSsYmDg7FrlNZtlAcmk5X$I7xcLMma4ukxiNj33ZVgESC15LjVSeDFxDvCMB3EFAM=', '2024-06-09 17:55:12.962812', 0, 'Exequiel', '', '', 0, 1, '2024-06-09 16:07:54.261900', '21.002.289-9', '', '', 'Exequiel', 'Albornoz', 'Millantu 123', 33, 1);
 
 -- --------------------------------------------------------
 
@@ -382,6 +487,7 @@ INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`
 -- Estructura de tabla para la tabla `core_usuariocustom_groups`
 --
 
+DROP TABLE IF EXISTS `core_usuariocustom_groups`;
 CREATE TABLE `core_usuariocustom_groups` (
   `id` int(11) NOT NULL,
   `usuariocustom_id` bigint(20) NOT NULL,
@@ -394,6 +500,7 @@ CREATE TABLE `core_usuariocustom_groups` (
 -- Estructura de tabla para la tabla `core_usuariocustom_user_permissions`
 --
 
+DROP TABLE IF EXISTS `core_usuariocustom_user_permissions`;
 CREATE TABLE `core_usuariocustom_user_permissions` (
   `id` int(11) NOT NULL,
   `usuariocustom_id` bigint(20) NOT NULL,
@@ -406,16 +513,25 @@ CREATE TABLE `core_usuariocustom_user_permissions` (
 -- Estructura de tabla para la tabla `core_vehiculo`
 --
 
+DROP TABLE IF EXISTS `core_vehiculo`;
 CREATE TABLE `core_vehiculo` (
   `idVehiculo` int(11) NOT NULL,
   `patente` varchar(6) NOT NULL,
   `modelo` varchar(20) NOT NULL,
-  `subModelo` varchar(20) NOT NULL,
+  `subModelo` varchar(20) DEFAULT NULL,
   `anno` int(11) NOT NULL,
   `idMarca_id` int(11) NOT NULL,
   `idTipoVehiculo_id` int(11) NOT NULL,
   `idUsuario_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_vehiculo`
+--
+
+INSERT INTO `core_vehiculo` (`idVehiculo`, `patente`, `modelo`, `subModelo`, `anno`, `idMarca_id`, `idTipoVehiculo_id`, `idUsuario_id`) VALUES
+(1, 'PRKG97', 'Gol', 'Comfortline', 2021, 6, 2, 3),
+(2, 'DRJK23', 'Q3', NULL, 2020, 13, 3, 2);
 
 -- --------------------------------------------------------
 
@@ -423,6 +539,7 @@ CREATE TABLE `core_vehiculo` (
 -- Estructura de tabla para la tabla `django_admin_log`
 --
 
+DROP TABLE IF EXISTS `django_admin_log`;
 CREATE TABLE `django_admin_log` (
   `id` int(11) NOT NULL,
   `action_time` datetime(6) NOT NULL,
@@ -440,6 +557,7 @@ CREATE TABLE `django_admin_log` (
 -- Estructura de tabla para la tabla `django_content_type`
 --
 
+DROP TABLE IF EXISTS `django_content_type`;
 CREATE TABLE `django_content_type` (
   `id` int(11) NOT NULL,
   `app_label` varchar(100) NOT NULL,
@@ -454,6 +572,8 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (1, 'admin', 'logentry'),
 (3, 'auth', 'group'),
 (2, 'auth', 'permission'),
+(18, 'authtoken', 'token'),
+(19, 'authtoken', 'tokenproxy'),
 (4, 'contenttypes', 'contenttype'),
 (16, 'core', 'agenda'),
 (7, 'core', 'boleta'),
@@ -475,6 +595,7 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 -- Estructura de tabla para la tabla `django_migrations`
 --
 
+DROP TABLE IF EXISTS `django_migrations`;
 CREATE TABLE `django_migrations` (
   `id` int(11) NOT NULL,
   `app` varchar(255) NOT NULL,
@@ -510,7 +631,12 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (21, 'core', '0003_delete_detalleboleta', '2024-05-30 21:32:27.340753'),
 (22, 'core', '0004_detalleboleta', '2024-05-30 21:32:27.407725'),
 (23, 'core', '0005_alter_usuariocustom_id', '2024-05-30 21:32:28.208800'),
-(24, 'core', '0006_taller_descripcion_taller_imagen', '2024-05-31 22:56:53.184188');
+(24, 'core', '0006_taller_descripcion_taller_imagen', '2024-05-31 22:56:53.184188'),
+(25, 'authtoken', '0001_initial', '2024-06-09 16:35:06.776220'),
+(26, 'authtoken', '0002_auto_20160226_1747', '2024-06-09 16:35:06.800780'),
+(27, 'authtoken', '0003_tokenproxy', '2024-06-09 16:35:06.802188'),
+(28, 'authtoken', '0004_alter_tokenproxy_options', '2024-06-09 16:35:06.805286'),
+(29, 'core', '0007_alter_vehiculo_submodelo', '2024-06-09 17:48:53.276782');
 
 -- --------------------------------------------------------
 
@@ -518,6 +644,7 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 -- Estructura de tabla para la tabla `django_session`
 --
 
+DROP TABLE IF EXISTS `django_session`;
 CREATE TABLE `django_session` (
   `session_key` varchar(40) NOT NULL,
   `session_data` longtext NOT NULL,
@@ -529,11 +656,19 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('rei8lpt1i9trh9xnwse6hynrficepl4t', '.eJxVjEEOwiAQRe_C2pAOU6Dj0r1nIMCAVA0kpV0Z765NutDtf-_9l3B-W4vbelrczOIslDj9bsHHR6o74LuvtyZjq-syB7kr8qBdXhun5-Vw_w6K7-VbY2TwWRFBhJhREwONg54sKUoUMqI2ozaIyGyTGrInTiHYSQMgKCPeH9IvNyE:1sCnNC:LHb9X1HQ5PEiQX9AVDi9_Vx5rtAcH7cjw9gAL-twkKQ', '2024-06-13 21:31:46.489247');
+('rei8lpt1i9trh9xnwse6hynrficepl4t', '.eJxVjEEOwiAQRe_C2pAOU6Dj0r1nIMCAVA0kpV0Z765NutDtf-_9l3B-W4vbelrczOIslDj9bsHHR6o74LuvtyZjq-syB7kr8qBdXhun5-Vw_w6K7-VbY2TwWRFBhJhREwONg54sKUoUMqI2ozaIyGyTGrInTiHYSQMgKCPeH9IvNyE:1sCnNC:LHb9X1HQ5PEiQX9AVDi9_Vx5rtAcH7cjw9gAL-twkKQ', '2024-06-13 21:31:46.489247'),
+('zvebrvos71nz5ngo7qnuwbpjk23p8ao9', '.eJxVjEEOwiAQRe_C2pAOU6Dj0r1nIMCAVA0kpV0Z765NutDtf-_9l3B-W4vbelrczOIslDj9bsHHR6o74LuvtyZjq-syB7kr8qBdXhun5-Vw_w6K7-VbY2TwWRFBhJhREwONg54sKUoUMqI2ozaIyGyTGrInTiHYSQMgKCPeH9IvNyE:1sGMlN:a4J1D4HgNKfeUEz1J-2acSgsgcQW-TGX8R2Gz5C-CEw', '2024-06-23 17:55:29.546220');
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `authtoken_token`
+--
+ALTER TABLE `authtoken_token`
+  ADD PRIMARY KEY (`key`),
+  ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
 -- Indices de la tabla `auth_group`
@@ -707,7 +842,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT de la tabla `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT de la tabla `core_agenda`
@@ -737,7 +872,7 @@ ALTER TABLE `core_detalleboleta`
 -- AUTO_INCREMENT de la tabla `core_marca`
 --
 ALTER TABLE `core_marca`
-  MODIFY `idMarca` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idMarca` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `core_region`
@@ -761,19 +896,19 @@ ALTER TABLE `core_taller`
 -- AUTO_INCREMENT de la tabla `core_tipoagenda`
 --
 ALTER TABLE `core_tipoagenda`
-  MODIFY `idTipo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idTipo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `core_tipovehiculo`
 --
 ALTER TABLE `core_tipovehiculo`
-  MODIFY `idTipo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idTipo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `core_usuariocustom`
 --
 ALTER TABLE `core_usuariocustom`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `core_usuariocustom_groups`
@@ -791,7 +926,7 @@ ALTER TABLE `core_usuariocustom_user_permissions`
 -- AUTO_INCREMENT de la tabla `core_vehiculo`
 --
 ALTER TABLE `core_vehiculo`
-  MODIFY `idVehiculo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idVehiculo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `django_admin_log`
@@ -803,17 +938,23 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT de la tabla `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `authtoken_token`
+--
+ALTER TABLE `authtoken_token`
+  ADD CONSTRAINT `authtoken_token_user_id_35299eff_fk_core_usuariocustom_id` FOREIGN KEY (`user_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `auth_group_permissions`

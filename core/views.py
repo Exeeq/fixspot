@@ -206,7 +206,10 @@ def mis_reservas(request):
 	return render(request, 'core/mis_reservas.html')
 
 def mis_vehiculos(request):
-	return render(request, 'core/mis_vehiculos.html')
+    # Filtra los vehículos por el usuario logeado
+    vehiculos = Vehiculo.objects.filter(idUsuario=request.user)
+
+    return render(request, 'core/mis_vehiculos.html', {'vehiculos': vehiculos})
 
 def realizar_ticket(request):
 	return render(request, 'core/realizar_ticket.html')
@@ -308,8 +311,6 @@ def get_coordinates(request):
     form = AddressForm()
     return render(request, 'core/test.html', {'form': form})
 
-
-
 def autocomplete_address(request):
     if 'term' in request.GET:
         search_term = request.GET.get('term')
@@ -339,6 +340,35 @@ def autocomplete_address(request):
 def administracion(request):
     return render(request, 'core/administracion.html')
 
+def agendar_hora(request, id_taller):
+    try:
+        taller = Taller.objects.get(idTaller=id_taller)
+    except Taller.DoesNotExist:
+        return redirect('talleres')
 
+    if request.method == 'POST':
+        form = AgendaForm(request.POST)
+        if form.is_valid():
+            agenda = form.save(commit=False)
+            agenda.idTaller = taller
+            agenda.save()
+            return redirect('mis_reservas')  
+    else:
+        form = AgendaForm()
 
+    return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
+def annadir_vehiculo(request):
+    form = VehiculoForm()  
+
+    if request.method == 'POST':
+        form = VehiculoForm(request.POST)  
+
+        if form.is_valid():
+            vehiculo = form.save(commit=False)
+            vehiculo.idUsuario = request.user  
+            vehiculo.save()
+
+            return redirect('mis_vehiculos')
+
+    return render(request, 'core/annadir_vehiculo.html', {'form': form})

@@ -47,4 +47,9 @@ urlpatterns = [
     # testeo
     path('test/', get_coordinates, name="test"),
     path('autocomplete_address/', autocomplete_address, name='autocomplete_address'),
+
+    #Agendar
+    path('agendar_hora/<int:id_taller>/', agendar_hora, name='agendar_hora'),
+
+    path('annadir_vehiculo/', annadir_vehiculo, name="annadir_vehiculo"),
 ]

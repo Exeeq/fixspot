@@ -69,7 +69,7 @@ class Vehiculo(models.Model):
     idVehiculo = models.AutoField(primary_key=True)
     patente = models.CharField(blank=False, null=False, max_length=6)
     modelo = models.CharField(blank=False, null=False, max_length=20)
-    subModelo = models.CharField(blank=False, null=False, max_length=20)
+    subModelo = models.CharField(blank=True, null=True, max_length=20)
     anno = models.IntegerField(blank=False, null=False)
     idUsuario = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=True, null=True)
     idMarca = models.ForeignKey(Marca, on_delete=models.CASCADE, blank=False, null=False)

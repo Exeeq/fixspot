@@ -47,3 +47,19 @@ class TallerForm(forms.Form):
         choices = [('','Seleccione...')]  
         choices += [(usuario['id'], usuario['pnombre']) for usuario in response.json()]
         return choices
+    
+
+class AgendaForm(forms.ModelForm):
+    class Meta:
+        model = Agenda
+        fields = ['fechaAtencion', 'horaAtencion', 'idTipoAgenda', 'idVehiculo']
+
+    def __init__(self, *args, **kwargs):
+        super(AgendaForm, self).__init__(*args, **kwargs)
+        self.fields['fechaAtencion'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['horaAtencion'].widget = forms.TimeInput(attrs={'type': 'time'})
+
+class VehiculoForm(forms.ModelForm):
+    class Meta:
+        model = Vehiculo
+        exclude = ['idUsuario']

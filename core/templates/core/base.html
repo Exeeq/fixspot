@@ -56,8 +56,16 @@
                         <ul class="dropdown-menu dropdown-menu-end custom-dropdown text-center bg-dark" aria-labelledby="userDropdown">
                             {% if user.is_authenticated %}
                                 <li><a class="dropdown-item custom-dropdown-item fw-bold text-uppercase" href="">{{ user.pnombre }} {{ user.ap_paterno }} </a></li>
-                                <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administracion' %}"><i class="fa-solid fa-lock"></i> ADMINISTRACIÓN </a></li>
-                                <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN </a></li>
+                                {% if user.idRol_id == 3 %}
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administracion' %}"><i class="fa-solid fa-lock"></i> ADMINISTRACIÓN </a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'mis_vehiculos' %}"><i class="fa-solid fa-car"></i> MIS VEHÍCULOS </a></li>
+                                <li>
+                                    <form method="POST" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item custom-dropdown-item fw-bold" type="submit"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN </button>
+                                    </form>
+                                </li>
                             {% else %}
                                 <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i> INICIAR SESIÓN </a></li>
                                 <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'register' %}"><i class="fa-solid fa-cash-register"></i> REGISTRARSE </a></li>

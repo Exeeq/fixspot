@@ -1,7 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
-
 {% block contenido %}
 
 <!-- INICIO ENCABEZADO -->
@@ -10,7 +9,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-6 mt-5">
                 <div class="intro-excerpt">
-                    <h1 class="fw-bold text-center">AGENDAR</h1>
+                    <h1 class="fw-bold text-center">AÑADIR VEHÍCULO</h1>
                 </div>
             </div>
         </div>
@@ -19,32 +18,28 @@
 </div>
 <!-- FIN ENCABEZADO -->
 
-<div class="bg-white">
+<div class="bg-page">
   <br><br><br>
-    <div class="container mt-5 mb-5">
+    <div class="container mt-4">
         <div class="row justify-content-center mt-4 mb-5">
           <div class="col-md-8">
-            <h1 class="text-center text-uppercase fw-bold">Agendar Hora en {{ taller.nombreTaller }}</h1>
             <form method="POST" class="p-4 rounded shadow-lg">
               {% csrf_token %}
               <div class="form-group">
                 {{ form | crispy }}
               </div>
-              <input type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" value="Agendar hora">
+              <input type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" value="Añadir vehículo">
             </form>
           </div>
         </div>
-        <br><br>
     </div>
+    <br><br><br>
       <style>
         .form-control {
           height: 50px;
           border-radius: 20px;
         }
       </style>
-
 </div>
 
 {% endblock contenido %}
-
-

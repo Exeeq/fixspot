@@ -20,7 +20,6 @@ urlpatterns = [
     path('api/', include(router.urls)),
     
     path('', index, name="index"),
-    path('administrar_reservas/', administrar_reservas, name="administrar_reservas"),
     path('agendar_hora/', agendar_hora, name="agendar_hora"),
     path('agendar/', agendar, name="agendar"),
     path('contactanos/', contactanos, name="contactanos"),
@@ -62,4 +61,6 @@ urlpatterns = [
 
     path('administrar_mi_taller/', administrar_mi_taller, name="administrar_mi_taller"),
     path('reservas_taller/<int:idTaller>/', reservas_taller, name='reservas_taller'),
+
+    path('perfil_usuario/', perfil_usuario, name='perfil_usuario'),
 ]

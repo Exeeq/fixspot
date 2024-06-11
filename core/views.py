@@ -9,6 +9,8 @@ from rest_framework import viewsets
 from .serializers import *
 from django.http import HttpResponse
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 #SERIALIZERS (API):
 class RolUsuarioViewSet(viewsets.ModelViewSet):
@@ -63,9 +65,6 @@ class DetalleBoletaViewSet(viewsets.ModelViewSet):
 def index(request):
 	return render(request, 'core/index.html')
 
-def administrar_reservas(request):
-	return render(request, 'core/administrar_reservas.html')
-
 def administrar_talleres(request):
     talleres = Taller.objects.all()
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
@@ -97,9 +96,11 @@ def eliminar_taller(request, id_taller):
     taller.delete()
     return redirect('administrar_talleres')
 
+@login_required
 def agendar_hora(request):
 	return render(request, 'core/agendar_hora.html')
 
+@login_required
 def agendar(request):
 	return render(request, 'core/agendar.html')
 
@@ -109,23 +110,29 @@ def contactanos(request):
 def login(request):
 	return render(request, 'core/login.html')
 
+@login_required
 def mapa(request):
 	return render(request, 'core/mapa.html')
 
+@login_required
 def mis_reservas(request):
     agendas = Agenda.objects.filter(cliente=request.user)
     return render(request, 'core/mis_reservas.html', {'agendas': agendas})
 
+@login_required
 def mis_vehiculos(request):
     vehiculos = Vehiculo.objects.filter(idUsuario=request.user)
     return render(request, 'core/mis_vehiculos.html', {'vehiculos': vehiculos})
 
+@login_required
 def realizar_ticket(request):
 	return render(request, 'core/realizar_ticket.html')
 
+@login_required
 def solicitar_taller(request):
 	return render(request, 'core/solicitar_taller.html')
 
+@login_required
 def register_vehiculo(request):
 	return render(request, 'core/register_vehiculo.html')
 
@@ -148,18 +155,15 @@ def register(request):
 def sobre_nosotros(request):
 	return render(request, 'core/sobre_nosotros.html')
 
+@login_required
 def talleres(request):
     talleres = Taller.objects.all()
     return render(request, 'core/talleres.html', {'talleres': talleres})
 
+@login_required
 def tickets(request):
 	return render(request, 'core/tickets.html')
 
-
-# views.py
-from django.shortcuts import render
-from .forms import AddressForm
-import requests
 
 def get_coordinates(request):
     try:
@@ -222,9 +226,11 @@ def autocomplete_address(request):
             return JsonResponse([], safe=False)
     return JsonResponse([], safe=False)
 
+@login_required
 def administracion(request):
     return render(request, 'core/administracion.html')
 
+@login_required
 def agendar_hora(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
 
@@ -241,6 +247,7 @@ def agendar_hora(request, id_taller):
 
     return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
+@login_required
 def annadir_vehiculo(request):
     form = VehiculoForm()  
 
@@ -256,6 +263,7 @@ def annadir_vehiculo(request):
 
     return render(request, 'core/annadir_vehiculo.html', {'form': form})
 
+@login_required
 def modificar_vehiculo(request, vehiculo_id):
     # Obtener el vehículo a modificar
     vehiculo = Vehiculo.objects.get(idVehiculo=vehiculo_id)
@@ -272,16 +280,18 @@ def modificar_vehiculo(request, vehiculo_id):
 
     return render(request, 'core/modificar_vehiculo.html', {'form': form})
 
+@login_required
 def eliminar_vehiculo(request, vehiculo_id):
     vehiculo = Vehiculo.objects.get(idVehiculo = vehiculo_id)
     vehiculo.delete()
     return redirect('mis_vehiculos')
    
-
+@login_required
 def administrar_usuarios(request):
     usuarios = UsuarioCustom.objects.all()
     return render(request, 'core/administrar_usuarios.html', {'usuarios': usuarios})
 
+@login_required
 def modificar_usuario(request, id):
     usuario = get_object_or_404(UsuarioCustom, id=id)
     if request.method == 'POST':
@@ -298,7 +308,8 @@ def eliminar_usuario(request, id):
     if request.method == 'POST':
         usuario.delete()
         return redirect('administrar_usuarios')
-    
+
+@login_required 
 def crear_usuario(request):
     if request.method == 'POST':
         form = UsuarioCustomCreationForm(request.POST)
@@ -309,11 +320,13 @@ def crear_usuario(request):
         form = UsuarioCustomCreationForm()
     return render(request, 'core/crear_usuario.html', {'form': form})
 
+@login_required
 def administrar_mi_taller(request):
     taller_del_usuario = Taller.objects.filter(idUsuario=request.user).first()
 
     return render(request, 'core/administrar_mi_taller.html', {'taller': taller_del_usuario})
 
+@login_required
 def reservas_taller(request, idTaller):
     taller = Taller.objects.get(pk=idTaller)
     reservas = Agenda.objects.filter(idTaller=taller)
@@ -323,3 +336,16 @@ def reservas_taller(request, idTaller):
     }
     return render(request, 'core/reservas_taller.html', data)
 
+@login_required
+def perfil_usuario(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UsuarioCustomPerfilForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Perfil actualizado correctamente!')
+            return redirect('index')
+    else:
+        form = UsuarioCustomPerfilForm(instance=user)
+    
+    return render(request, 'core/perfil_usuario.html', {'form': form})

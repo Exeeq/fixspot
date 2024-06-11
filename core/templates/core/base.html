@@ -55,7 +55,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end custom-dropdown text-center bg-dark" aria-labelledby="userDropdown">
                             {% if user.is_authenticated %}
-                                <li><a class="dropdown-item custom-dropdown-item fw-bold text-uppercase" href=""><i class="fa-solid fa-user"></i> {{ user.pnombre }} {{ user.ap_paterno }} </a></li>
+                                <li><a class="dropdown-item custom-dropdown-item fw-bold text-uppercase" href="{% url 'perfil_usuario' %}"><i class="fa-solid fa-user"></i> {{ user.pnombre }} {{ user.ap_paterno }} </a></li>
                                 {% if user.idRol_id == 3 %}
                                     <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administracion' %}"><i class="fa-solid fa-lock"></i> ADMINISTRACIÓN </a></li>
                                 {% endif %}

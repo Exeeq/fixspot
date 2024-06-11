@@ -109,8 +109,9 @@ class VehiculoForm(forms.ModelForm):
 class UsuarioCustomForm(forms.ModelForm):
     class Meta:
         model = UsuarioCustom
-        fields = ['run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'idRol', 'idComuna']
+        fields = ['username','run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'idRol', 'idComuna']
         labels = {
+            'username': 'Nombre de usuario',
             'run': 'RUN',
             'correo': 'Correo Electrónico',
             'pnombre': 'Primer Nombre',
@@ -151,3 +152,25 @@ class UsuarioCustomCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+    
+class UsuarioCustomPerfilForm(forms.ModelForm):
+    class Meta:
+        model = UsuarioCustom
+        fields = ['username','run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'idComuna']
+        labels = {
+            'username': 'Nombre de usuario',
+            'run': 'RUN',
+            'correo': 'Correo Electrónico',
+            'pnombre': 'Primer Nombre',
+            'ap_paterno': 'Apellido Paterno',
+            'direccion': 'Dirección',
+            'idComuna': 'Comuna',
+        }
+        widgets = {
+            'run': forms.TextInput(attrs={'class': 'form-control'}),
+            'correo': forms.EmailInput(attrs={'class': 'form-control'}),
+            'pnombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'ap_paterno': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'idComuna': forms.Select(attrs={'class': 'form-control'}),
+        }

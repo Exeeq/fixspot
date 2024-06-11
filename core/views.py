@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 import requests
 from django.shortcuts import render
 from .forms import AddressForm
@@ -67,125 +67,35 @@ def administrar_reservas(request):
 	return render(request, 'core/administrar_reservas.html')
 
 def administrar_talleres(request):
-    # Obtener los talleres desde la API
-    response = requests.get('http://localhost:8000/api/talleres/')
-    talleres = response.json()
-
-    # Obtener los detalles de cada encargado del taller y cada comuna
-    for taller in talleres:
-        # Obtener el nombre del encargado del taller
-        id_encargado = taller['idUsuario']
-        response_usuario = requests.get(f'http://localhost:8000/api/usuarios/{id_encargado}/')
-        if response_usuario.status_code == 200:
-            encargado_data = response_usuario.json()
-            taller['encargadoTaller'] = f"{encargado_data['pnombre']} {encargado_data['ap_paterno']}"
-        else:
-            taller['encargadoTaller'] = "Desconocido"
-
-        # Obtener el nombre de la comuna
-        id_comuna = taller['idComuna']
-        response_comuna = requests.get(f'http://localhost:8000/api/comunas/{id_comuna}/')
-        if response_comuna.status_code == 200:
-            comuna_data = response_comuna.json()
-            taller['comuna'] = comuna_data['nombreComuna']
-        else:
-            taller['comuna'] = "Desconocida"
-
+    talleres = Taller.objects.all()
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
 
 def crear_taller(request):
+    
     if request.method == 'POST':
         form = TallerForm(request.POST, request.FILES)
         if form.is_valid():
-            nombreTaller = form.cleaned_data['nombreTaller']
-            descripcion = form.cleaned_data['descripcion']
-            direccion = form.cleaned_data['direccion']
-            telefono = form.cleaned_data['telefono']
-            idComuna = form.cleaned_data['comuna']
-            idUsuario = form.cleaned_data['encargadoTaller']
-            imagen = form.cleaned_data['imagen']
-
-            data = {
-                'nombreTaller': nombreTaller,
-                'descripcion': descripcion,
-                'direccion': direccion,
-                'telefono': telefono,
-                'idComuna': idComuna,
-                'idUsuario': idUsuario,
-            }
-
-            files = {}
-            if imagen:
-                files['imagen'] = imagen
-
-            response = requests.post('http://localhost:8000/api/talleres/', data=data, files=files)
-            if response.status_code == 201:  
-                return redirect('administrar_talleres')  
-            else:
-                form.add_error(None, 'Hubo un error al crear el taller. Inténtalo nuevamente.')
+            form.save()  # Guardar el formulario directamente
+            return redirect('administrar_talleres')
     else:
         form = TallerForm()
-
     return render(request, 'core/crear_taller.html', {'form': form})
 
 def modificar_taller(request, id_taller):
-    response = requests.get(f'http://localhost:8000/api/talleres/{id_taller}/')
-    if response.status_code == 200:
-        taller_data = response.json()
-        if request.method == 'POST':
-            form = TallerForm(request.POST, request.FILES)
-            if form.is_valid():
-                taller_data.update({
-                    'nombreTaller': form.cleaned_data['nombreTaller'],
-                    'descripcion': form.cleaned_data['descripcion'],
-                    'direccion': form.cleaned_data['direccion'],
-                    'telefono': form.cleaned_data['telefono'],
-                    'idComuna': form.cleaned_data['comuna'],
-                    'idUsuario': form.cleaned_data['encargadoTaller'],
-                })
-
-                files = {}
-                if form.cleaned_data['imagen']:
-                    files['imagen'] = form.cleaned_data['imagen']
-
-                response = requests.put(f'http://localhost:8000/api/talleres/{id_taller}/', data=taller_data, files=files)
-                if response.status_code == 200:
-                    return redirect('administrar_talleres')
-                else:
-                    return HttpResponse("Error al actualizar el taller", status=response.status_code)
-        else:
-            initial_data = {
-                'nombreTaller': taller_data.get('nombreTaller', ''),
-                'descripcion': taller_data.get('descripcion', ''),
-                'direccion': taller_data.get('direccion', ''),
-                'telefono': taller_data.get('telefono', ''),
-                'comuna': taller_data.get('idComuna', ''),
-                'encargadoTaller': taller_data.get('idUsuario', ''),
-            }
-            form = TallerForm(initial=initial_data)
-
-            image_url = taller_data.get('imagen')
-            initial_preview = []
-            initial_caption = ""
-            if image_url:
-                initial_preview = [image_url]
-                initial_caption = taller_data.get('nombreTaller')
-
-        return render(request, 'core/modificar_taller.html', {
-            'form': form,
-            'initial_preview': initial_preview,
-            'initial_caption': initial_caption,
-        })
+    taller = get_object_or_404(Taller, idTaller=id_taller)
+    if request.method == 'POST':
+        form = TallerForm(request.POST, request.FILES, instance=taller)
+        if form.is_valid():
+            form.save()  # Guardar el formulario directamente
+            return redirect('administrar_talleres')
     else:
-        return HttpResponse("Taller no encontrado", status=404)
+        form = TallerForm(instance=taller)
+    return render(request, 'core/modificar_taller.html', {'form': form})
 
-    
 def eliminar_taller(request, id_taller):
-    response = requests.delete(f'http://localhost:8000/api/talleres/{id_taller}/')
-    if response.status_code == 204:
-        return redirect('administrar_talleres')
-    else:
-        return HttpResponse("Error al eliminar el taller", status=response.status_code)
+    taller = get_object_or_404(Taller, idTaller=id_taller)
+    taller.delete()
+    return redirect('administrar_talleres')
 
 def agendar_hora(request):
 	return render(request, 'core/agendar_hora.html')
@@ -203,19 +113,18 @@ def mapa(request):
 	return render(request, 'core/mapa.html')
 
 def mis_reservas(request):
-	return render(request, 'core/mis_reservas.html')
+    agendas = Agenda.objects.filter(cliente=request.user)
+    return render(request, 'core/mis_reservas.html', {'agendas': agendas})
 
 def mis_vehiculos(request):
-    # Filtra los vehículos por el usuario logeado
     vehiculos = Vehiculo.objects.filter(idUsuario=request.user)
-
     return render(request, 'core/mis_vehiculos.html', {'vehiculos': vehiculos})
 
 def realizar_ticket(request):
 	return render(request, 'core/realizar_ticket.html')
 
-def register_taller(request):
-	return render(request, 'core/register_taller.html')
+def solicitar_taller(request):
+	return render(request, 'core/solicitar_taller.html')
 
 def register_vehiculo(request):
 	return render(request, 'core/register_vehiculo.html')
@@ -240,30 +149,7 @@ def sobre_nosotros(request):
 	return render(request, 'core/sobre_nosotros.html')
 
 def talleres(request):
-    def get_user_details(user_id):
-        response = requests.get(f'http://localhost:8000/api/usuarios/{user_id}/')
-        if response.status_code == 200:
-            usuario = response.json()
-            return f"{usuario['pnombre']} {usuario['ap_paterno']}"
-        return "No disponible"
-    
-    def get_comuna_details(comuna_id):
-        response = requests.get(f'http://localhost:8000/api/comunas/{comuna_id}/')
-        if response.status_code == 200:
-            comuna = response.json()
-            return comuna['nombreComuna']  
-        return "No disponible"
-
-    response = requests.get('http://localhost:8000/api/talleres/')
-    
-    if response.status_code == 200:
-        talleres = response.json() 
-        for taller in talleres:
-            taller['encargado'] = get_user_details(taller['idUsuario'])
-            taller['comuna'] = get_comuna_details(taller['idComuna'])
-    else:
-        talleres = []  
-    
+    talleres = Taller.objects.all()
     return render(request, 'core/talleres.html', {'talleres': talleres})
 
 def tickets(request):
@@ -307,7 +193,6 @@ def get_coordinates(request):
                             return render(request, 'core/test.html', {'form': form, 'error_message': error_message})
     except Exception as e:
         print(e)
-    
     form = AddressForm()
     return render(request, 'core/test.html', {'form': form})
 
@@ -341,20 +226,18 @@ def administracion(request):
     return render(request, 'core/administracion.html')
 
 def agendar_hora(request, id_taller):
-    try:
-        taller = Taller.objects.get(idTaller=id_taller)
-    except Taller.DoesNotExist:
-        return redirect('talleres')
+    taller = get_object_or_404(Taller, idTaller=id_taller)
 
     if request.method == 'POST':
-        form = AgendaForm(request.POST, user=request.user)
+        form = AgendaForm(request.POST, user=request.user, taller=taller)
         if form.is_valid():
             agenda = form.save(commit=False)
             agenda.idTaller = taller
+            agenda.cliente = request.user
             agenda.save()
-            return redirect('mis_reservas')  
+            return redirect('mis_reservas')
     else:
-        form = AgendaForm(user=request.user)
+        form = AgendaForm(user=request.user, taller=taller)
 
     return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
@@ -394,3 +277,49 @@ def eliminar_vehiculo(request, vehiculo_id):
     vehiculo.delete()
     return redirect('mis_vehiculos')
    
+
+def administrar_usuarios(request):
+    usuarios = UsuarioCustom.objects.all()
+    return render(request, 'core/administrar_usuarios.html', {'usuarios': usuarios})
+
+def modificar_usuario(request, id):
+    usuario = get_object_or_404(UsuarioCustom, id=id)
+    if request.method == 'POST':
+        form = UsuarioCustomForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('administrar_usuarios')
+    else:
+        form = UsuarioCustomForm(instance=usuario)
+    return render(request, 'core/modificar_usuario.html', {'form': form})
+
+def eliminar_usuario(request, id):
+    usuario = UsuarioCustom.objects.get(id = id)
+    if request.method == 'POST':
+        usuario.delete()
+        return redirect('administrar_usuarios')
+    
+def crear_usuario(request):
+    if request.method == 'POST':
+        form = UsuarioCustomCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('administrar_usuarios')
+    else:
+        form = UsuarioCustomCreationForm()
+    return render(request, 'core/crear_usuario.html', {'form': form})
+
+def administrar_mi_taller(request):
+    taller_del_usuario = Taller.objects.filter(idUsuario=request.user).first()
+
+    return render(request, 'core/administrar_mi_taller.html', {'taller': taller_del_usuario})
+
+def reservas_taller(request, idTaller):
+    taller = Taller.objects.get(pk=idTaller)
+    reservas = Agenda.objects.filter(idTaller=taller)
+    data = {
+        'taller': taller,
+        'reservas': reservas
+    }
+    return render(request, 'core/reservas_taller.html', data)
+

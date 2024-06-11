@@ -1,41 +1,70 @@
 {% extends 'core/base.html' %}
 {% load static %}
-
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+     
+     <style> 
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map { 
+            height: 100%;
+            width: 100%;
+        } 
+    </style>
+{% endblock %}
 {% block contenido %}
+    <div id="map"></div>
+{% endblock %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+crossorigin=""></script>  
 
-        <!-- INICIO ENCABEZADO -->
-        <div class="">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5 mt-5">
-                        <div class="intro-excerpt">
-                            <h1 class="fw-bold text-center"> MAPA</h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br><br><br>
-        </div>
-        
-        <!-- FIN ENCABEZADO -->
+<script>
+    var map = L.map('map').setView([41.66, -4.72], 15); 
+    L.control.scale().addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-        <!-- INICIO INFO -->
-        <div class="bg-page">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5 mt-5">
-                        <div class="intro-excerpt">
-                            <img src="{% static 'core/img/mapa.png' %}" alt="" class="img-border">
-                        </div>
-                    </div>
-                </div>
-                <br><br><br><br><br><br><br>
-            </div>            
-        </div>
-        
+    // Función para manejar errores de geolocalización
+    function handleLocationError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("El usuario ha denegado la solicitud de geolocalización.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("La información de ubicación no está disponible.");
+                break;
+            case error.TIMEOUT:
+                alert("La solicitud de ubicación ha caducado.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("Se ha producido un error desconocido.");
+                break;
+        }
+    }
 
-            </div>
-        </div>
-    </div>
+    // Obtener la ubicación actual del usuario
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+            var userMarker = L.marker([userLat, userLng], {draggable: true}).addTo(map)
+                .bindPopup("Estás aquí").openPopup();
+            map.setView([userLat, userLng], 15);
+        }, handleLocationError);
+    } else {
+        alert("La geolocalización no es soportada por este navegador.");
+    }
+</script> 
 
 {% endblock %}

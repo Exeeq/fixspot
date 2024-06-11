@@ -29,7 +29,7 @@ urlpatterns = [
     path('mis_reservas/', mis_reservas, name="mis_reservas"),
     path('mis_vehiculos/', mis_vehiculos, name="mis_vehiculos"),
     path('realizar_ticket/', realizar_ticket, name="realizar_ticket"),
-    path('register_taller/', register_taller, name="register_taller"),
+    path('solicitar_taller/', solicitar_taller, name="solicitar_taller"),
     path('register_vehiculo/', register_vehiculo, name="register_vehiculo"),
     path('register/', register, name="register"),
     path('sobre_nosotros/', sobre_nosotros, name="sobre_nosotros"),
@@ -53,5 +53,13 @@ urlpatterns = [
 
     path('annadir_vehiculo/', annadir_vehiculo, name="annadir_vehiculo"),
     path('modificar_vehiculo/<int:vehiculo_id>/', modificar_vehiculo, name='modificar_vehiculo'),
-    path('eliminar_vehiculo/<int:vehiculo_id>/', eliminar_vehiculo, name="eliminar_vehiculo")
+    path('eliminar_vehiculo/<int:vehiculo_id>/', eliminar_vehiculo, name="eliminar_vehiculo"),
+
+    path('administrar_usuarios', administrar_usuarios, name="administrar_usuarios"),
+    path('modificar_usuario/<int:id>/', modificar_usuario, name='modificar_usuario'),
+    path('eliminar_usuario/<int:id>/', eliminar_usuario, name='eliminar_usuario'),
+    path('crear_usuario/', crear_usuario, name='crear_usuario'),
+
+    path('administrar_mi_taller/', administrar_mi_taller, name="administrar_mi_taller"),
+    path('reservas_taller/<int:idTaller>/', reservas_taller, name='reservas_taller'),
 ]

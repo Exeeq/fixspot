@@ -8,7 +8,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-5 mt-5">
                 <div class="intro-excerpt">
-                    <h1 class="fw-bold text-center">ADMINISTRACIÓN DE TALLERES</h1>
+                    <h1 class="fw-bold text-center">ADMINISTRACIÓN DE USUARIOS</h1>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
 <div class="bg-page">
     <div class="container my-5 ">
         <div class="d-flex mx-auto align-items-end justify-content-end">
-            <p><a href="{% url 'crear_taller' %}" class="btn btn-primary me-2 text-white font-bold rounded-5">CREAR TALLER <i class="fa-solid fa-wrench"></i></a></p>
+            <p><a href="{% url 'crear_usuario' %}" class="btn btn-primary me-2 text-white font-bold rounded-5">CREAR USUARIO <i class="fa-solid fa-user"></i></a></p>
         </div>
         <div class="card shadow-lg">
             <div class="card-body">
@@ -30,26 +30,31 @@
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
-                                <th scope="col">Encargado del taller</th>
-                                <th scope="col">Nombre del taller</th>
-                                <th scope="col">Teléfono</th>
+                                <th scope="col">Run</th>
+                                <th scope="col">Nombre de usuario</th>
+                                <th scope="col">Nombre y apellido</th>
+                                <th scope="col">Correo</th>
                                 <th scope="col">Dirección</th>
-                                <th scope="col">Comuna</th>
+                                <th scope="col">Rol Usuario</th>
                                 <th scope="col" class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for taller in talleres %}
+                            {% for usuario in usuarios %}
                                 <tr>
-                                    <th scope="row">{{ taller.idTaller }}</th>
-                                    <td>{{ taller.idUsuario.pnombre }} {{ taller.idUsuario.ap_paterno }}</td>
-                                    <td>{{ taller.nombreTaller }}</td>
-                                    <td>{{ taller.telefono }}</td>
-                                    <td>{{ taller.direccion }}</td>
-                                    <td>{{ taller.idComuna }}</td>
+                                    <th scope="row">{{ usuario.id }}</th>
+                                    <td>{{ usuario.run }}</td>
+                                    <td>{{ usuario.username }}</td>
+                                    <td>{{ usuario.pnombre }} {{ usuario.ap_paterno }}</td>
+                                    <td>{{ usuario.correo }}</td>
+                                    <td>{{ usuario.direccion }}</td>
+                                    <td>{{ usuario.idRol }}</td>
                                     <td class="text-center">
-                                        <a href="{% url 'modificar_taller' taller.idTaller %}" class="btn btn-dark btn-sm rounded-5 mt-1">Modificar</a>
-                                        <a href="{% url 'eliminar_taller' taller.idTaller %}" class="btn btn-danger btn-sm rounded-5 mt-1">Eliminar</a>
+                                        <a href="{% url 'modificar_usuario' usuario.id %}" class="btn btn-dark btn-sm rounded-5 mt-1">Modificar</a>
+                                        <form action="{% url 'eliminar_usuario' usuario.id %}" method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm rounded-5 mt-1">Eliminar</button>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}

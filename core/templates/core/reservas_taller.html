@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<div class="">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 mt-5">
+                <div class="intro-excerpt">
+                    <h1 class="fw-bold text-center text-uppercase">PANEL DE ADMINISTRACIÓN TALLER</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br><br>
+</div>
+<!-- FIN ENCABEZADO -->
+
+<!-- Inicio panel de administración -->
+<div class="bg-page">
+    <br><br><br><br>
+    {% if taller %}
+    <h1 class="text-center fw-bold text-uppercase">TALLER: {{ taller.nombreTaller }}</h1>
+    <div class="container mx-auto align-items-center">
+        <div class="row justify-content-center">
+            <!-- Lista de Reservas -->
+            <div class="col-md-12 mb-4">
+                <div class="card mb-4 shadow-lg rounded-5">
+                    <div class="card-body">
+                        <h5 class="card-title">Reservas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Fecha de Atención</th>
+                                        <th scope="col">Hora de Atención</th>
+                                        <th scope="col">Tipo de Agenda</th>
+                                        <th scope="col">Cliente</th>
+                                        <th scope="col">Patente</th>
+                                        <th scope="col">Vehículo</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reserva in reservas %}
+                                    <tr>
+                                        <td>{{ reserva.idAgenda }}</td>
+                                        <td>{{ reserva.fechaAtencion }}</td>
+                                        <td>{{ reserva.horaAtencion }}</td>
+                                        <td>{{ reserva.idTipoAgenda }}</td>
+                                        <td>{{ reserva.cliente.pnombre }} {{ reserva.cliente.ap_paterno }}</td>
+                                        <td>{{ reserva.idVehiculo.patente }}</td>
+                                        <td>
+                                            {{ reserva.idVehiculo.idMarca }} {{ reserva.idVehiculo.modelo }}
+                                            {% if reserva.idVehiculo.subModelo %}
+                                                {{ reserva.idVehiculo.subModelo }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-primary">Generar Reporte de Pago</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br><br><br><br><br>
+    {% endif %}
+</div>
+{% endblock contenido %}

@@ -55,11 +55,15 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end custom-dropdown text-center bg-dark" aria-labelledby="userDropdown">
                             {% if user.is_authenticated %}
-                                <li><a class="dropdown-item custom-dropdown-item fw-bold text-uppercase" href="">{{ user.pnombre }} {{ user.ap_paterno }} </a></li>
+                                <li><a class="dropdown-item custom-dropdown-item fw-bold text-uppercase" href=""><i class="fa-solid fa-user"></i> {{ user.pnombre }} {{ user.ap_paterno }} </a></li>
                                 {% if user.idRol_id == 3 %}
                                     <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administracion' %}"><i class="fa-solid fa-lock"></i> ADMINISTRACIÓN </a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'mis_vehiculos' %}"><i class="fa-solid fa-car"></i> MIS VEHÍCULOS </a></li>
+                                <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'mis_reservas' %}"><i class="fa-solid fa-book"></i> MIS RESERVAS </a></li>
+                                {% if user.idRol_id == 2 %}
+                                    <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administrar_mi_taller' %}"><i class="fa-solid fa-gear"></i> MI TALLER </a></li>
+                                {% endif %}
                                 <li>
                                     <form method="POST" action="{% url 'logout' %}">
                                         {% csrf_token %}
@@ -83,16 +87,16 @@
         <footer class="navbar navbar-expand-lg bg-dark rounded-5 mb-5 mt-3 footer" style="margin-left: 15px; margin-right: 15px;">
             <div class="container d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center">
                 <div class="footer-logo text-center mb-3 mb-lg-0">
-                    <a href="#">
+                    <a href="{% url 'index' %}">
                         <img src="{% static 'core/img/fixspot-logo-sinfondo.png' %}" alt="Logo" class="img-fluid w-50 h-50">
                     </a>
                 </div>
                 <div class="footer-links text-center mb-3 mb-lg-0">
                     <ul class="list-unstyled d-flex mb-0">
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Talleres</a></li>
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Mapa</a></li>
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Contacto</a></li>
-                        <li class="mx-3"><a href="#" class="text-white text-decoration-none fw-bold">Sobre nosotros</a></li>
+                        <li class="mx-3"><a href="{% url 'talleres' %}" class="text-white text-decoration-none fw-bold">Talleres</a></li>
+                        <li class="mx-3"><a href="{% url 'mapa' %}" class="text-white text-decoration-none fw-bold">Mapa</a></li>
+                        <li class="mx-3"><a href="{% url 'contactanos' %}" class="text-white text-decoration-none fw-bold">Contacto</a></li>
+                        <li class="mx-3"><a href="{% url 'sobre_nosotros' %}" class="text-white text-decoration-none fw-bold">Sobre nosotros</a></li>
                     </ul>
                 </div>
                 <div class="footer-tagline text-center text-lg-end">

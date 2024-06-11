@@ -26,7 +26,7 @@ class Comuna(models.Model):
 
 class UsuarioCustom(AbstractUser):
     run = models.CharField(max_length=12, blank=False, null=False)
-    email = models.EmailField(blank=False, null=False)
+    correo = models.EmailField(blank=False, null=False)
     telefono = models.CharField(max_length=15, blank=False, null=False)
     pnombre = models.CharField(max_length=20, blank=False, null=False)
     ap_paterno = models.CharField(max_length=24, blank=False, null=False)
@@ -46,6 +46,8 @@ class Taller(models.Model):
     imagen = models.ImageField(upload_to='taller_imagenes/', blank=True, null=True)
     idUsuario = models.ForeignKey('UsuarioCustom', on_delete=models.CASCADE, blank=True, null=True)
     idComuna = models.ForeignKey('Comuna', on_delete=models.CASCADE, blank=True, null=True)
+    latitud = models.FloatField(blank=True, null=True)
+    longitud = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return self.nombreTaller
@@ -88,12 +90,12 @@ class TipoAgenda(models.Model):
 
 class Agenda(models.Model):
     idAgenda = models.AutoField(primary_key=True)
-    fechaAgenda = models.DateField(null=False, blank=False)
     fechaAtencion = models.DateField(null=False, blank=False)
     horaAtencion = models.TimeField(blank=False, null=False)
     idTipoAgenda = models.ForeignKey(TipoAgenda, on_delete=models.CASCADE, blank=False, null=False)
     idTaller = models.ForeignKey(Taller, on_delete=models.CASCADE, blank=False, null=False) 
-    idVehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, blank=False, null=False) 
+    idVehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, blank=False, null=False)
+    cliente = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
         return self.idAgenda

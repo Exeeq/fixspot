@@ -52,7 +52,7 @@
                                     <td>{{ vehiculo.idTipoVehiculo }}</td>
                                     <td class="text-center">
                                         <a href="{% url 'modificar_vehiculo' vehiculo.idVehiculo %}" class="btn btn-dark btn-sm rounded-5 mt-1">Modificar</a>
-                                        <a href="{% url 'eliminar_vehiculo' vehiculo.idVehiculo %}" class="btn btn-dark btn-sm rounded-5 mt-1">Eliminar</a>
+                                        <a href="{% url 'eliminar_vehiculo' vehiculo.idVehiculo %}" class="btn btn-danger btn-sm rounded-5 mt-1">Eliminar</a>
                                     </td>
                                 </tr>
                             {% endfor %}

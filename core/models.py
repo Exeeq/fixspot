@@ -87,6 +87,13 @@ class TipoAgenda(models.Model):
 
     def __str__(self):
         return self.nombreTipo
+    
+class EstadoAgenda(models.Model):
+    idEstado = models.AutoField(primary_key=True)
+    nombreEstado = models.CharField(max_length=50, blank=False, null=False)
+
+    def __str__(self):
+        return self.nombreEstado
 
 class Agenda(models.Model):
     idAgenda = models.AutoField(primary_key=True)
@@ -96,6 +103,7 @@ class Agenda(models.Model):
     idTaller = models.ForeignKey(Taller, on_delete=models.CASCADE, blank=False, null=False) 
     idVehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, blank=False, null=False)
     cliente = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=False, null=False)
+    estado = models.ForeignKey(EstadoAgenda, on_delete=models.CASCADE, blank=True, null=True, default=1) 
 
     def __str__(self):
         return self.idAgenda
@@ -122,4 +130,15 @@ class DetalleBoleta(models.Model):
 
     def __str__(self):
         return self.nombreDetalle
+    
+class ReportePago(models.Model):
+    idReporte = models.AutoField(primary_key=True)
+    reserva = models.OneToOneField(Agenda, on_delete=models.CASCADE)
+    comentario = models.TextField(blank=True, null=True)
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Reporte de pago para reserva {self.reserva.idAgenda}"
+    
+
 

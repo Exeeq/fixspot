@@ -174,3 +174,24 @@ class UsuarioCustomPerfilForm(forms.ModelForm):
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
             'idComuna': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class ReportePagoForm(forms.ModelForm):
+    class Meta:
+        model = ReportePago
+        fields = ['comentario', 'monto']
+        widgets = {
+            'comentario': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'monto': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean_comentario(self):
+        comentario = self.cleaned_data.get('comentario')
+        if not comentario:
+            raise forms.ValidationError('Este campo es obligatorio.')
+        return comentario
+
+    def clean_monto(self):
+        monto = self.cleaned_data.get('monto')
+        if monto is None or monto < 0:
+            raise forms.ValidationError('El monto no puede ser negativo.')
+        return monto

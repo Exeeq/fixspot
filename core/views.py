@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.serializers import serialize
 
 #SERIALIZERS (API):
 class RolUsuarioViewSet(viewsets.ModelViewSet):
@@ -70,15 +71,50 @@ def administrar_talleres(request):
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
 
 def crear_taller(request):
-    
+    form = TallerForm()
+    formAddress = AddressForm()
+    coordinates = {}
+    address = ""
+
     if request.method == 'POST':
-        form = TallerForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()  # Guardar el formulario directamente
-            return redirect('administrar_talleres')
-    else:
-        form = TallerForm()
-    return render(request, 'core/crear_taller.html', {'form': form})
+        if 'crear_taller' in request.POST:
+            form = TallerForm(request.POST, request.FILES)
+            if form.is_valid():
+                taller = form.save(commit=False)
+                latitud = request.POST.get('latitud')
+                longitud = request.POST.get('longitud')
+                direccion = request.POST.get('direccion')
+                if latitud and longitud:
+                    taller.latitud = float(latitud)
+                    taller.longitud = float(longitud)
+                if direccion:
+                    taller.direccion = direccion
+                taller.save()
+                return redirect('administrar_talleres')
+        elif 'obtener_ubicacion' in request.POST:
+            formAddress = AddressForm(request.POST)
+            if formAddress.is_valid():
+                address = formAddress.cleaned_data['address']
+                api_key = '855d3348e0ee4298b17b00e020377da5'
+                base_url = 'https://api.opencagedata.com/geocode/v1/json'
+                params = {'q': address, 'key': api_key}
+                response = requests.get(base_url, params=params)
+                if response.status_code == 200:
+                    data = response.json()
+                    if data['results']:
+                        location = data['results'][0]['geometry']
+                        address_details = data['results'][0]['components']
+                        if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
+                            coordinates = {
+                                'lat': location['lat'],
+                                'lng': location['lng']
+                            }
+                            return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
+                        else:
+                            return JsonResponse({'success': False, 'error': 'La dirección seleccionada no está en la Región Metropolitana.'})
+                return JsonResponse({'success': False, 'error': 'Error en la solicitud de geocodificación.'})
+
+    return render(request, 'core/crear_taller.html', {'form': form, 'formAddress': formAddress, 'coordinates': coordinates, 'address': address})
 
 def modificar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
@@ -112,12 +148,24 @@ def login(request):
 
 @login_required
 def mapa(request):
-	return render(request, 'core/mapa.html')
+    talleres = Taller.objects.all()
+    talleres_json = serialize('json', talleres, fields=('nombreTaller', 'direccion', 'latitud', 'longitud'))
+    return render(request, 'core/mapa.html', {'talleres_json': talleres_json})
 
 @login_required
 def mis_reservas(request):
     agendas = Agenda.objects.filter(cliente=request.user)
     return render(request, 'core/mis_reservas.html', {'agendas': agendas})
+
+def detalle_reserva(request, id_agenda):
+    agenda = get_object_or_404(Agenda, idAgenda=id_agenda)
+    reporte_pago = ReportePago.objects.filter(reserva=agenda).first()  
+
+    context = {
+        'agenda': agenda,
+        'reporte_pago': reporte_pago,
+    }
+    return render(request, 'core/detalle_reserva.html', context)
 
 @login_required
 def mis_vehiculos(request):
@@ -265,17 +313,14 @@ def annadir_vehiculo(request):
 
 @login_required
 def modificar_vehiculo(request, vehiculo_id):
-    # Obtener el vehículo a modificar
     vehiculo = Vehiculo.objects.get(idVehiculo=vehiculo_id)
 
     if request.method == 'POST':
-        # Si el formulario se envió con datos, procesarlos
         form = VehiculoForm(request.POST, instance=vehiculo)
         if form.is_valid():
-            form.save()  # Guardar los cambios en el vehículo
-            return redirect('mis_vehiculos')  # Redirigir a la página de mis vehículos
+            form.save() 
+            return redirect('mis_vehiculos')  
     else:
-        # Si es una solicitud GET, prellenar el formulario con los datos del vehículo
         form = VehiculoForm(instance=vehiculo)
 
     return render(request, 'core/modificar_vehiculo.html', {'form': form})
@@ -349,3 +394,22 @@ def perfil_usuario(request):
         form = UsuarioCustomPerfilForm(instance=user)
     
     return render(request, 'core/perfil_usuario.html', {'form': form})
+
+
+def generar_reporte_pago(request, idReserva):
+    reserva = get_object_or_404(Agenda, pk=idReserva)
+    if request.method == 'POST':
+        form = ReportePagoForm(request.POST)
+        if form.is_valid():
+            reporte = form.save(commit=False)
+            reporte.reserva = reserva
+            reporte.save()
+
+            reserva.estado_id = 2  
+            reserva.save()
+
+            return redirect('reservas_taller', idTaller=reserva.idTaller.idTaller)
+    else:
+        form = ReportePagoForm()
+    
+    return render(request, 'core/generar_reporte_pago.html', {'form': form, 'reserva': reserva})

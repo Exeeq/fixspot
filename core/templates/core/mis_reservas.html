@@ -1,5 +1,4 @@
 {% extends 'core/base.html' %}
-{% load static %}
 {% block contenido %}
 <!-- INICIO ENCABEZADO -->
 <div class="">
@@ -30,6 +29,7 @@
                                 <th scope="col">Tipo de Agenda</th>
                                 <th scope="col">Taller</th>
                                 <th scope="col">Patente Vehículo</th>
+                                <th scope="col">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,6 +40,9 @@
                                     <td>{{ agenda.idTipoAgenda }}</td>
                                     <td>{{ agenda.idTaller }}</td>
                                     <td>{{ agenda.idVehiculo }}</td>
+                                    <td>
+                                        <a href="{% url 'detalle_reserva' id_agenda=agenda.idAgenda %}" class="btn btn-primary">Ver Detalles</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -50,10 +53,4 @@
     </div>
     <br><br><br><br><br><br><br><br><br><br><br><br>
 </div>
-
-{% endblock contenido %}
-{% block js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-{% endblock js %}
+{% endblock %}

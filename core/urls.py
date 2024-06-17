@@ -63,4 +63,8 @@ urlpatterns = [
     path('reservas_taller/<int:idTaller>/', reservas_taller, name='reservas_taller'),
 
     path('perfil_usuario/', perfil_usuario, name='perfil_usuario'),
+
+    path('reporte_pago/<int:idReserva>/', generar_reporte_pago, name='reporte_pago'),
+
+    path('detalle_reserva/<int:id_agenda>/', detalle_reserva, name='detalle_reserva'),
 ]

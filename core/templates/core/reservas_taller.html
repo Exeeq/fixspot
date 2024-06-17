@@ -59,7 +59,7 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-primary">Generar Reporte de Pago</a>
+                                            <a href="{% url 'reporte_pago' reserva.idAgenda %}" class="btn btn-primary">Generar Reporte de Pago</a>
                                         </td>
                                     </tr>
                                     {% endfor %}

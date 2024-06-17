@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+
+{% block contenido %}
+<!-- INICIO ENCABEZADO -->
+<div class="">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 mt-5">
+                <div class="intro-excerpt">
+                    <h1 class="fw-bold text-center">PAGAR RESERVA</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br><br>
+</div>
+<!-- FIN ENCABEZADO -->
+
+<div class="bg-page">
+    <br>
+    <div class="container mt-4 shadow-lg">
+        <div class="card">
+            <div class="card-body shadow-lg">
+                <!-- Detalles de la Reserva -->
+                <h2 class="card-title fw-bold text-uppercase shadow-lg bg-purple text-white">Detalle de la Reserva</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered shadow-lg">
+                        <tbody>
+                            <tr>
+                                <th style="width: 40%;">Fecha de Atención:</th>
+                                <td>{{ agenda.fechaAtencion }}</td>
+                            </tr>
+                            <tr>
+                                <th>Hora de Atención:</th>
+                                <td>{{ agenda.horaAtencion }}</td>
+                            </tr>
+                            <tr>
+                                <th>Tipo de Agenda:</th>
+                                <td>{{ agenda.idTipoAgenda }}</td>
+                            </tr>
+                            <tr>
+                                <th>Taller:</th>
+                                <td>{{ agenda.idTaller }}</td>
+                            </tr>
+                            <tr>
+                                <th>Patente Vehículo:</th>
+                                <td>{{ agenda.idVehiculo }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Detalles del Reporte de Pago -->
+                {% if reporte_pago %}
+                    <h2 class="card-title mt-4 fw-bold text-uppercase shadow-lg bg-purple text-white">Detalle del Reporte de Pago</h2>
+                    <div class="table-responsive ">
+                        <table class="table table-bordered shadow-lg">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 40%;">Comentario:</th>
+                                    <td>{{ reporte_pago.comentario }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Monto a pagar:</th>
+                                    <td>${{ reporte_pago.monto|stringformat:".0f"|floatformat }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <br><br><br><br><br><br>
+</div>
+
+{% endblock %}

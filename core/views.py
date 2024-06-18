@@ -75,10 +75,12 @@ class AgendaViewSet(viewsets.ModelViewSet):
 def index(request):
 	return render(request, 'core/index.html')
 
+@role_required(["Administrador"])
 def administrar_talleres(request):
     talleres = Taller.objects.all()
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
 
+@role_required(["Administrador"])
 def crear_taller(request):
     form = TallerForm()
     formAddress = AddressForm()
@@ -125,6 +127,7 @@ def crear_taller(request):
 
     return render(request, 'core/crear_taller.html', {'form': form, 'formAddress': formAddress, 'coordinates': coordinates, 'address': address})
 
+@role_required(["Administrador"])
 def modificar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
     if request.method == 'POST':
@@ -136,6 +139,7 @@ def modificar_taller(request, id_taller):
         form = TallerForm(instance=taller)
     return render(request, 'core/modificar_taller.html', {'form': form})
 
+@role_required(["Administrador"])
 def eliminar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
     taller.delete()
@@ -149,6 +153,7 @@ def agendar_hora(request):
 def agendar(request):
 	return render(request, 'core/agendar.html')
 
+@login_required
 def contactanos(request):
 	return render(request, 'core/contactanos.html')
 
@@ -242,6 +247,7 @@ def mis_vehiculos(request):
     return render(request, 'core/mis_vehiculos.html', {'vehiculos': vehiculos})
 
 @login_required
+@role_required(["Encargado taller"])
 def realizar_ticket(request):
 	return render(request, 'core/realizar_ticket.html')
 
@@ -278,6 +284,7 @@ def talleres(request):
     return render(request, 'core/talleres.html', {'talleres': talleres})
 
 @login_required
+@role_required(["Administrador"])
 def tickets(request):
 	return render(request, 'core/tickets.html')
 
@@ -343,6 +350,7 @@ def autocomplete_address(request):
     return JsonResponse([], safe=False)
 
 @login_required
+@role_required(["Administrador"])
 def administracion(request):
     return render(request, 'core/administracion.html')
 
@@ -416,6 +424,8 @@ def modificar_usuario(request, id):
         form = UsuarioCustomForm(instance=usuario)
     return render(request, 'core/modificar_usuario.html', {'form': form})
 
+@login_required 
+@role_required(["Administrador"])
 def eliminar_usuario(request, id):
     usuario = UsuarioCustom.objects.get(id = id)
     if request.method == 'POST':
@@ -423,6 +433,7 @@ def eliminar_usuario(request, id):
         return redirect('administrar_usuarios')
 
 @login_required 
+@role_required(["Administrador"])
 def crear_usuario(request):
     if request.method == 'POST':
         form = UsuarioCustomCreationForm(request.POST)
@@ -434,12 +445,14 @@ def crear_usuario(request):
     return render(request, 'core/crear_usuario.html', {'form': form})
 
 @login_required
+@role_required(["Encargado taller"])
 def administrar_mi_taller(request):
     taller_del_usuario = Taller.objects.filter(idUsuario=request.user).first()
 
     return render(request, 'core/administrar_mi_taller.html', {'taller': taller_del_usuario})
 
 @login_required
+@role_required(["Encargado taller"])
 def reservas_taller(request, idTaller):
     taller = Taller.objects.get(pk=idTaller)
     reservas = Agenda.objects.filter(idTaller=taller)
@@ -463,7 +476,7 @@ def perfil_usuario(request):
     
     return render(request, 'core/perfil_usuario.html', {'form': form})
 
-
+@role_required(["Encargado taller"])
 def generar_reporte_pago(request, idReserva):
     reserva = get_object_or_404(Agenda, pk=idReserva)
     if request.method == 'POST':

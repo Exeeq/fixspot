@@ -13,8 +13,6 @@ router.register(r'tipos-vehiculo', TipoVehiculoViewSet)
 router.register(r'vehiculos', VehiculoViewSet)
 router.register(r'tipos-agenda', TipoAgendaViewSet)
 router.register(r'agendas', AgendaViewSet)
-router.register(r'boletas', BoletaViewSet)
-router.register(r'detalles-boleta', DetalleBoletaViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
@@ -67,4 +65,7 @@ urlpatterns = [
     path('reporte_pago/<int:idReserva>/', generar_reporte_pago, name='reporte_pago'),
 
     path('detalle_reserva/<int:id_agenda>/', detalle_reserva, name='detalle_reserva'),
+
+    path('actualizar_estado_agenda/<int:id_agenda>/', actualizar_estado_agenda, name='actualizar_estado_agenda'),
+    path('generar_documento_word/<int:id_agenda>/', generar_documento_word, name='generar_documento_word'),
 ]

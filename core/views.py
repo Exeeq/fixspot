@@ -12,6 +12,13 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.serializers import serialize
+import requests
+from decimal import Decimal
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import docx
+from io import BytesIO
+
 
 #SERIALIZERS (API):
 class RolUsuarioViewSet(viewsets.ModelViewSet):
@@ -53,15 +60,6 @@ class TipoAgendaViewSet(viewsets.ModelViewSet):
 class AgendaViewSet(viewsets.ModelViewSet):
     queryset = Agenda.objects.all()
     serializer_class = AgendaSerializer
-
-class BoletaViewSet(viewsets.ModelViewSet):
-    queryset = Boleta.objects.all()
-    serializer_class = BoletaSerializer
-
-class DetalleBoletaViewSet(viewsets.ModelViewSet):
-    queryset = DetalleBoleta.objects.all()
-    serializer_class = DetalleBoletaSerializer
-
 
 def index(request):
 	return render(request, 'core/index.html')
@@ -157,13 +155,73 @@ def mis_reservas(request):
     agendas = Agenda.objects.filter(cliente=request.user)
     return render(request, 'core/mis_reservas.html', {'agendas': agendas})
 
+@csrf_exempt
+def actualizar_estado_agenda(request, id_agenda):
+    if request.method == 'POST':
+        agenda = get_object_or_404(Agenda, idAgenda=id_agenda)
+        
+        # Obtener la instancia de EstadoAgenda correspondiente
+        try:
+            estado_pagado = EstadoAgenda.objects.get(nombreEstado='Pagado')
+        except EstadoAgenda.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Estado "Pagado" no encontrado'}, status=400)
+
+        agenda.estado = estado_pagado
+        agenda.save()
+
+        # Devolver una respuesta JSON con success
+        return JsonResponse({'success': True, 'filename': f'Reserva_{agenda.idAgenda}.docx'})
+
+    return JsonResponse({'success': False}, status=400)
+
+def generar_documento_word(request, id_agenda):
+    agenda = get_object_or_404(Agenda, idAgenda=id_agenda)
+
+    # Generar el documento Word
+    doc = docx.Document()
+    doc.add_heading('Detalle de la Reserva', level=1)
+    doc.add_paragraph(f'Fecha de Atención: {agenda.fechaAtencion}')
+    doc.add_paragraph(f'Hora de Atención: {agenda.horaAtencion}')
+    doc.add_paragraph(f'Tipo de Agenda: {agenda.idTipoAgenda}')
+    doc.add_paragraph(f'Taller: {agenda.idTaller}')
+    doc.add_paragraph(f'Patente Vehículo: {agenda.idVehiculo}')
+
+    # Detalles del Reporte de Pago
+    reporte_pago = ReportePago.objects.filter(reserva=agenda).first()
+    if reporte_pago:
+        doc.add_heading('Detalle del Reporte de Pago', level=2)
+        doc.add_paragraph(f'Comentario: {reporte_pago.comentario}')
+        doc.add_paragraph(f'Monto a pagar: ${reporte_pago.monto}')
+
+    # Guardar el documento en memoria
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+
+    response = HttpResponse(buffer, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = f'attachment; filename=Reserva_{agenda.idAgenda}.docx'
+    return response
+
 def detalle_reserva(request, id_agenda):
     agenda = get_object_or_404(Agenda, idAgenda=id_agenda)
-    reporte_pago = ReportePago.objects.filter(reserva=agenda).first()  
+    reporte_pago = ReportePago.objects.filter(reserva=agenda).first()
+
+    try:
+        respuesta = requests.get('https://mindicador.cl/api/')
+        monedas = respuesta.json()
+        tasa_dolar = Decimal(monedas['dolar']['valor'])
+    except requests.exceptions.RequestException as e:
+        tasa_dolar = None
+
+    monto_dolares = None
+    if reporte_pago and tasa_dolar:
+        monto_dolares = round(Decimal(reporte_pago.monto) / tasa_dolar, 2)
+        monto_dolares = format(monto_dolares, '.2f')  
 
     context = {
         'agenda': agenda,
         'reporte_pago': reporte_pago,
+        'monto_dolares': monto_dolares,
     }
     return render(request, 'core/detalle_reserva.html', context)
 
@@ -211,7 +269,6 @@ def talleres(request):
 @login_required
 def tickets(request):
 	return render(request, 'core/tickets.html')
-
 
 def get_coordinates(request):
     try:

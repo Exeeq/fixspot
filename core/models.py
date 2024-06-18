@@ -43,7 +43,7 @@ class Taller(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     direccion = models.CharField(max_length=100, blank=False, null=False)
     telefono = models.CharField(max_length=15, blank=False, null=False)
-    imagen = models.ImageField(upload_to='taller_imagenes/', blank=True, null=True)
+    imagen = models.ImageField(upload_to='taller_imagenes/', blank=False, null=False)
     idUsuario = models.ForeignKey('UsuarioCustom', on_delete=models.CASCADE, blank=True, null=True)
     idComuna = models.ForeignKey('Comuna', on_delete=models.CASCADE, blank=True, null=True)
     latitud = models.FloatField(blank=True, null=True)
@@ -108,28 +108,6 @@ class Agenda(models.Model):
     def __str__(self):
         return self.idAgenda
 
-#MODELOS RELACIONADOS A LA BOLETA:
-class Boleta(models.Model):
-    nFolio = models.AutoField(primary_key=True)
-    fecha = models.DateField(null=False, blank=False)
-    montoNeto = models.IntegerField(blank=False, null=False)
-    iva = models.IntegerField(blank=False, null=False)
-    montoTotal = models.IntegerField(blank=False, null=False)
-
-    def __str__(self):
-        return self.nFolio
-
-class DetalleBoleta(models.Model):
-    idDetalle = models.AutoField(primary_key=True)
-    nombreDetalle = models.CharField(max_length=100, blank=False, null=False)
-    montoDetalle = models.IntegerField(blank=False, null=False)
-    cantidad = models.IntegerField(blank=False, null=False)
-    comentario = models.CharField(max_length=100, blank=False, null=False)
-    idAgenda = models.ForeignKey(Agenda, on_delete=models.CASCADE, blank=False, null=False) 
-    nFolio = models.ForeignKey(Boleta, on_delete=models.CASCADE, blank=False, null=False) 
-
-    def __str__(self):
-        return self.nombreDetalle
     
 class ReportePago(models.Model):
     idReporte = models.AutoField(primary_key=True)

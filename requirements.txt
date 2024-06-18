@@ -6,3 +6,4 @@ django-rest-framework
 djangorestframework
 requests
 Pillow
+python-docx

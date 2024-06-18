@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timedelta, time
 
 class AddressForm(forms.Form):
-    address = forms.CharField(label='Enter Address', max_length=255)
+    address = forms.CharField(label='Ingrese dirección', max_length=255)
 
 
 #REGISTRAR USUARIO:
@@ -103,7 +103,19 @@ class AgendaForm(forms.ModelForm):
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        exclude = ['idUsuario']
+        exclude = ['idUsuario'] 
+        labels = {
+            'patente': 'Patente del Vehículo',
+            'modelo': 'Modelo',
+            'subModelo': 'Sub-Modelo',
+            'anno': 'Año',
+            'idMarca': 'Marca',
+            'idTipoVehiculo': 'Tipo de Vehículo',
+        }
+
+    widgets = {
+        'anno': forms.NumberInput(attrs={'min': 1900, 'max': 2024}),
+    }
 
 
 class UsuarioCustomForm(forms.ModelForm):

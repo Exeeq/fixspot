@@ -54,13 +54,3 @@ class AgendaSerializer(serializers.ModelSerializer):
         model = Agenda
         fields = '__all__'
 
-# Serializador para modelo relacionado a la boleta
-class BoletaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Boleta
-        fields = '__all__'
-
-class DetalleBoletaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DetalleBoleta
-        fields = '__all__'

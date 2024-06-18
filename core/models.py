@@ -9,6 +9,14 @@ class rolUsuario(models.Model):
     def __str__(self):
         return self.nombreRol
 
+    class Meta:
+        permissions = (
+            ("cliente_permiso", "Permiso para Cliente"),
+            ("encargado_taller_permiso", "Permiso para Encargado de Taller"),
+            ("administrador_permiso", "Permiso para Administrador"),
+        )
+    
+
 class Region(models.Model):
     idRegion = models.AutoField(primary_key=True)
     nombreRegion = models.CharField(max_length=80, blank=False, null=False)

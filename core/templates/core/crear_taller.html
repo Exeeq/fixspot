@@ -24,13 +24,13 @@
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center mt-4 mb-5">
             <div class="col-md-6">
-                <form method="POST" enctype="multipart/form-data" class="p-4 rounded shadow-lg">
+                <form method="POST" enctype="multipart/form-data" class="p-4 rounded shadow-lg" id="formCrearTaller">
                     {% csrf_token %}
                     {{ form | crispy }}
                     <input type="hidden" id="latitud" name="latitud">
                     <input type="hidden" id="longitud" name="longitud">
                     <input type="hidden" id="direccion" name="direccion">
-                    <input type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" name="crear_taller" value="Crear taller">
+                    <button type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" id="btnCrearTaller">Crear taller</button>
                 </form>
             </div>
             <div class="col-md-6">
@@ -51,8 +51,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 <script>
     $(document).ready(function() {
         var map = L.map('map').setView([-33.4489, -70.6693], 10);
@@ -113,6 +114,31 @@
             },
             minLength: 2,
         });
+
+        // Función para mostrar la alerta antes de crear el taller
+        $('#btnCrearTaller').click(function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Está seguro de que desea crear este taller?',
+                text: 'Esta acción creará un nuevo taller con los datos proporcionados',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, crear taller',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Reemplaza el método de envío con una función que asegure el envío correcto del formulario.
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'crear_taller',
+                        value: 'true'
+                    }).appendTo('#formCrearTaller');
+                    $('#formCrearTaller')[0].submit();
+                }
+            });
+        });
     });
 </script>
-{% endblock %}
+{% endblock js %}

@@ -45,7 +45,7 @@ class TallerForm(forms.ModelForm):
         self.fields['telefono'].required = True
         self.fields['idComuna'].required = True
         self.fields['idUsuario'].required = True
-        self.fields['imagen'].required = False
+        self.fields['imagen'].required = True
     
 class AgendaForm(forms.ModelForm):
     class Meta:

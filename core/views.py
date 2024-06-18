@@ -18,7 +18,18 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import docx
 from io import BytesIO
+from functools import wraps
+from django.http import HttpResponseForbidden
 
+def role_required(roles):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if request.user.is_authenticated and request.user.idRol and request.user.idRol.nombreRol in roles:
+                return view_func(request, *args, **kwargs)
+            return HttpResponseForbidden("No tienes permiso para acceder a esta página")
+        return _wrapped_view
+    return decorator
 
 #SERIALIZERS (API):
 class RolUsuarioViewSet(viewsets.ModelViewSet):

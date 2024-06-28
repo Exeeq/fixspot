@@ -126,5 +126,19 @@ class ReportePago(models.Model):
     def __str__(self):
         return f"Reporte de pago para reserva {self.reserva.idAgenda}"
     
+#Modelos relacionados a los tickets
+class EstadoTicket(models.Model):
+    idEstado = models.AutoField(primary_key=True)
+    NombreEstado = models.CharField(max_length=50, blank=False, null=False)
+
+    def __str__(self):
+        return self.NombreEstado
+    
+class Ticket(models.Model):
+    idTicket = models.AutoField(primary_key=True)
+    asunto = models.TextField(blank=False, null=False)
+    solicitante = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=False, null=False)
+    EstadoTicket = models.ForeignKey(EstadoTicket, on_delete=models.CASCADE, blank=False, null=False)
+    
 
 

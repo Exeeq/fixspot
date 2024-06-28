@@ -286,7 +286,11 @@ def talleres(request):
 @login_required
 @role_required(["Administrador"])
 def tickets(request):
-	return render(request, 'core/tickets.html')
+    tickets = Ticket.objects.all()
+    data = {
+        'tickets': tickets
+    }
+    return render(request, 'core/tickets.html', data)
 
 def get_coordinates(request):
     try:
@@ -302,7 +306,7 @@ def get_coordinates(request):
                 response = requests.get(base_url, params=params)
                 if response.status_code == 200:
                     data = response.json()
-                    print(data)  # Imprimir la respuesta JSON para depuración
+                    print(data) 
                     if data['results']:
                         location = data['results'][0]['geometry']
                         address_details = data['results'][0]['components']
@@ -338,7 +342,7 @@ def autocomplete_address(request):
         }
         try:
             response = requests.get(url, params=params, headers=headers)
-            response.raise_for_status()  # Will raise an HTTPError for bad responses
+            response.raise_for_status()  
             suggestions = response.json()
             results = []
             for suggestion in suggestions:

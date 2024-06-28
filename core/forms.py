@@ -207,3 +207,17 @@ class ReportePagoForm(forms.ModelForm):
         if monto is None or monto < 0:
             raise forms.ValidationError('El monto no puede ser negativo.')
         return monto
+    
+class TicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['asunto']
+        widgets = {
+            'asunto': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+    def clean_asunto(self):
+        comentario = self.cleaned_data.get('asunto')
+        if not comentario:
+            raise forms.ValidationError('Este campo es obligatorio.')
+        return comentario

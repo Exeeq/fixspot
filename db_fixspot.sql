@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-06-2024 a las 04:19:21
+-- Tiempo de generación: 28-06-2024 a las 21:13:05
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -163,7 +163,18 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (81, 'Can add Token', 21, 'add_tokenproxy'),
 (82, 'Can change Token', 21, 'change_tokenproxy'),
 (83, 'Can delete Token', 21, 'delete_tokenproxy'),
-(84, 'Can view Token', 21, 'view_tokenproxy');
+(84, 'Can view Token', 21, 'view_tokenproxy'),
+(85, 'Permiso para Cliente', 11, 'cliente_permiso'),
+(86, 'Permiso para Encargado de Taller', 11, 'encargado_taller_permiso'),
+(87, 'Permiso para Administrador', 11, 'administrador_permiso'),
+(88, 'Can add ticket', 22, 'add_ticket'),
+(89, 'Can change ticket', 22, 'change_ticket'),
+(90, 'Can delete ticket', 22, 'delete_ticket'),
+(91, 'Can view ticket', 22, 'view_ticket'),
+(92, 'Can add estado ticket', 23, 'add_estadoticket'),
+(93, 'Can change estado ticket', 23, 'change_estadoticket'),
+(94, 'Can delete estado ticket', 23, 'delete_estadoticket'),
+(95, 'Can view estado ticket', 23, 'view_estadoticket');
 
 -- --------------------------------------------------------
 
@@ -189,7 +200,9 @@ CREATE TABLE `core_agenda` (
 
 INSERT INTO `core_agenda` (`idAgenda`, `fechaAtencion`, `horaAtencion`, `cliente_id`, `estado_id`, `idTaller_id`, `idTipoAgenda_id`, `idVehiculo_id`) VALUES
 (1, '2024-06-19', '12:00:00.000000', 4, 3, 1, 6, 1),
-(3, '2024-06-21', '15:00:00.000000', 6, 3, 1, 5, 4);
+(3, '2024-06-21', '15:00:00.000000', 6, 3, 1, 5, 4),
+(4, '2024-06-20', '12:00:00.000000', 1, 3, 1, 6, 3),
+(5, '2024-06-24', '13:00:00.000000', 1, 2, 1, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -275,6 +288,18 @@ INSERT INTO `core_estadoagenda` (`idEstado`, `nombreEstado`) VALUES
 (1, 'En proceso'),
 (2, 'Por pagar'),
 (3, 'Pagado');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `core_estadoticket`
+--
+
+DROP TABLE IF EXISTS `core_estadoticket`;
+CREATE TABLE `core_estadoticket` (
+  `idEstado` int(11) NOT NULL,
+  `NombreEstado` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -378,7 +403,9 @@ CREATE TABLE `core_reportepago` (
 
 INSERT INTO `core_reportepago` (`idReporte`, `comentario`, `monto`, `reserva_id`) VALUES
 (4, 'Se realizó alineación y balanceo de las 4 ruedas del vehículo.', 750.00, 1),
-(5, 'Se realizo el cambio de aceite, con uno de mejor calidad para el auto.', 1000.00, 3);
+(5, 'Se realizo el cambio de aceite, con uno de mejor calidad para el auto.', 1000.00, 3),
+(6, 'se realizo tal cosa jsjdjd.', 300.00, 4),
+(7, 'Se hizo algo', 600.00, 5);
 
 -- --------------------------------------------------------
 
@@ -427,6 +454,20 @@ CREATE TABLE `core_taller` (
 
 INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `descripcion`, `direccion`, `telefono`, `imagen`, `latitud`, `longitud`, `idComuna_id`, `idUsuario_id`) VALUES
 (1, 'El zapallo', 'Taller dedicado a los zapallos', 'Ernesto alvear', '+569 1234 5678', 'taller_imagenes/134198213.jpg', -33.6083006, -70.5841941, 7, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `core_ticket`
+--
+
+DROP TABLE IF EXISTS `core_ticket`;
+CREATE TABLE `core_ticket` (
+  `idTicket` int(11) NOT NULL,
+  `asunto` longtext NOT NULL,
+  `EstadoTicket_id` int(11) NOT NULL,
+  `solicitante_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -527,11 +568,12 @@ CREATE TABLE `core_usuariocustom` (
 --
 
 INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`, `run`, `correo`, `telefono`, `pnombre`, `ap_paterno`, `direccion`, `idComuna_id`, `idRol_id`) VALUES
-(1, 'pbkdf2_sha256$216000$TLAvQnJumt9m$ZibgjzxAKYPiihfJgeMiw3D2goqiopWOUAu9Hn9BxPg=', '2024-06-18 02:00:19.934981', 1, 'admin', '', '', '', 1, 1, '2024-06-17 00:30:02.176083', '00.00.000-0', 'admin@duocuc.cl', '', 'Admin', 'General', 'Admin 111', NULL, 3),
+(1, 'pbkdf2_sha256$216000$TLAvQnJumt9m$ZibgjzxAKYPiihfJgeMiw3D2goqiopWOUAu9Hn9BxPg=', '2024-06-28 01:03:37.194545', 1, 'admin', '', '', '', 1, 1, '2024-06-17 00:30:02.176083', '00.00.000-0', 'admin@duocuc.cl', '', 'Admin', 'General', 'Admin 111', NULL, 3),
 (2, 'pbkdf2_sha256$216000$coIo7evpv5C8$DQjlv/yUDsGmureJDijlleNP+dDxYSKG2wkEyWuFGZg=', '2024-06-18 02:12:47.269804', 0, 'Exequiel', '', '', '', 0, 1, '2024-06-17 00:36:44.818514', '21.002.289-9', 'ex.albornoz@duocuc.cl', '', 'Exequiel', 'Albornoz', 'Millantu 123', 7, 2),
-(3, 'pbkdf2_sha256$216000$266gQNler743$+j+nAveFC+mDOiLzyMOcAO+dYD1tVYagc6LQ70/aRjI=', '2024-06-18 02:13:01.702869', 0, 'Jeffrey', '', '', '', 0, 1, '2024-06-17 00:40:32.818240', '21.207.762-3', 'jeff.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramirez', 'San Francisco 9484', 7, 2),
+(3, 'pbkdf2_sha256$216000$266gQNler743$+j+nAveFC+mDOiLzyMOcAO+dYD1tVYagc6LQ70/aRjI=', '2024-06-20 23:47:08.637000', 0, 'Jeffrey', '', '', '', 0, 1, '2024-06-17 00:40:32.818240', '21.207.762-3', 'jeff.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramirez', 'San Francisco 9484', 7, 2),
 (4, 'pbkdf2_sha256$216000$9Xul931xv0Q0$8WJQA9sC+FFejOHpMD2YlLgl9xzi16Z3X9S9yqR7XhA=', '2024-06-18 00:58:09.311944', 0, 'Juan', '', '', '', 0, 1, '2024-06-17 00:41:24.612111', '11.111.111-1', 'juan.callabo@gmail.com', '', 'Juan', 'Callabo', 'Juan 123', 7, 1),
-(6, 'pbkdf2_sha256$216000$1BC4f97UTWJx$lD2357J8qAoTTcT+3DuzBWx6qipGPn0Bxwehkcy8Y0g=', '2024-06-18 01:43:17.153433', 0, 'Javier', '', '', '', 0, 1, '2024-06-18 01:39:37.808368', '17.225.361-4', 'jav.er@gmail.com', '', 'Javier', 'Velásquez', 'hola 123', 7, 1);
+(6, 'pbkdf2_sha256$216000$1BC4f97UTWJx$lD2357J8qAoTTcT+3DuzBWx6qipGPn0Bxwehkcy8Y0g=', '2024-06-18 01:43:17.153433', 0, 'Javier', '', '', '', 0, 1, '2024-06-18 01:39:37.808368', '17.225.361-4', 'jav.er@gmail.com', '', 'Javier', 'Velásquez', 'hola 123', 7, 1),
+(7, 'pbkdf2_sha256$216000$qbziHHr2luot$KUNIEm8sdcyRTF6cGQnkqvQUpDekrhyA34a+p03Ubl8=', '2024-06-18 14:35:05.624940', 0, 'Carolina', '', '', '', 0, 1, '2024-06-18 14:34:58.596238', '21.343.355-2', 'carolina@gmail.com', '', 'efdsfs', 'sfsfsf', 'hola 123', 7, 1);
 
 -- --------------------------------------------------------
 
@@ -642,11 +684,13 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (7, 'core', 'comuna'),
 (17, 'core', 'detalleboleta'),
 (8, 'core', 'estadoagenda'),
+(23, 'core', 'estadoticket'),
 (9, 'core', 'marca'),
 (10, 'core', 'region'),
 (16, 'core', 'reportepago'),
 (11, 'core', 'rolusuario'),
 (15, 'core', 'taller'),
+(22, 'core', 'ticket'),
 (12, 'core', 'tipoagenda'),
 (13, 'core', 'tipovehiculo'),
 (4, 'core', 'usuariocustom'),
@@ -696,7 +740,9 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (22, 'authtoken', '0004_alter_tokenproxy_options', '2024-06-17 00:29:33.918244'),
 (23, 'sessions', '0001_initial', '2024-06-17 00:29:33.926766'),
 (24, 'core', '0002_auto_20240617_1849', '2024-06-17 22:49:22.693715'),
-(25, 'core', '0003_auto_20240617_2204', '2024-06-18 02:04:44.683199');
+(25, 'core', '0003_auto_20240617_2204', '2024-06-18 02:04:44.683199'),
+(26, 'core', '0004_auto_20240618_1030', '2024-06-18 14:30:45.000665'),
+(27, 'core', '0005_estadoticket_ticket', '2024-06-28 18:54:09.841491');
 
 -- --------------------------------------------------------
 
@@ -716,7 +762,13 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('7pwjplvanb6mk7ajoh3gdtjhjzl1f5nu', '.eJxVjEEOwiAQRe_C2hBoOzDj0r1nIMMAUjVtUtqV8e7apAvd_vfef6nA21rD1vISxqTOalCn3y2yPPK0g3Tn6TZrmad1GaPeFX3Qpq9zys_L4f4dVG71WxdvU9dHsgUBuyFzX6hItOLEoWHvwbAg-gKeDWVAIgAGNi5ZQhL1_gDkAjea:1sJ0ya:zOfi8YAx_mIXm7Vqn7N2l8vIM6ROE3b6kD524kcFA7U', '2024-07-01 01:16:04.261526');
+('14hbcj4xrq9younb8ynxn11h7cschn9o', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sN013:z89ueF-DI0gG6ThTOOMKr7_yKrPP9Y0JsHJ1kZCP-Ns', '2024-07-12 01:03:05.820991'),
+('6hnaos7pxzekkaw0scrqwhntsgnt7mmb', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sJbIc:cgx2dTpVMIk-Dg_YYiUoxFDiAZ2JUbC10JhODPrjS34', '2024-07-02 16:03:10.493793'),
+('7pwjplvanb6mk7ajoh3gdtjhjzl1f5nu', '.eJxVjEEOwiAQRe_C2hBoOzDj0r1nIMMAUjVtUtqV8e7apAvd_vfef6nA21rD1vISxqTOalCn3y2yPPK0g3Tn6TZrmad1GaPeFX3Qpq9zys_L4f4dVG71WxdvU9dHsgUBuyFzX6hItOLEoWHvwbAg-gKeDWVAIgAGNi5ZQhL1_gDkAjea:1sJ0ya:zOfi8YAx_mIXm7Vqn7N2l8vIM6ROE3b6kD524kcFA7U', '2024-07-01 01:16:04.261526'),
+('7smc3rveovpb8ysh6i7icawiwva26adw', '.eJxVjDsOwjAQBe_iGln2bvwJJT1nsHb9wQHkSHFSIe4OkVJA-2bmvUSgba1h63kJUxJngeL0uzHFR247SHdqt1nGua3LxHJX5EG7vM4pPy-H-3dQqddvPaqkXUb23gNRKdoick6sVYFo1EBu8FDKSF4ZJmvIRdDeWrCECMzi_QHnIzfD:1sKRUi:9iXs8qfhS21mCF0QvMP7OnrN0xuXFO7Ordo5QF6yDGM', '2024-07-04 23:47:08.640194'),
+('8uwvpkc4fcchovsi927v3rezbarlv90v', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sN01Z:Uo-pal2b-KskA7-KjdvSgg-TgW_RuOoKv9sHDRtakN0', '2024-07-12 01:03:37.195546'),
+('ehtymdcli8oznr0dr6b2dp87i0ofgavr', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sJbQl:VeMEX5hD9HF7QFiMJJSZHvdue0aDwjHsd8X7opdORQk', '2024-07-02 16:11:35.494367'),
+('hq8pssmeg207wrxucgmz1r1r2djvcgkh', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sJbVJ:WX28Vi_E1parfaErlNQbdk8z09HPz6cQ3YyKKpSkmB4', '2024-07-02 16:16:17.477422');
 
 --
 -- Índices para tablas volcadas
@@ -776,6 +828,12 @@ ALTER TABLE `core_estadoagenda`
   ADD PRIMARY KEY (`idEstado`);
 
 --
+-- Indices de la tabla `core_estadoticket`
+--
+ALTER TABLE `core_estadoticket`
+  ADD PRIMARY KEY (`idEstado`);
+
+--
 -- Indices de la tabla `core_marca`
 --
 ALTER TABLE `core_marca`
@@ -807,6 +865,14 @@ ALTER TABLE `core_taller`
   ADD PRIMARY KEY (`idTaller`),
   ADD KEY `core_taller_idComuna_id_4af1bf31_fk_core_comuna_idComuna` (`idComuna_id`),
   ADD KEY `core_taller_idUsuario_id_d1356fab_fk_core_usuariocustom_id` (`idUsuario_id`);
+
+--
+-- Indices de la tabla `core_ticket`
+--
+ALTER TABLE `core_ticket`
+  ADD PRIMARY KEY (`idTicket`),
+  ADD KEY `core_ticket_EstadoTicket_id_3d9bd6f1_fk_core_esta` (`EstadoTicket_id`),
+  ADD KEY `core_ticket_solicitante_id_e52f4ee7_fk_core_usuariocustom_id` (`solicitante_id`);
 
 --
 -- Indices de la tabla `core_tipoagenda`
@@ -902,13 +968,13 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT de la tabla `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT de la tabla `core_agenda`
 --
 ALTER TABLE `core_agenda`
-  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `core_comuna`
@@ -921,6 +987,12 @@ ALTER TABLE `core_comuna`
 --
 ALTER TABLE `core_estadoagenda`
   MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `core_estadoticket`
+--
+ALTER TABLE `core_estadoticket`
+  MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `core_marca`
@@ -938,7 +1010,7 @@ ALTER TABLE `core_region`
 -- AUTO_INCREMENT de la tabla `core_reportepago`
 --
 ALTER TABLE `core_reportepago`
-  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `core_rolusuario`
@@ -950,7 +1022,13 @@ ALTER TABLE `core_rolusuario`
 -- AUTO_INCREMENT de la tabla `core_taller`
 --
 ALTER TABLE `core_taller`
-  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `core_ticket`
+--
+ALTER TABLE `core_ticket`
+  MODIFY `idTicket` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `core_tipoagenda`
@@ -968,7 +1046,7 @@ ALTER TABLE `core_tipovehiculo`
 -- AUTO_INCREMENT de la tabla `core_usuariocustom`
 --
 ALTER TABLE `core_usuariocustom`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `core_usuariocustom_groups`
@@ -986,7 +1064,7 @@ ALTER TABLE `core_usuariocustom_user_permissions`
 -- AUTO_INCREMENT de la tabla `core_vehiculo`
 --
 ALTER TABLE `core_vehiculo`
-  MODIFY `idVehiculo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idVehiculo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `django_admin_log`
@@ -998,13 +1076,13 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT de la tabla `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Restricciones para tablas volcadas
@@ -1057,6 +1135,13 @@ ALTER TABLE `core_reportepago`
 ALTER TABLE `core_taller`
   ADD CONSTRAINT `core_taller_idComuna_id_4af1bf31_fk_core_comuna_idComuna` FOREIGN KEY (`idComuna_id`) REFERENCES `core_comuna` (`idComuna`),
   ADD CONSTRAINT `core_taller_idUsuario_id_d1356fab_fk_core_usuariocustom_id` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`);
+
+--
+-- Filtros para la tabla `core_ticket`
+--
+ALTER TABLE `core_ticket`
+  ADD CONSTRAINT `core_ticket_EstadoTicket_id_3d9bd6f1_fk_core_esta` FOREIGN KEY (`EstadoTicket_id`) REFERENCES `core_estadoticket` (`idEstado`),
+  ADD CONSTRAINT `core_ticket_solicitante_id_e52f4ee7_fk_core_usuariocustom_id` FOREIGN KEY (`solicitante_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `core_usuariocustom`

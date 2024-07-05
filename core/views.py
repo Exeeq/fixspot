@@ -498,3 +498,43 @@ def generar_reporte_pago(request, idReserva):
         form = ReportePagoForm()
     
     return render(request, 'core/generar_reporte_pago.html', {'form': form, 'reserva': reserva})
+
+@login_required 
+@role_required(["Encargado taller"])
+def mis_tickets(request):
+    user = request.user
+    tickets_usuario = Ticket.objects.filter(solicitante=user)
+    data = {
+        'tickets_usuario':tickets_usuario
+    }
+    return render(request, 'core/mis_tickets.html', data)
+
+@login_required
+@role_required(["Encargado taller"])
+def crear_ticket(request):
+    if request.method == 'POST':
+        form = TicketForm(request.POST)
+        if form.is_valid():
+            ticket = form.save(commit=False)
+            ticket.solicitante = request.user
+            estado_pendiente = EstadoTicket.objects.get(NombreEstado='Pendiente')
+            ticket.EstadoTicket = estado_pendiente
+            ticket.save()
+            return redirect('mis_tickets') 
+    else:
+        form = TicketForm()
+    return render(request, 'core/crear_ticket.html', {'form': form})
+
+def aceptar_ticket(request, idTicket):
+    ticket = get_object_or_404(Ticket, idTicket=idTicket)
+    ticket.EstadoTicket = EstadoTicket.objects.get(NombreEstado='Aceptado')
+    ticket.save()
+    return redirect('tickets')
+
+def rechazar_ticket(request, idTicket):
+    ticket = get_object_or_404(Ticket, idTicket=idTicket)
+    ticket.EstadoTicket = EstadoTicket.objects.get(NombreEstado='Rechazado')
+    ticket.save()
+    return redirect('tickets')
+
+

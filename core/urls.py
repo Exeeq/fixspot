@@ -68,4 +68,10 @@ urlpatterns = [
 
     path('actualizar_estado_agenda/<int:id_agenda>/', actualizar_estado_agenda, name='actualizar_estado_agenda'),
     path('generar_documento_word/<int:id_agenda>/', generar_documento_word, name='generar_documento_word'),
+
+    path('mis_tickets/', mis_tickets, name="mis_tickets"),
+
+    path('crear_ticket/', crear_ticket, name="crear_ticket"),
+    path('aceptar_ticket/<int:idTicket>/', aceptar_ticket, name="aceptar_ticket"),
+    path('rechazar_ticket<int:idTicket>//', rechazar_ticket, name="rechazar_ticket"),
 ]

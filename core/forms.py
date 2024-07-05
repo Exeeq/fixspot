@@ -221,3 +221,10 @@ class TicketForm(forms.ModelForm):
         if not comentario:
             raise forms.ValidationError('Este campo es obligatorio.')
         return comentario
+
+class TicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket  
+        fields = ['asunto']
+
+

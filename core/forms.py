@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import *
 import requests
 from datetime import datetime, timedelta, time
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 
 class AddressForm(forms.Form):
     address = forms.CharField(label='Ingrese dirección', max_length=255)
@@ -37,6 +38,18 @@ class TallerForm(forms.ModelForm):
             'imagen': 'Imagen',
         }
 
+    telefono = forms.CharField(
+        max_length=12,
+        validators=[
+            RegexValidator(
+                regex=r'^\+569\d{8}$',
+                message='El número de teléfono debe estar en el formato correcto: +569XXXXXXXX.',
+                code='invalid_telefono'
+            )
+        ],
+        widget=forms.TextInput(attrs={'placeholder': '+56991005929'})
+    )
+
     def __init__(self, *args, **kwargs):
         super(TallerForm, self).__init__(*args, **kwargs)
         self.fields['nombreTaller'].required = True
@@ -46,7 +59,7 @@ class TallerForm(forms.ModelForm):
         self.fields['idComuna'].required = True
         self.fields['idUsuario'].required = True
         self.fields['imagen'].required = True
-    
+
 class AgendaForm(forms.ModelForm):
     class Meta:
         model = Agenda
@@ -64,13 +77,11 @@ class AgendaForm(forms.ModelForm):
         super(AgendaForm, self).__init__(*args, **kwargs)
 
         self.fields['fechaAtencion'].widget = forms.DateInput(attrs={'type': 'date', 'min': datetime.today().date()})
-        self.fields['horaAtencion'].widget = forms.Select()
+        self.fields['horaAtencion'].widget = forms.Select(choices=self.get_available_hours())
 
         if user:
             self.fields['idVehiculo'].queryset = Vehiculo.objects.filter(idUsuario=user)
         
-        self.fields['horaAtencion'].widget.choices = self.get_available_hours()
-
     def get_available_hours(self):
         available_hours = [(time(hour=h), f"{h:02}:00") for h in range(9, 19)]
         if self.is_bound and 'fechaAtencion' in self.data:
@@ -92,7 +103,7 @@ class AgendaForm(forms.ModelForm):
         hora = cleaned_data.get('horaAtencion')
 
         if fecha and hora and self.taller:
-            if fecha.weekday() >= 5: 
+            if fecha.weekday() >= 5:
                 raise forms.ValidationError("Las reservas solo están disponibles de lunes a viernes.")
 
             if Agenda.objects.filter(fechaAtencion=fecha, horaAtencion=hora, idTaller=self.taller).exists():
@@ -103,7 +114,7 @@ class AgendaForm(forms.ModelForm):
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
-        exclude = ['idUsuario'] 
+        exclude = ['idUsuario']
         labels = {
             'patente': 'Patente del Vehículo',
             'modelo': 'Modelo',
@@ -112,10 +123,26 @@ class VehiculoForm(forms.ModelForm):
             'idMarca': 'Marca',
             'idTipoVehiculo': 'Tipo de Vehículo',
         }
+        widgets = {
+            'anno': forms.NumberInput(attrs={'min': 1950, 'max': 2024}),
+        }
 
-    widgets = {
-        'anno': forms.NumberInput(attrs={'min': 1900, 'max': 2024}),
-    }
+    anno = forms.IntegerField(
+        validators=[MinValueValidator(1950), MaxValueValidator(2024)],
+        widget=forms.NumberInput(attrs={'min': 1950, 'max': 2024})
+    )
+
+    patente = forms.CharField(
+        max_length=6,
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Z]{4}\d{2}$',
+                message='La patente debe estar en el formato correcto: 4 letras seguidas de 2 números (ej. HYRG34).',
+                code='invalid_patente'
+            )
+        ],
+        widget=forms.TextInput(attrs={'placeholder': 'HYRG34'})
+    )
 
 
 class UsuarioCustomForm(forms.ModelForm):
@@ -193,7 +220,7 @@ class ReportePagoForm(forms.ModelForm):
         fields = ['comentario', 'monto']
         widgets = {
             'comentario': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'monto': forms.NumberInput(attrs={'class': 'form-control'}),
+            'monto': forms.NumberInput(attrs={'class': 'form-control', 'min': 100}),
         }
 
     def clean_comentario(self):
@@ -204,8 +231,8 @@ class ReportePagoForm(forms.ModelForm):
 
     def clean_monto(self):
         monto = self.cleaned_data.get('monto')
-        if monto is None or monto < 0:
-            raise forms.ValidationError('El monto no puede ser negativo.')
+        if monto is None or monto < 100:
+            raise forms.ValidationError('El monto debe ser al menos 100 pesos chilenos.')
         return monto
     
 class TicketForm(forms.ModelForm):

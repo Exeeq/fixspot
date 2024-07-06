@@ -375,6 +375,22 @@ def agendar_hora(request, id_taller):
 
     return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
+def get_available_hours(request):
+    date = request.GET.get('date')
+    id_taller = request.GET.get('id_taller')
+    taller = get_object_or_404(Taller, idTaller=id_taller)
+
+    if date:
+        reserved_hours = Agenda.objects.filter(fechaAtencion=date, idTaller=taller).values_list('horaAtencion', flat=True)
+        available_hours = [
+            f"{h:02}:00" for h in range(9, 19)
+            if time(hour=h) not in reserved_hours
+        ]
+    else:
+        available_hours = [f"{h:02}:00" for h in range(9, 19)]
+
+    return JsonResponse({'available_hours': available_hours})
+
 @login_required
 def annadir_vehiculo(request):
     form = VehiculoForm()  

@@ -67,5 +67,27 @@
         });
         return false;
     }
+
+    $(document).ready(function() {
+        $('#id_fechaAtencion').change(function() {
+            var selectedDate = $(this).val();
+            var idTaller = "{{ taller.idTaller }}";
+
+            $.ajax({
+                url: "{% url 'get_available_hours' %}",
+                data: {
+                    'date': selectedDate,
+                    'id_taller': idTaller
+                },
+                success: function(data) {
+                    var $horaAtencion = $('#id_horaAtencion');
+                    $horaAtencion.empty();
+                    $.each(data.available_hours, function(index, value) {
+                        $horaAtencion.append('<option value="' + value + '">' + value + '</option>');
+                    });
+                }
+            });
+        });
+    });
 </script>
 {% endblock js %}

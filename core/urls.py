@@ -47,6 +47,7 @@ urlpatterns = [
 
     #Agendar
     path('agendar_hora/<int:id_taller>/', agendar_hora, name='agendar_hora'),
+    path('get_available_hours/', get_available_hours, name='get_available_hours'),
 
     path('annadir_vehiculo/', annadir_vehiculo, name="annadir_vehiculo"),
     path('modificar_vehiculo/<int:vehiculo_id>/', modificar_vehiculo, name='modificar_vehiculo'),

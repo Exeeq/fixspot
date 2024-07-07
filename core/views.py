@@ -155,7 +155,17 @@ def agendar(request):
 
 @login_required
 def contactanos(request):
-	return render(request, 'core/contactanos.html')
+    if request.method == 'POST':
+        form = ContactoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Mensaje enviado correctamente.')
+            return redirect('contactanos')
+        else:
+            messages.error(request, 'Hay algún problema con los datos ingresados, revise nuevamente.')
+    else:
+        form = ContactoForm()
+    return render(request, 'core/contactanos.html', {'form': form})
 
 def login(request):
 	return render(request, 'core/login.html')
@@ -552,5 +562,14 @@ def rechazar_ticket(request, idTicket):
     ticket.EstadoTicket = EstadoTicket.objects.get(NombreEstado='Rechazado')
     ticket.save()
     return redirect('tickets')
+
+def mensajes(request):
+    mensajes = Contacto.objects.all()
+    return render(request, 'core/mensajes.html', {'mensajes': mensajes})
+
+def eliminar_mensaje(request, id_mensaje):
+    mensaje = get_object_or_404(Contacto, idContacto=id_mensaje)
+    mensaje.delete()
+    return redirect('mensajes')
 
 

@@ -140,5 +140,9 @@ class Ticket(models.Model):
     solicitante = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=False, null=False)
     EstadoTicket = models.ForeignKey(EstadoTicket, on_delete=models.CASCADE, blank=False, null=False)
     
-
-
+class Contacto(models.Model):
+    idContacto = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50, blank=False, null=False)
+    correo = models.EmailField(blank=False, null=False)
+    telefono = models.CharField(max_length=15, blank=False, null=False)
+    asunto = models.TextField(blank=False, null=False)

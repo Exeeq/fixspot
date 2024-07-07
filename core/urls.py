@@ -75,4 +75,7 @@ urlpatterns = [
     path('crear_ticket/', crear_ticket, name="crear_ticket"),
     path('aceptar_ticket/<int:idTicket>/', aceptar_ticket, name="aceptar_ticket"),
     path('rechazar_ticket<int:idTicket>/', rechazar_ticket, name="rechazar_ticket"),
+
+    path('mensajes/', mensajes, name='mensajes'),
+    path('eliminar_mensaje/<int:id_mensaje>/', eliminar_mensaje, name='eliminar_mensaje'),
 ]

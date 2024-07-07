@@ -4,6 +4,10 @@ from .models import *
 import requests
 from datetime import datetime, timedelta, time
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+import re
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+import requests
 
 class AddressForm(forms.Form):
     address = forms.CharField(label='Ingrese dirección', max_length=255)
@@ -254,4 +258,47 @@ class TicketForm(forms.ModelForm):
         model = Ticket  
         fields = ['asunto']
 
+class ContactoForm(forms.ModelForm):
+    class Meta:
+        model = Contacto
+        fields = '__all__'
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not nombre:
+            raise forms.ValidationError("Este campo es obligatorio.")
+        return nombre
+
+    def clean_correo(self):
+        correo = self.cleaned_data.get('correo')
+        if not correo:
+            raise forms.ValidationError("Este campo es obligatorio.")
+        try:
+            validate_email(correo)
+        except ValidationError:
+            raise forms.ValidationError("Ingrese una dirección de correo válida.")
+        
+        api_key = '9aaf4399a47279f19ea95563bae1116ea6ba0f36'  
+        response = requests.get(
+            'https://api.hunter.io/v2/email-verifier',
+            params={'email': correo, 'api_key': api_key}
+        )
+        result = response.json()
+        
+        if result.get('data', {}).get('result') != 'deliverable':
+            raise forms.ValidationError("La dirección de correo no parece ser válida.")
+        
+        return correo
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if not re.match(r'^\+569\d{8}$', telefono):
+            raise forms.ValidationError("El número de teléfono debe tener el formato +569 seguido de 8 dígitos.")
+        return telefono
+
+    def clean_asunto(self):
+        asunto = self.cleaned_data.get('asunto')
+        if not asunto:
+            raise forms.ValidationError("Este campo es obligatorio.")
+        return asunto
 

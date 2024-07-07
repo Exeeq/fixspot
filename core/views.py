@@ -83,7 +83,6 @@ def administrar_talleres(request):
 @role_required(["Administrador"])
 def crear_taller(request):
     form = TallerForm()
-    formAddress = AddressForm()
     coordinates = {}
     address = ""
 
@@ -103,41 +102,69 @@ def crear_taller(request):
                 taller.save()
                 return redirect('administrar_talleres')
         elif 'obtener_ubicacion' in request.POST:
-            formAddress = AddressForm(request.POST)
-            if formAddress.is_valid():
-                address = formAddress.cleaned_data['address']
-                api_key = '855d3348e0ee4298b17b00e020377da5'
-                base_url = 'https://api.opencagedata.com/geocode/v1/json'
-                params = {'q': address, 'key': api_key}
-                response = requests.get(base_url, params=params)
-                if response.status_code == 200:
-                    data = response.json()
-                    if data['results']:
-                        location = data['results'][0]['geometry']
-                        address_details = data['results'][0]['components']
-                        if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
-                            coordinates = {
-                                'lat': location['lat'],
-                                'lng': location['lng']
-                            }
-                            return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
-                        else:
-                            return JsonResponse({'success': False, 'error': 'La dirección seleccionada no está en la Región Metropolitana.'})
-                return JsonResponse({'success': False, 'error': 'Error en la solicitud de geocodificación.'})
+            address = request.POST.get('address')
+            api_key = '855d3348e0ee4298b17b00e020377da5'
+            base_url = 'https://api.opencagedata.com/geocode/v1/json'
+            params = {'q': address, 'key': api_key}
+            response = requests.get(base_url, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                if data['results']:
+                    location = data['results'][0]['geometry']
+                    address_details = data['results'][0]['components']
+                    if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
+                        coordinates = {
+                            'lat': location['lat'],
+                            'lng': location['lng']
+                        }
+                        return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
+                    else:
+                        return JsonResponse({'success': False, 'error': 'La dirección seleccionada no está en la Región Metropolitana.'})
+            return JsonResponse({'success': False, 'error': 'Error en la solicitud de geocodificación.'})
 
-    return render(request, 'core/crear_taller.html', {'form': form, 'formAddress': formAddress, 'coordinates': coordinates, 'address': address})
+    return render(request, 'core/crear_taller.html', {'form': form, 'coordinates': coordinates, 'address': address})
 
 @role_required(["Administrador"])
 def modificar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
     if request.method == 'POST':
-        form = TallerForm(request.POST, request.FILES, instance=taller)
-        if form.is_valid():
-            form.save()  # Guardar el formulario directamente
-            return redirect('administrar_talleres')
+        if 'modificar_taller' in request.POST:
+            form = TallerForm(request.POST, request.FILES, instance=taller)
+            if form.is_valid():
+                taller_modificado = form.save(commit=False)
+                # Aquí actualizamos la dirección si se recibió una nueva desde el formulario
+                if 'direccion' in request.POST:
+                    taller_modificado.direccion = request.POST['direccion']
+                taller_modificado.save()
+                return redirect('administrar_talleres')
+        elif 'obtener_ubicacion' in request.POST:
+            address = request.POST.get('address')
+            api_key = '855d3348e0ee4298b17b00e020377da5'
+            base_url = 'https://api.opencagedata.com/geocode/v1/json'
+            params = {'q': address, 'key': api_key}
+            response = requests.get(base_url, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                if data['results']:
+                    location = data['results'][0]['geometry']
+                    address_details = data['results'][0]['components']
+                    if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
+                        coordinates = {
+                            'lat': location['lat'],
+                            'lng': location['lng']
+                        }
+                        # Actualizamos la dirección en el objeto taller y lo guardamos
+                        taller.direccion = address
+                        taller.save()
+                        return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
+                    else:
+                        return JsonResponse({'success': False, 'error': 'La dirección seleccionada no está en la Región Metropolitana.'})
+            return JsonResponse({'success': False, 'error': 'Error en la solicitud de geocodificación.'})
+
     else:
         form = TallerForm(instance=taller)
-    return render(request, 'core/modificar_taller.html', {'form': form})
+    
+    return render(request, 'core/modificar_taller.html', {'form': form, 'taller': taller})
 
 @role_required(["Administrador"])
 def eliminar_taller(request, id_taller):

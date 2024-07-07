@@ -31,11 +31,10 @@ class RegisterForm(UserCreationForm):
 class TallerForm(forms.ModelForm):
     class Meta:
         model = Taller
-        fields = ['nombreTaller', 'descripcion', 'direccion', 'telefono', 'idComuna', 'idUsuario', 'imagen']
+        fields = ['nombreTaller', 'descripcion', 'telefono', 'idComuna', 'idUsuario', 'imagen']
         labels = {
             'nombreTaller': 'Nombre del taller',
             'descripcion': 'Descripción',
-            'direccion': 'Dirección',
             'telefono': 'Teléfono',
             'idComuna': 'Comuna',
             'idUsuario': 'Encargado del taller',
@@ -48,7 +47,7 @@ class TallerForm(forms.ModelForm):
             RegexValidator(
                 regex=r'^\+569\d{8}$',
                 message='El número de teléfono debe estar en el formato correcto: +569XXXXXXXX.',
-                code='invalid_telefono'
+                code='invalid_phone_number'
             )
         ],
         widget=forms.TextInput(attrs={'placeholder': '+56991005929'})
@@ -58,7 +57,6 @@ class TallerForm(forms.ModelForm):
         super(TallerForm, self).__init__(*args, **kwargs)
         self.fields['nombreTaller'].required = True
         self.fields['descripcion'].required = True
-        self.fields['direccion'].required = True
         self.fields['telefono'].required = True
         self.fields['idComuna'].required = True
         self.fields['idUsuario'].required = True
@@ -69,7 +67,7 @@ class AgendaForm(forms.ModelForm):
         model = Agenda
         fields = ['fechaAtencion', 'horaAtencion', 'idTipoAgenda', 'idVehiculo']
         labels = {
-            'fechaAtencion': 'Fecha de Atención',
+            'fechaAtencion': 'Fecha de Atención (Solo de lunes a viernes)',
             'horaAtencion': 'Hora de Atención',
             'idTipoAgenda': 'Tipo de Agenda',
             'idVehiculo': 'Vehículo',

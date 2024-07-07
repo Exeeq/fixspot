@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-07-2024 a las 04:02:22
+-- Tiempo de generación: 07-07-2024 a las 22:19:22
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -205,9 +205,10 @@ CREATE TABLE `core_agenda` (
 INSERT INTO `core_agenda` (`idAgenda`, `fechaAtencion`, `horaAtencion`, `cliente_id`, `estado_id`, `idTaller_id`, `idTipoAgenda_id`, `idVehiculo_id`) VALUES
 (1, '2024-06-19', '12:00:00.000000', 4, 3, 1, 6, 1),
 (3, '2024-06-21', '15:00:00.000000', 6, 3, 1, 5, 4),
-(7, '2024-07-10', '13:00:00.000000', 4, 1, 1, 9, 1),
-(8, '2024-07-08', '13:00:00.000000', 1, 1, 1, 9, 9),
-(9, '2024-07-09', '16:00:00.000000', 4, 1, 1, 5, 1);
+(7, '2024-07-10', '13:00:00.000000', 4, 2, 1, 9, 1),
+(8, '2024-07-08', '13:00:00.000000', 1, 2, 1, 9, 9),
+(9, '2024-07-09', '16:00:00.000000', 4, 2, 1, 5, 1),
+(10, '2024-07-26', '14:00:00.000000', 4, 1, 1, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -440,7 +441,10 @@ CREATE TABLE `core_reportepago` (
 
 INSERT INTO `core_reportepago` (`idReporte`, `comentario`, `monto`, `reserva_id`) VALUES
 (4, 'Se realizó alineación y balanceo de las 4 ruedas del vehículo.', 750.00, 1),
-(5, 'Se realizo el cambio de aceite, con uno de mejor calidad para el auto.', 1000.00, 3);
+(5, 'Se realizo el cambio de aceite, con uno de mejor calidad para el auto.', 1000.00, 3),
+(8, 'se le', 100.00, 7),
+(9, '3wefwe', 100.00, 9),
+(10, 'rfgjrelghjrdoigdjhig', 300.00, 8);
 
 -- --------------------------------------------------------
 
@@ -488,7 +492,8 @@ CREATE TABLE `core_taller` (
 --
 
 INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `descripcion`, `direccion`, `telefono`, `imagen`, `latitud`, `longitud`, `idComuna_id`, `idUsuario_id`) VALUES
-(1, 'El zapallo', 'Taller dedicado a los zapallos', 'Ernesto alvear', '+569 1234 5678', 'taller_imagenes/134198213.jpg', -33.6083006, -70.5841941, 7, 3);
+(1, 'El zapallo', 'Taller dedicado a los zapallos', 'Ernesto alvear', '+569 1234 5678', 'taller_imagenes/134198213.jpg', -33.6083006, -70.5841941, 7, 3),
+(6, 'el zapato', 'dffesfsfs', 'santiago de chile', '+56991005929', 'taller_imagenes/caso-uso-negocio-ferreteria.jpg', -33.598569, -70.5792277, 3, 4);
 
 -- --------------------------------------------------------
 
@@ -510,7 +515,9 @@ CREATE TABLE `core_ticket` (
 
 INSERT INTO `core_ticket` (`idTicket`, `asunto`, `EstadoTicket_id`, `solicitante_id`) VALUES
 (4, 'Cambio de nombre del taller.', 2, 3),
-(5, 'Cambio de dirección.', 3, 3);
+(5, 'Cambio de dirección.', 3, 3),
+(6, 'cambio de ubicacion', 3, 3),
+(7, 'wriopgjdjklgnthdjkgh', 1, 3);
 
 -- --------------------------------------------------------
 
@@ -611,10 +618,10 @@ CREATE TABLE `core_usuariocustom` (
 --
 
 INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`, `run`, `correo`, `telefono`, `pnombre`, `ap_paterno`, `direccion`, `idComuna_id`, `idRol_id`) VALUES
-(1, 'pbkdf2_sha256$720000$e5aZHyD0j73xGIY39Rw5N6$/s5sEbNsJKa12SDWHeDvp5pciZ/deGpE/XvHCLmUG0w=', '2024-07-07 00:31:45.599487', 1, 'admin', '', '', '', 1, 1, '2024-06-17 00:30:02.176083', '00.00.000-0', 'admin@duocuc.cl', '', 'Admin', 'General', 'Admin 111', NULL, 3),
+(1, 'pbkdf2_sha256$720000$e5aZHyD0j73xGIY39Rw5N6$/s5sEbNsJKa12SDWHeDvp5pciZ/deGpE/XvHCLmUG0w=', '2024-07-07 19:55:00.013908', 1, 'admin', '', '', '', 1, 1, '2024-06-17 00:30:02.176083', '00.00.000-0', 'admin@duocuc.cl', '', 'Admin', 'General', 'Admin 111', NULL, 3),
 (2, 'pbkdf2_sha256$216000$coIo7evpv5C8$DQjlv/yUDsGmureJDijlleNP+dDxYSKG2wkEyWuFGZg=', '2024-06-18 02:12:47.269804', 0, 'Exequiel', '', '', '', 0, 1, '2024-06-17 00:36:44.818514', '21.002.289-9', 'ex.albornoz@duocuc.cl', '', 'Exequiel', 'Albornoz', 'Millantu 123', 7, 2),
-(3, 'pbkdf2_sha256$720000$jAhg53cSD6YfPQL5gbBsbk$ApbRHaurPJ3jg5e2bKlG0jNhEikajykZsWOypUYywkw=', '2024-07-06 17:00:42.808541', 0, 'Jeffrey', '', '', '', 0, 1, '2024-06-17 00:40:32.818240', '21.207.762-3', 'jeff.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramirez', 'San Francisco 9484', 7, 2),
-(4, 'pbkdf2_sha256$720000$D4JXSO3pnGtrXPgy1XqBQ5$Kdttnaj9B4DGnt/1mNx4VSiU4kUaZE77TN4nVYz+nYE=', '2024-07-06 17:22:54.886031', 0, 'Juan', '', '', '', 0, 1, '2024-06-17 00:41:24.612111', '11.111.111-1', 'juan.callabo@gmail.com', '', 'Juan', 'Callabo', 'Juan 123', 7, 1),
+(3, 'pbkdf2_sha256$720000$jAhg53cSD6YfPQL5gbBsbk$ApbRHaurPJ3jg5e2bKlG0jNhEikajykZsWOypUYywkw=', '2024-07-07 18:57:31.565143', 0, 'Jeffrey', '', '', '', 0, 1, '2024-06-17 00:40:32.818240', '21.207.762-3', 'jeff.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramirez', 'San Francisco 9484', 7, 2),
+(4, 'pbkdf2_sha256$720000$D4JXSO3pnGtrXPgy1XqBQ5$Kdttnaj9B4DGnt/1mNx4VSiU4kUaZE77TN4nVYz+nYE=', '2024-07-07 19:54:08.213186', 0, 'Juan', '', '', '', 0, 1, '2024-06-17 00:41:24.612111', '11.111.111-1', 'juan.callabo@gmail.com', '', 'Juan', 'Callabo', 'Juan 123', 7, 1),
 (6, 'pbkdf2_sha256$216000$1BC4f97UTWJx$lD2357J8qAoTTcT+3DuzBWx6qipGPn0Bxwehkcy8Y0g=', '2024-06-18 01:43:17.153433', 0, 'Javier', '', '', '', 0, 1, '2024-06-18 01:39:37.808368', '17.225.361-4', 'jav.er@gmail.com', '', 'Javier', 'Velásquez', 'hola 123', 7, 1),
 (7, 'pbkdf2_sha256$216000$qbziHHr2luot$KUNIEm8sdcyRTF6cGQnkqvQUpDekrhyA34a+p03Ubl8=', '2024-06-18 14:35:05.624940', 0, 'Carolina', '', '', '', 0, 1, '2024-06-18 14:34:58.596238', '21.343.355-2', 'carolina@gmail.com', '', 'efdsfs', 'sfsfsf', 'hola 123', 7, 1);
 
@@ -816,8 +823,8 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 ('7pwjplvanb6mk7ajoh3gdtjhjzl1f5nu', '.eJxVjEEOwiAQRe_C2hBoOzDj0r1nIMMAUjVtUtqV8e7apAvd_vfef6nA21rD1vISxqTOalCn3y2yPPK0g3Tn6TZrmad1GaPeFX3Qpq9zys_L4f4dVG71WxdvU9dHsgUBuyFzX6hItOLEoWHvwbAg-gKeDWVAIgAGNi5ZQhL1_gDkAjea:1sJ0ya:zOfi8YAx_mIXm7Vqn7N2l8vIM6ROE3b6kD524kcFA7U', '2024-07-01 01:16:04.261526'),
 ('7smc3rveovpb8ysh6i7icawiwva26adw', '.eJxVjDsOwjAQBe_iGln2bvwJJT1nsHb9wQHkSHFSIe4OkVJA-2bmvUSgba1h63kJUxJngeL0uzHFR247SHdqt1nGua3LxHJX5EG7vM4pPy-H-3dQqddvPaqkXUb23gNRKdoick6sVYFo1EBu8FDKSF4ZJmvIRdDeWrCECMzi_QHnIzfD:1sKRUi:9iXs8qfhS21mCF0QvMP7OnrN0xuXFO7Ordo5QF6yDGM', '2024-07-04 23:47:08.640194'),
 ('8uwvpkc4fcchovsi927v3rezbarlv90v', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sN01Z:Uo-pal2b-KskA7-KjdvSgg-TgW_RuOoKv9sHDRtakN0', '2024-07-12 01:03:37.195546'),
-('brkria5lqrgcm5dxingqwjzal688wcar', '.eJxVjDkOwjAUBe_iGlnfiZeIkp4zWH-xcQDZUpxUiLtDpBTQvpl5LxVxW0vcelriLOqsjDr9boT8SHUHcsd6a5pbXZeZ9K7og3Z9bZKel8P9OyjYy7e2FEweULJ1YtkgTaN1mSELQeBsE_DkCAQny2Cc98NgcIQM7BFcIPX-AP-FODc:1sQFof:BklunREK1CxUVBVY0j_Kkh5PsRdl9FJyzNRAX5PMDlg', '2024-07-21 00:31:45.601488'),
 ('ehtymdcli8oznr0dr6b2dp87i0ofgavr', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sJbQl:VeMEX5hD9HF7QFiMJJSZHvdue0aDwjHsd8X7opdORQk', '2024-07-02 16:11:35.494367'),
+('grrolbpl5wxkrqxmzhjikrogr6v7ax6r', '.eJxVjDkOwjAUBe_iGlnfiZeIkp4zWH-xcQDZUpxUiLtDpBTQvpl5LxVxW0vcelriLOqsjDr9boT8SHUHcsd6a5pbXZeZ9K7og3Z9bZKel8P9OyjYy7e2FEweULJ1YtkgTaN1mSELQeBsE_DkCAQny2Cc98NgcIQM7BFcIPX-AP-FODc:1sQXyO:VKOGndJ-F7HtgOikS5KsM7NSwhputeubSD1mcciZMno', '2024-07-21 19:55:00.015911'),
 ('hq8pssmeg207wrxucgmz1r1r2djvcgkh', '.eJxVjEEOwiAQRe_C2hCRYZi6dO8ZmgEGqRpISrsy3l2bdKHb_977LzXyupRx7TKPU1JnZdThdwscH1I3kO5cb03HVpd5CnpT9E67vrYkz8vu_h0U7uVbI5JNSA485IBsvBATgI2RMmaPkdGI9SyQ3ZEDGzfkE7hBDJIJHNT7A9fGN-U:1sJbVJ:WX28Vi_E1parfaErlNQbdk8z09HPz6cQ3YyKKpSkmB4', '2024-07-02 16:16:17.477422');
 
 --
@@ -1030,7 +1037,7 @@ ALTER TABLE `auth_permission`
 -- AUTO_INCREMENT de la tabla `core_agenda`
 --
 ALTER TABLE `core_agenda`
-  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `core_comuna`
@@ -1072,7 +1079,7 @@ ALTER TABLE `core_region`
 -- AUTO_INCREMENT de la tabla `core_reportepago`
 --
 ALTER TABLE `core_reportepago`
-  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `core_rolusuario`
@@ -1084,13 +1091,13 @@ ALTER TABLE `core_rolusuario`
 -- AUTO_INCREMENT de la tabla `core_taller`
 --
 ALTER TABLE `core_taller`
-  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `core_ticket`
 --
 ALTER TABLE `core_ticket`
-  MODIFY `idTicket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idTicket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `core_tipoagenda`

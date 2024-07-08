@@ -20,6 +20,7 @@
 <div class="bg-page">
     <br><br><br>
     <div class="container my-5">
+        {% if mensajes %}
         <div class="row row-cols-1 row-cols-md-2 g-4">
             {% for mensaje in mensajes %}
             <div class="col">
@@ -38,6 +39,11 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="alert alert-danger text-center" role="alert">
+            En este momento no hay mensajes...
+        </div>
+        {% endif %}
     </div>
     <br><br><br><br><br><br><br>
 </div>

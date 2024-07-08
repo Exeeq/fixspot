@@ -131,7 +131,8 @@ class VehiculoForm(forms.ModelForm):
 
     anno = forms.IntegerField(
         validators=[MinValueValidator(1950), MaxValueValidator(2024)],
-        widget=forms.NumberInput(attrs={'min': 1950, 'max': 2024})
+        widget=forms.NumberInput(attrs={'min': 1950, 'max': 2024}),
+        label= 'Año'
     )
 
     patente = forms.CharField(

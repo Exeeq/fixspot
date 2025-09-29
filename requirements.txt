@@ -1,5 +1,4 @@
-django
-pymysql
+django==4.1
 mysqlclient
 django-crispy-forms==1.14.0
 django-rest-framework

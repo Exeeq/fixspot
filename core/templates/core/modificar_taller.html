@@ -1,57 +1,165 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <style>
-    #map {
-        height: 400px; /* Ajusta la altura del mapa según tu diseño */
-    }
-    .form-control {
-        height: 50px;
-        border-radius: 20px;
-    }
+  #map { height: 400px; border-radius: 12px; }
+  .map-card { height: 100%; }
+
+  .form-container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+  }
+
+  .btn-primary {
+    background-color: #7a3cff;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background-color: #692eff;
+  }
+
+  .btn-background {
+    background-color: #7a3cff;
+    color: white;
+  }
+
+  .btn-background:hover {
+    background-color: #692eff;
+  }
+
+  /* 🔹 Campos generales */
+  .form-field {
+    border: 1px solid #dcdcdc;
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  .form-field:focus {
+    border-color: #7a3cff;
+    box-shadow: 0 0 0 3px rgba(122, 60, 255, 0.15);
+  }
+
+  /* 🔹 Caja de servicios con scroll */
+  .servicios-box {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fafafa;
+    padding: 10px 12px;
+    height: 200px;
+    overflow-y: auto;
+  }
+
+  .servicios-box label {
+    display: block;
+    margin-bottom: 6px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .servicios-box label:hover {
+    background-color: #f0e8ff;
+    border-color: #7a3cff;
+  }
+
+  .servicios-box input[type="checkbox"] {
+    accent-color: #7a3cff;
+    transform: scale(1.1);
+    margin-right: 8px;
+  }
+
+  .field-servicios {
+    margin-top: 20px;
+  }
+
+  .field-servicios label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+
 </style>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 {% endblock %}
+
 {% block contenido %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 mt-5">
-            <div class="intro-excerpt">
-                <h1 class="fw-bold text-center">MODIFICAR TALLER</h1>
-            </div>
-        </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-6 mt-5">
+      <div class="intro-excerpt">
+        <h1 class="fw-bold text-center text-uppercase">MODIFICAR TALLER</h1>
+      </div>
     </div>
-    <br><br>
+  </div>
 </div>
-<div class="bg-white">
-    <div class="container mt-5 mb-5">
-        <div class="row justify-content-center mt-4 mb-5">
-            <div class="col-md-6">
-                <form method="POST" enctype="multipart/form-data" class="p-4 rounded shadow-lg" id="formModificarTaller">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <div class="form-group">
-                        <label for="id_address">Ingresar Dirección</label>
-                        <input type="text" id="id_address" class="form-control" name="direccion" placeholder="Ingrese su dirección" value="{{ taller.direccion }}">
-                        <button type="button" class="btn btn-primary mt-2" id="btnObtenerDireccion">Obtener Dirección</button>
-                    </div>
-                    <input type="hidden" id="latitud" name="latitud" value="{{ form.instance.latitud }}">
-                    <input type="hidden" id="longitud" name="longitud" value="{{ form.instance.longitud }}">
-                    <button type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" id="btnModificarTaller" disabled>Modificar</button>
-                </form>
-                <div id="message" class="mt-3"></div>
+
+<div class="bg-page py-5">
+  <div class="container">
+    <div class="row g-4 justify-content-center align-items-start">
+      
+      <!-- Formulario -->
+      <div class="col-lg-6">
+        <div class="form-container">
+          <form method="POST" enctype="multipart/form-data" id="formModificarTaller">
+            {% csrf_token %}
+
+            <div class="mb-3">{{ form.nombreTaller|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.descripcion|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.telefono|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.idComuna|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.idUsuario|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.imagen|as_crispy_field }}</div>
+
+            <!-- Caja de servicios con scroll -->
+            <div class="field-servicios">
+              <label for="id_servicios">Servicios que ofrece el taller</label>
+              <div class="servicios-box">
+                {% for checkbox in form.servicios %}
+                  <label>{{ checkbox.tag }} {{ checkbox.choice_label }}</label>
+                {% endfor %}
+              </div>
             </div>
-            <div class="col-md-6">
-                <div class="card map-card">
-                    <div id="map"></div>
-                </div>
+
+            <!-- Dirección -->
+            <div class="mt-4">
+              <label for="id_address" class="form-label">Ingresar Dirección</label>
+              <input type="text" id="id_address" class="form-control" name="direccion" placeholder="Ej: Ernesto Alvear 245, Puente Alto" value="{{ taller.direccion }}">
+              <button type="button" class="btn btn-primary mt-2 w-100" id="btnObtenerDireccion">Obtener Dirección</button>
             </div>
+
+            <!-- Coordenadas ocultas -->
+            <input type="hidden" id="latitud" name="latitud" value="{{ form.instance.latitud }}">
+            <input type="hidden" id="longitud" name="longitud" value="{{ form.instance.longitud }}">
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-background px-5 py-2 rounded-pill" id="btnModificarTaller" disabled>Modificar taller</button>
+            </div>
+          </form>
+
+          <div id="message" class="mt-3"></div>
         </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="col-lg-6">
+        <div class="card map-card shadow-lg border-0">
+          <div id="map"></div>
+        </div>
+      </div>
+
     </div>
+  </div>
 </div>
 {% endblock contenido %}
+
 {% block js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -59,125 +167,119 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 
 <script>
-    $(document).ready(function() {
-        var map = L.map('map').setView([-33.4489, -70.6693], 10);
-        var marker; 
+  $(document).ready(function() {
+    var map = L.map('map').setView([-33.4489, -70.6693], 10);
+    var marker; 
 
-        function initializeMap(lat, lng, zoomLevel) {
-            map.setView([lat, lng], zoomLevel);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-            
-            if (marker) {
-                map.removeLayer(marker);
+    function initializeMap(lat, lng, zoomLevel) {
+      map.setView([lat, lng], zoomLevel);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup('Ubicación actual')
+        .openPopup();
+    }
+
+    function validarBotonModificar() {
+      var latitud = $("#latitud").val();
+      var longitud = $("#longitud").val();
+      $("#btnModificarTaller").prop("disabled", !(latitud && longitud));
+    }
+
+    $(function () {
+      $("#id_address").autocomplete({
+        source: function(request, response) {
+          $.ajax({
+            url: "{% url 'autocomplete_address' %}",
+            dataType: "json",
+            data: { term: request.term },
+            success: function(data) { response(data); },
+            error: function(xhr, status, error) {
+              console.log("Error en autocompletado:", error);
+              response([]);
             }
-            marker = L.marker([lat, lng]).addTo(map)
-                .bindPopup('Ubicación actual')
-                .openPopup();
-        }
+          });
+        },
+        minLength: 3
+      });
 
-        function validarBotonModificar() {
-            var latitud = $("#latitud").val();
-            var longitud = $("#longitud").val();
-            if (latitud && longitud) {
-                $("#btnModificarTaller").prop("disabled", false);
-            } else {
-                $("#btnModificarTaller").prop("disabled", true);
-            }
-        }
-
-        $("#btnObtenerDireccion").click(function(event) {
-            event.preventDefault();
-            var address = $("#id_address").val();
-            $.ajax({
-                url: "{% url 'modificar_taller' taller.idTaller %}",
-                type: "POST",
-                data: {
-                    address: address,
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    obtener_ubicacion: true
-                },
-                success: function(response) {
-                    if (response.success) {
-                        var lat = response.coordinates.lat;
-                        var lng = response.coordinates.lng;
-                        var zoomLevel = 17; 
-                        initializeMap(lat, lng, zoomLevel); 
-                        $("#latitud").val(lat);
-                        $("#longitud").val(lng);
-                        // No necesitas actualizar #direccion aquí ya que lo hace el formulario
-                        $("#message").html('<div class="alert alert-success">La dirección seleccionada es válida</div>');
-                    } else {
-                        $("#message").html('<div class="alert alert-danger">' + response.error + '</div>');
-                        $("#latitud").val('');
-                        $("#longitud").val('');
-                        // No necesitas actualizar #direccion aquí ya que lo hace el formulario
-                    }
-                    validarBotonModificar();
-                },
-                error: function() {
-                    $("#message").html('<div class="alert alert-danger">Error en la solicitud de geocodificación.</div>');
-                    $("#latitud").val('');
-                    $("#longitud").val('');
-                    // No necesitas actualizar #direccion aquí ya que lo hace el formulario
-                    validarBotonModificar();
-                }
-            });
-        });
-
-        $("#id_address").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{% url 'autocomplete_address' %}",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function(data) {
-                        response(data);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Error during AJAX request: ", error);
-                        response([]);
-                    }
-                });
-            },
-            minLength: 2,
-        });
-
-        $('#btnModificarTaller').click(function(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: '¿Está seguro de que desea modificar este taller?',
-                text: 'Esta acción actualizará los datos del taller',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, modificar taller',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'modificar_taller',
-                        value: 'true'
-                    }).appendTo('#formModificarTaller');
-                    $('#formModificarTaller')[0].submit();
-                }
-            });
-        });
-
-        var initialLat = parseFloat("{{ form.instance.latitud }}");
-        var initialLng = parseFloat("{{ form.instance.longitud }}");
-        if (!isNaN(initialLat) && !isNaN(initialLng)) {
-            initializeMap(initialLat, initialLng, 13); 
-        }
-
-        validarBotonModificar();
+      $("#id_address").on("autocompleteselect", function (e, ui) {
+        const val = (ui.item && (ui.item.value || ui.item.label)) || ui.item || "";
+        $(this).val((val || "").toString().trim());
+        $(this).trigger("change");
+      });
     });
+
+    $("#btnObtenerDireccion").click(function(event) {
+      event.preventDefault();
+      var address = $("#id_address").val();
+      $.ajax({
+        url: "{% url 'modificar_taller' taller.idTaller %}",
+        type: "POST",
+        data: {
+          address: address,
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          obtener_ubicacion: true
+        },
+        success: function(response) {
+          if (response.success) {
+            var lat = response.coordinates.lat;
+            var lng = response.coordinates.lng;
+            initializeMap(lat, lng, 17);
+            $("#latitud").val(lat);
+            $("#longitud").val(lng);
+            $("#message").html('<div class="alert alert-success">Dirección válida.</div>');
+          } else {
+            $("#message").html('<div class="alert alert-danger">' + response.error + '</div>');
+            $("#latitud").val('');
+            $("#longitud").val('');
+          }
+          validarBotonModificar();
+        },
+        error: function() {
+          $("#message").html('<div class="alert alert-danger">Error en la solicitud.</div>');
+          $("#latitud").val('');
+          $("#longitud").val('');
+          validarBotonModificar();
+        }
+      });
+    });
+
+    $('#btnModificarTaller').click(function(event) {
+      event.preventDefault();
+      Swal.fire({
+        title: '¿Modificar este taller?',
+        text: 'Se actualizarán los datos y servicios seleccionados.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, modificar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#7a3cff',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $('<input>').attr({
+            type: 'hidden',
+            name: 'modificar_taller',
+            value: 'true'
+          }).appendTo('#formModificarTaller');
+          $('#formModificarTaller')[0].submit();
+        }
+      });
+    });
+
+    var initialLat = parseFloat("{{ form.instance.latitud }}");
+    var initialLng = parseFloat("{{ form.instance.longitud }}");
+    if (!isNaN(initialLat) && !isNaN(initialLng)) {
+      initializeMap(initialLat, initialLng, 13);
+    }
+
+    validarBotonModificar();
+  });
 </script>
 {% endblock js %}

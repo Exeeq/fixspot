@@ -20,6 +20,7 @@ import docx
 from io import BytesIO
 from functools import wraps
 from django.http import HttpResponseForbidden
+from urllib.parse import quote_plus
 
 def role_required(roles):
     def decorator(view_func):
@@ -81,12 +82,14 @@ def administrar_talleres(request):
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
 
 @role_required(["Administrador"])
+@role_required(["Administrador"])
 def crear_taller(request):
     form = TallerForm()
     coordinates = {}
     address = ""
 
     if request.method == 'POST':
+        # ----- Crear taller -----
         if 'crear_taller' in request.POST:
             form = TallerForm(request.POST, request.FILES)
             if form.is_valid():
@@ -94,77 +97,124 @@ def crear_taller(request):
                 latitud = request.POST.get('latitud')
                 longitud = request.POST.get('longitud')
                 direccion = request.POST.get('direccion')
+
                 if latitud and longitud:
                     taller.latitud = float(latitud)
                     taller.longitud = float(longitud)
                 if direccion:
                     taller.direccion = direccion
-                taller.save()
-                return redirect('administrar_talleres')
-        elif 'obtener_ubicacion' in request.POST:
-            address = request.POST.get('address')
-            api_key = '855d3348e0ee4298b17b00e020377da5'
-            base_url = 'https://api.opencagedata.com/geocode/v1/json'
-            params = {'q': address, 'key': api_key}
-            response = requests.get(base_url, params=params)
-            if response.status_code == 200:
-                data = response.json()
-                if data['results']:
-                    location = data['results'][0]['geometry']
-                    address_details = data['results'][0]['components']
-                    if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
-                        coordinates = {
-                            'lat': location['lat'],
-                            'lng': location['lng']
-                        }
-                        return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
-                    else:
-                        return JsonResponse({'success': False, 'error': 'La dirección seleccionada no está en la Región Metropolitana.'})
-            return JsonResponse({'success': False, 'error': 'Error en la solicitud de geocodificación.'})
 
-    return render(request, 'core/crear_taller.html', {'form': form, 'coordinates': coordinates, 'address': address})
+                taller.save()
+                form.save_m2m()
+                messages.success(request, "Taller creado correctamente.")
+                return redirect('administrar_talleres')
+            else:
+                messages.error(request, "Error al crear el taller. Revisa los campos.")
+
+        # ----- Obtener ubicación -----
+        elif 'obtener_ubicacion' in request.POST:
+            address = request.POST.get('address', '').strip()
+            if not address:
+                return JsonResponse({'success': False, 'error': 'No se ingresó dirección.'})
+
+            try:
+                # Codificar dirección para evitar errores con acentos y comas
+                encoded_address = quote_plus(address)
+
+                url = f'https://nominatim.openstreetmap.org/search?q={encoded_address}&format=json&addressdetails=1&limit=1'
+                headers = {'User-Agent': 'FixSpotApp (contacto: soporte@fixspot.cl)'}
+                response = requests.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                data = response.json()
+
+                if not data:
+                    return JsonResponse({'success': False, 'error': 'No se encontró la dirección especificada.'})
+
+                location = data[0]
+                lat = location.get('lat')
+                lon = location.get('lon')
+
+                if not lat or not lon:
+                    return JsonResponse({'success': False, 'error': 'No se pudieron obtener coordenadas.'})
+
+                coordinates = {'lat': float(lat), 'lng': float(lon)}
+                return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
+
+            except requests.RequestException as e:
+                print(f"[ERROR NOMINATIM REQUEST] {str(e)}")
+                return JsonResponse({'success': False, 'error': 'Error al conectarse con el servicio de geolocalización.'})
+            except ValueError as e:
+                print(f"[ERROR JSON PARSE] {str(e)}")
+                return JsonResponse({'success': False, 'error': 'Error al procesar la respuesta del servidor.'})
+
+    return render(request, 'core/crear_taller.html', {'form': form})
+
+
+
 
 @role_required(["Administrador"])
 def modificar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
+
     if request.method == 'POST':
         if 'modificar_taller' in request.POST:
             form = TallerForm(request.POST, request.FILES, instance=taller)
             if form.is_valid():
                 taller_modificado = form.save(commit=False)
-                # Aquí actualizamos la dirección si se recibió una nueva desde el formulario
                 if 'direccion' in request.POST:
                     taller_modificado.direccion = request.POST['direccion']
                 taller_modificado.save()
+                form.save_m2m()
+                messages.success(request, "Taller modificado correctamente.")
                 return redirect('administrar_talleres')
+            else:
+                messages.error(request, "Error al modificar el taller. Revisa los campos.")
         elif 'obtener_ubicacion' in request.POST:
-            address = request.POST.get('address')
-            api_key = '855d3348e0ee4298b17b00e020377da5'
-            base_url = 'https://api.opencagedata.com/geocode/v1/json'
-            params = {'q': address, 'key': api_key}
-            response = requests.get(base_url, params=params)
-            if response.status_code == 200:
+            address = request.POST.get('address', '').strip()
+            if not address:
+                return JsonResponse({'success': False, 'error': 'No se ingresó dirección.'})
+
+            try:
+                #Codificamos la dirección para evitar errores con comas o acentos
+                encoded_address = quote_plus(address)
+
+                url = f'https://nominatim.openstreetmap.org/search?q={encoded_address}&format=json&addressdetails=1&limit=1'
+                headers = {'User-Agent': 'FixSpotApp (contacto: soporte@fixspot.cl)'}
+                response = requests.get(url, headers=headers, timeout=10)
+
+                response.raise_for_status()
                 data = response.json()
-                if data['results']:
-                    location = data['results'][0]['geometry']
-                    address_details = data['results'][0]['components']
-                    if 'state' in address_details and address_details['state'] == 'Santiago Metropolitan Region':
-                        coordinates = {
-                            'lat': location['lat'],
-                            'lng': location['lng']
-                        }
-                        # Actualizamos la dirección en el objeto taller y lo guardamos
-                        taller.direccion = address
-                        taller.save()
-                        return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
-                    else:
-                        return JsonResponse({'success': False, 'error': 'La dirección seleccionada no está en la Región Metropolitana.'})
-            return JsonResponse({'success': False, 'error': 'Error en la solicitud de geocodificación.'})
+
+                if not data:
+                    return JsonResponse({'success': False, 'error': 'No se encontró la dirección especificada.'})
+
+                location = data[0]
+                lat = location.get('lat')
+                lon = location.get('lon')
+
+                if not lat or not lon:
+                    return JsonResponse({'success': False, 'error': 'No se pudieron obtener coordenadas.'})
+
+                # Guardamos la dirección y coordenadas
+                taller.direccion = address
+                taller.save()
+
+                coordinates = {'lat': float(lat), 'lng': float(lon)}
+                return JsonResponse({'success': True, 'coordinates': coordinates, 'address': address})
+
+            except requests.RequestException as e:
+                print(f"[ERROR NOMINATIM REQUEST] {str(e)}")
+                return JsonResponse({'success': False, 'error': 'Error al conectarse con el servicio de geolocalización.'})
+            except ValueError as e:
+                print(f"[ERROR JSON PARSE] {str(e)}")
+                return JsonResponse({'success': False, 'error': 'Error al procesar la respuesta del servidor.'})
 
     else:
         form = TallerForm(instance=taller)
-    
+
     return render(request, 'core/modificar_taller.html', {'form': form, 'taller': taller})
+
+
 
 @role_required(["Administrador"])
 def eliminar_taller(request, id_taller):
@@ -375,18 +425,22 @@ def autocomplete_address(request):
             'limit': 5,
         }
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+            'User-Agent': 'FixSpotApp (contacto: soporte@fixspot.cl)'
         }
         try:
-            response = requests.get(url, params=params, headers=headers)
-            response.raise_for_status()  
+            response = requests.get(url, params=params, headers=headers, timeout=10)
+            response.raise_for_status()
             suggestions = response.json()
+
             results = []
-            for suggestion in suggestions:
-                results.append(suggestion['display_name'])
+            for s in suggestions:
+                display = s.get('display_name', '')
+                if display:
+                    # jQuery UI friendly
+                    results.append({'label': display, 'value': display})
             return JsonResponse(results, safe=False)
         except requests.RequestException as e:
-            print(f"Error during requests to {url}: {str(e)}")
+            print(f"[AUTOCOMPLETE ERROR] {str(e)}")
             return JsonResponse([], safe=False)
     return JsonResponse([], safe=False)
 

@@ -49,7 +49,7 @@ class Taller(models.Model):
     idTaller = models.AutoField(primary_key=True)
     nombreTaller = models.CharField(max_length=46, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
-    direccion = models.CharField(max_length=100, blank=False, null=False)
+    direccion = models.CharField(max_length=500, blank=False, null=False)
     telefono = models.CharField(max_length=15, blank=False, null=False)
     imagen = models.ImageField(upload_to='taller_imagenes/', blank=False, null=False)
     idUsuario = models.ForeignKey('UsuarioCustom', on_delete=models.CASCADE, blank=True, null=True)
@@ -59,6 +59,27 @@ class Taller(models.Model):
 
     def __str__(self):
         return self.nombreTaller
+    
+# MODELOS RELACIONADOS A LOS SERVICIOS
+class Servicio(models.Model):
+    idServicio = models.AutoField(primary_key=True)
+    nombreServicio = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nombreServicio
+
+
+class TallerServicio(models.Model):
+    idTaller = models.ForeignKey('Taller', on_delete=models.CASCADE)
+    idServicio = models.ForeignKey('Servicio', on_delete=models.CASCADE)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('idTaller', 'idServicio')
+
+    def __str__(self):
+        return f"{self.idTaller.nombreTaller} - {self.idServicio.nombreServicio}"
 
 #MODELOS RELACIONADOS AL VEHÍCULO:
 class Marca(models.Model):

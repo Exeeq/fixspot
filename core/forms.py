@@ -28,10 +28,29 @@ class RegisterForm(UserCreationForm):
         fields = ['username', 'run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'comuna']
 
 #FORMULARIO TALLER:
+from django import forms
+from django.core.validators import RegexValidator
+from .models import Taller, Servicio, TallerServicio
+
 class TallerForm(forms.ModelForm):
+    servicios = forms.ModelMultipleChoiceField(
+        queryset=Servicio.objects.all().order_by('nombreServicio'),
+        widget=forms.CheckboxSelectMultiple(),
+        required=False,
+        label="Servicios que ofrece el taller"
+    )
+
     class Meta:
         model = Taller
-        fields = ['nombreTaller', 'descripcion', 'telefono', 'idComuna', 'idUsuario', 'imagen']
+        fields = [
+            'nombreTaller',
+            'descripcion',
+            'telefono',
+            'idComuna',
+            'idUsuario',
+            'imagen',
+            'servicios'
+        ]
         labels = {
             'nombreTaller': 'Nombre del taller',
             'descripcion': 'Descripción',
@@ -39,6 +58,7 @@ class TallerForm(forms.ModelForm):
             'idComuna': 'Comuna',
             'idUsuario': 'Encargado del taller',
             'imagen': 'Imagen',
+            'servicios': 'Servicios disponibles',
         }
 
     telefono = forms.CharField(
@@ -55,12 +75,41 @@ class TallerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TallerForm, self).__init__(*args, **kwargs)
-        self.fields['nombreTaller'].required = True
-        self.fields['descripcion'].required = True
-        self.fields['telefono'].required = True
-        self.fields['idComuna'].required = True
-        self.fields['idUsuario'].required = True
-        self.fields['imagen'].required = True
+
+        # Definir orden visual más lógico
+        self.order_fields([
+            'nombreTaller',
+            'descripcion',
+            'telefono',
+            'idComuna',
+            'idUsuario',
+            'imagen',
+            'servicios',
+        ])
+
+        # Campos requeridos y estilos base
+        for name, field in self.fields.items():
+            if name != 'servicios':
+                field.required = True
+                field.widget.attrs.update({
+                    'class': 'form-control form-field shadow-sm mb-3 rounded-3'
+                })
+
+        # Si el taller ya existe, marcar sus servicios
+        if self.instance.pk:
+            self.fields['servicios'].initial = Servicio.objects.filter(
+                tallerservicio__idTaller=self.instance
+            )
+
+    def save(self, commit=True):
+        taller = super().save(commit=commit)
+        if commit:
+            servicios = self.cleaned_data.get('servicios', [])
+            TallerServicio.objects.filter(idTaller=taller).delete()
+            for s in servicios:
+                TallerServicio.objects.create(idTaller=taller, idServicio=s)
+        return taller
+
 
 class AgendaForm(forms.ModelForm):
     class Meta:

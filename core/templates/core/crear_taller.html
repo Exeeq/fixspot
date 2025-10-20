@@ -1,167 +1,256 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <style>
-    #map {
-        height: 100%;
-    }
-    .map-card {
-        height: 400px;
-    }
+  #map { height: 400px; border-radius: 12px; }
+  .map-card { height: 100%; }
+  .form-container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+  }
+  .form-label { font-weight: 600; }
+  .btn-primary {
+    background-color: #7a3cff;
+    border: none;
+  }
+  .btn-primary:hover {
+    background-color: #692eff;
+  }
+  .btn-background {
+    background-color: #7a3cff;
+    color: white;
+  }
+  .btn-background:hover {
+    background-color: #692eff;
+  }
+
+  /* 🔹 Campos generales */
+  .form-field {
+    border: 1px solid #dcdcdc;
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  .form-field:focus {
+    border-color: #7a3cff;
+    box-shadow: 0 0 0 3px rgba(122, 60, 255, 0.15);
+  }
+
+  /* 🔹 Caja de selección con scroll */
+  .servicios-box {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fafafa;
+    padding: 10px 12px;
+    height: 200px;          /* tamaño fijo visible */
+    overflow-y: auto;       /* scroll interno */
+  }
+
+  .servicios-box label {
+    display: block;
+    margin-bottom: 6px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .servicios-box label:hover {
+    background-color: #f0e8ff;
+    border-color: #7a3cff;
+  }
+
+  .servicios-box input[type="checkbox"] {
+    accent-color: #7a3cff;
+    transform: scale(1.1);
+    margin-right: 8px;
+  }
+
+  .field-servicios {
+    margin-top: 20px;
+  }
+
+  .field-servicios label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
 </style>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 {% endblock %}
+
 {% block contenido %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 mt-5">
-            <div class="intro-excerpt">
-                <h1 class="fw-bold text-center">CREAR TALLER</h1>
-            </div>
-        </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-6 mt-5">
+      <div class="intro-excerpt">
+        <h1 class="fw-bold text-center text-uppercase">CREAR TALLER</h1>
+      </div>
     </div>
-    <br><br>
+  </div>
 </div>
-<div class="bg-white">
-    <div class="container mt-5 mb-5">
-        <div class="row justify-content-center mt-4 mb-5">
-            <div class="col-md-6">
-                <form method="POST" enctype="multipart/form-data" class="p-4 rounded shadow-lg" id="formCrearTaller">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <div class="form-group">
-                        <label for="id_address">Ingresar Dirección</label>
-                        <input type="text" id="id_address" class="form-control" placeholder="Ingrese su dirección">
-                        <button type="button" class="btn btn-primary mt-2" id="btnObtenerDireccion">Obtener Dirección</button>
-                    </div>
-                    <input type="hidden" id="latitud" name="latitud">
-                    <input type="hidden" id="longitud" name="longitud">
-                    <input type="hidden" id="direccion" name="direccion">
-                    <button type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" id="btnCrearTaller" disabled>Crear taller</button>
-                </form>
-                <div id="message" class="mt-3"></div>
+
+<div class="bg-page py-5">
+  <div class="container">
+    <div class="row g-4 justify-content-center align-items-start">
+      
+      <!-- Formulario -->
+      <div class="col-lg-6">
+        <div class="form-container">
+          <form method="POST" enctype="multipart/form-data" id="formCrearTaller">
+            {% csrf_token %}
+
+            <div class="mb-3">{{ form.nombreTaller|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.descripcion|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.telefono|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.idComuna|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.idUsuario|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.imagen|as_crispy_field }}</div>
+
+            <!-- Caja de servicios con scroll -->
+            <div class="field-servicios">
+              <label for="id_servicios">Servicios que ofrece el taller</label>
+              <div class="servicios-box">
+                {% for checkbox in form.servicios %}
+                  <label>{{ checkbox.tag }} {{ checkbox.choice_label }}</label>
+                {% endfor %}
+              </div>
             </div>
-            <div class="col-md-6">
-                <div class="card map-card">
-                    <div id="map"></div>
-                </div>
+
+            <!-- Dirección -->
+            <div class="mt-4">
+              <label for="id_address" class="form-label">Ingresar Dirección</label>
+              <input type="text" id="id_address" class="form-control" placeholder="Ej: Ernesto Alvear 245, Puente Alto">
+              <button type="button" class="btn btn-primary mt-2 w-100" id="btnObtenerDireccion">Obtener Dirección</button>
             </div>
+
+            <!-- Coordenadas ocultas -->
+            <input type="hidden" id="latitud" name="latitud">
+            <input type="hidden" id="longitud" name="longitud">
+            <input type="hidden" id="direccion" name="direccion">
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-background px-5 py-2 rounded-pill" id="btnCrearTaller" disabled>Crear taller</button>
+            </div>
+          </form>
+
+          <div id="message" class="mt-3"></div>
         </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="col-lg-6">
+        <div class="card map-card shadow-lg border-0">
+          <div id="map"></div>
+        </div>
+      </div>
+
     </div>
+  </div>
 </div>
 {% endblock contenido %}
+
 {% block js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 
 <script>
-    $(document).ready(function() {
-        var map = L.map('map').setView([-33.4489, -70.6693], 10);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+$(document).ready(function() {
+  const map = L.map('map').setView([-33.4489, -70.6693], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-        function validarBotonCrear() {
-            var latitud = $("#latitud").val();
-            var longitud = $("#longitud").val();
-            if (latitud && longitud) {
-                $("#btnCrearTaller").prop("disabled", false);
-            } else {
-                $("#btnCrearTaller").prop("disabled", true);
-            }
+  function validarBotonCrear() {
+    $("#btnCrearTaller").prop("disabled", !($("#latitud").val() && $("#longitud").val()));
+  }
+
+  $("#btnObtenerDireccion").click(function(e) {
+    e.preventDefault();
+    const address = $("#id_address").val();
+    $.ajax({
+      url: "{% url 'crear_taller' %}",
+      type: "POST",
+      data: {
+        address: address,
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        obtener_ubicacion: true
+      },
+      success: function(response) {
+        if (response.success) {
+          const lat = response.coordinates.lat;
+          const lng = response.coordinates.lng;
+          map.setView([lat, lng], 16);
+          L.marker([lat, lng]).addTo(map).bindPopup('Ubicación actual').openPopup();
+          $("#latitud").val(lat);
+          $("#longitud").val(lng);
+          $("#direccion").val(address);
+          $("#message").html('<div class="alert alert-success">Dirección válida.</div>');
+        } else {
+          $("#message").html('<div class="alert alert-danger">' + response.error + '</div>');
         }
-
-        $("#btnObtenerDireccion").click(function(event) {
-            event.preventDefault();
-            var address = $("#id_address").val();
-            $.ajax({
-                url: "{% url 'crear_taller' %}",
-                type: "POST",
-                data: {
-                    address: address,
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    obtener_ubicacion: true
-                },
-                success: function(response) {
-                    if (response.success) {
-                        var lat = response.coordinates.lat;
-                        var lng = response.coordinates.lng;
-                        map.setView([lat, lng], 17);
-                        L.marker([lat, lng]).addTo(map)
-                            .bindPopup('Ubicación')
-                            .openPopup();
-                        $("#latitud").val(lat);
-                        $("#longitud").val(lng);
-                        $("#direccion").val(address);
-                        $("#message").html('<div class="alert alert-success">La dirección seleccionada es válida</div>');
-                    } else {
-                        $("#message").html('<div class="alert alert-danger">' + response.error + '</div>');
-                        $("#latitud").val('');
-                        $("#longitud").val('');
-                        $("#direccion").val('');
-                    }
-                    validarBotonCrear();
-                },
-                error: function() {
-                    $("#message").html('<div class="alert alert-danger">Error en la solicitud de geocodificación.</div>');
-                    $("#latitud").val('');
-                    $("#longitud").val('');
-                    $("#direccion").val('');
-                    validarBotonCrear();
-                }
-            });
-        });
-
-        $("#id_address").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{% url 'autocomplete_address' %}",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function(data) {
-                        response(data);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Error during AJAX request: ", error);
-                        response([]);
-                    }
-                });
-            },
-            minLength: 2,
-        });
-
-        $('#btnCrearTaller').click(function(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: '¿Está seguro de que desea crear este taller?',
-                text: 'Esta acción creará un nuevo taller con los datos proporcionados',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, crear taller',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'crear_taller',
-                        value: 'true'
-                    }).appendTo('#formCrearTaller');
-                    $('#formCrearTaller')[0].submit();
-                }
-            });
-        });
-
-        validarBotonCrear(); 
+        validarBotonCrear();
+      },
+      error: function() {
+        $("#message").html('<div class="alert alert-danger">Error en la solicitud.</div>');
+      }
     });
+  });
+
+  $(function () {
+      $("#id_address").autocomplete({
+        source: function(request, response) {
+          $.ajax({
+            url: "{% url 'autocomplete_address' %}",
+            dataType: "json",
+            data: { term: request.term },
+            success: function(data) { response(data); },
+            error: function(xhr, status, error) {
+              console.log("Error en autocompletado:", error);
+              response([]);
+            }
+          });
+        },
+        minLength: 3
+      });
+
+      $("#id_address").on("autocompleteselect", function (e, ui) {
+        const val = (ui.item && (ui.item.value || ui.item.label)) || ui.item || "";
+        $(this).val((val || "").toString().trim());
+        $(this).trigger("change");
+      });
+    });
+
+  $('#btnCrearTaller').click(function(e) {
+    e.preventDefault();
+    Swal.fire({
+      title: '¿Crear este taller?',
+      text: 'Se registrará con la dirección y servicios seleccionados.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#7a3cff',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $('<input>').attr({
+          type: 'hidden',
+          name: 'crear_taller',
+          value: 'true'
+        }).appendTo('#formCrearTaller');
+        $('#formCrearTaller')[0].submit();
+      }
+    });
+  });
+});
 </script>
 {% endblock js %}

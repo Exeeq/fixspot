@@ -63,7 +63,7 @@
                                                 <p class="fw-bold bg-warning text-white text-uppercase h5">Esperando pago...</p>
                                             {% elif reserva.estado.idEstado == 3 %}
                                                 <p class="fw-bold bg-success text-white text-uppercase h5">¡Reparación pagada!</p>
-                                                <a href='{% url "generar_documento_word" reserva.idAgenda %}'' class="btn btn-primary">DESCARGAR DOCUMENTO</a>
+                                                <a href='{% url "generar_boleta_pdf" reserva.idAgenda %}' class="btn btn-primary">DESCARGAR DOCUMENTO</a>
                                             {% else %}
                                                 <a href="{% url 'reporte_pago' reserva.idAgenda %}" class="btn btn-primary">Generar Reporte de Pago</a>
                                             {% endif %}

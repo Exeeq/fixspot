@@ -68,6 +68,7 @@ urlpatterns = [
 
     path('actualizar_estado_agenda/<int:id_agenda>/', actualizar_estado_agenda, name='actualizar_estado_agenda'),
     path('generar_documento_word/<int:id_agenda>/', generar_documento_word, name='generar_documento_word'),
+    path('boleta_pdf/<int:id_agenda>/', generar_boleta_pdf, name='generar_boleta_pdf'),
 
     path('mis_tickets/', mis_tickets, name="mis_tickets"),
 

@@ -132,12 +132,19 @@ class Agenda(models.Model):
     def __str__(self):
         return f"{self.idTaller} - {self.fechaAtencion} {self.horaAtencion}"
 
-    
+class FormaPago(models.Model):
+    idFormaPago = models.AutoField(primary_key=True)
+    nombreFormaPago = models.CharField(max_length=50, blank=False, null=False)
+
+    def __str__(self):
+        return self.nombreFormaPago
+       
 class ReportePago(models.Model):
     idReporte = models.AutoField(primary_key=True)
     reserva = models.OneToOneField(Agenda, on_delete=models.CASCADE)
     comentario = models.TextField(blank=True, null=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
+    idFormaPago = models.ForeignKey(FormaPago, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return f"Reporte de pago para reserva {self.reserva.idAgenda}"

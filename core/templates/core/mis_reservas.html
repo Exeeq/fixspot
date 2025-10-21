@@ -26,7 +26,7 @@
                             <tr>
                                 <th scope="col">Fecha de atención</th>
                                 <th scope="col">Hora de atención</th>
-                                <th scope="col">Tipo de Agenda</th>
+                                <th scope="col">Servicio</th>
                                 <th scope="col">Taller</th>
                                 <th scope="col">Patente Vehículo</th>
                                 <th scope="col">Acciones</th>
@@ -37,7 +37,7 @@
                                 <tr>
                                     <td>{{ agenda.fechaAtencion }}</td>
                                     <td>{{ agenda.horaAtencion }}</td>
-                                    <td>{{ agenda.idTipoAgenda }}</td>
+                                    <td>{{ agenda.idServicio }}</td>
                                     <td>{{ agenda.idTaller }}</td>
                                     <td>{{ agenda.idVehiculo }}</td>
                                     <td>
@@ -47,7 +47,7 @@
                                             <a href="{% url 'detalle_reserva' id_agenda=agenda.idAgenda %}" class="btn btn-primary">Ir a pagar</a>
                                         {% elif agenda.estado.idEstado == 3 %}
                                             <p class="fw-bold bg-success text-white text-uppercase h5">¡Reparación pagada!</p>
-                                            <a href='{% url "generar_documento_word" agenda.idAgenda %}'' class="btn btn-primary">DESCARGAR DOCUMENTO</a>
+                                            <a href="{% url 'generar_boleta_pdf' agenda.idAgenda %}" class="btn btn-primary">DESCARGAR DOCUMENTO</a>
                                         {% endif %}
                                     </td>
                                 </tr>

@@ -21,6 +21,12 @@ from io import BytesIO
 from functools import wraps
 from django.http import HttpResponseForbidden
 from urllib.parse import quote_plus
+from django.shortcuts import get_object_or_404
+from reportlab.lib import colors
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+
+
 
 def role_required(roles):
     def decorator(view_func):
@@ -212,9 +218,6 @@ def modificar_taller(request, id_taller):
 
     return render(request, 'core/modificar_taller.html', {'form': form, 'taller': taller})
 
-
-
-
 @role_required(["Administrador"])
 def eliminar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
@@ -304,26 +307,108 @@ def generar_documento_word(request, id_agenda):
     response['Content-Disposition'] = f'attachment; filename=Reserva_{agenda.idAgenda}.docx'
     return response
 
+def generar_boleta_pdf(request, id_agenda):
+    agenda = get_object_or_404(Agenda, idAgenda=id_agenda)
+    reporte_pago = ReportePago.objects.filter(reserva=agenda).first()
+
+    # Crear PDF
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    # === ENCABEZADO ===
+    p.setFillColorRGB(0.35, 0.16, 0.51)  # Morado FixSpot
+    p.rect(0, height - 100, width, 100, fill=True, stroke=False)
+
+    p.setFillColor(colors.white)
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(50, height - 60, "FIXSPOT")
+    p.setFont("Helvetica", 12)
+    p.drawString(50, height - 80, "Boleta de Servicio")
+    p.setFont("Helvetica", 10)
+    p.drawString(450, height - 60, f"Fecha emisión: {datetime.now().strftime('%d/%m/%Y')}")
+
+    # === DATOS PRINCIPALES ===
+    p.setFillColor(colors.black)
+    p.setFont("Helvetica-Bold", 13)
+    p.drawString(50, height - 130, "DETALLE DE LA RESERVA")
+    p.setFont("Helvetica", 11)
+    p.drawString(50, height - 150, f"Taller: {agenda.idTaller.nombreTaller}")
+    p.drawString(50, height - 165, f"Servicio: {agenda.idServicio.nombreServicio}")
+    p.drawString(50, height - 180, f"Cliente: {agenda.cliente.pnombre} {agenda.cliente.ap_paterno}")
+    p.drawString(50, height - 195, f"Vehículo: {agenda.idVehiculo.patente}")
+    p.drawString(50, height - 210, f"Fecha atención: {agenda.fechaAtencion.strftime('%d/%m/%Y')}  |  Hora: {agenda.horaAtencion.strftime('%H:%M')}")
+
+    # === LÍNEA DIVISORIA ===
+    p.setStrokeColor(colors.grey)
+    p.line(50, height - 225, width - 50, height - 225)
+
+    # === DETALLE DEL PAGO ===
+    y = height - 260
+    if reporte_pago:
+        p.setFont("Helvetica-Bold", 13)
+        p.drawString(50, y, "DETALLE DEL PAGO")
+        y -= 20
+        p.setFont("Helvetica", 11)
+        metodo = reporte_pago.idFormaPago.nombreFormaPago if hasattr(reporte_pago, 'idFormaPago') and reporte_pago.idFormaPago else "Efectivo"
+        p.drawString(50, y, f"Método de pago: {metodo}")
+        y -= 15
+        p.drawString(50, y, f"Comentario: {reporte_pago.comentario or 'N/A'}")
+        y -= 15
+        p.drawString(50, y, f"Monto Total: ${reporte_pago.monto:,.0f}")
+
+    # === SECCIÓN TOTAL ===
+    y -= 40
+    p.setFillColorRGB(0.95, 0.95, 0.95)
+    p.roundRect(50, y - 40, width - 100, 50, 8, fill=True, stroke=False)
+    p.setFillColor(colors.black)
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(60, y - 15, "Total a Pagar:")
+    p.setFont("Helvetica-Bold", 14)
+    p.drawRightString(width - 70, y - 15, f"${reporte_pago.monto:,.0f}")
+
+    # === FOOTER ===
+    p.setFont("Helvetica-Oblique", 9)
+    p.setFillColor(colors.grey)
+    p.drawString(50, 80, "Documento generado automáticamente por FixSpot")
+    p.drawString(50, 65, "Este documento no requiere firma ni timbre.")
+    p.drawString(50, 50, "© FixSpot - Todos los derechos reservados.")
+
+    # Finalizar PDF
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+
+    # Nombre del archivo con formato claro
+    filename = f"Boleta_FixSpot_{agenda.idTaller.nombreTaller}_{agenda.idAgenda}.pdf".replace(" ", "_")
+
+    return HttpResponse(buffer, content_type="application/pdf", headers={
+        "Content-Disposition": f'attachment; filename="{filename}"'
+    })
+
+
 def detalle_reserva(request, id_agenda):
     agenda = get_object_or_404(Agenda, idAgenda=id_agenda)
     reporte_pago = ReportePago.objects.filter(reserva=agenda).first()
+    formas_pago = FormaPago.objects.all()
 
     try:
         respuesta = requests.get('https://mindicador.cl/api/')
         monedas = respuesta.json()
         tasa_dolar = Decimal(monedas['dolar']['valor'])
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
         tasa_dolar = None
 
     monto_dolares = None
     if reporte_pago and tasa_dolar:
         monto_dolares = round(Decimal(reporte_pago.monto) / tasa_dolar, 2)
-        monto_dolares = format(monto_dolares, '.2f')  
+        monto_dolares = format(monto_dolares, '.2f')
 
     context = {
         'agenda': agenda,
         'reporte_pago': reporte_pago,
         'monto_dolares': monto_dolares,
+        'formas_pago': formas_pago,
     }
     return render(request, 'core/detalle_reserva.html', context)
 

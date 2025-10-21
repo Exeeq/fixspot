@@ -7,3 +7,4 @@ requests
 Pillow
 python-docx
 djangorestframework-simplejwt==5.2.2
+reportlab

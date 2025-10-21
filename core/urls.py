@@ -11,7 +11,6 @@ router.register(r'talleres', TallerViewSet)
 router.register(r'marcas', MarcaViewSet)
 router.register(r'tipos-vehiculo', TipoVehiculoViewSet)
 router.register(r'vehiculos', VehiculoViewSet)
-router.register(r'tipos-agenda', TipoAgendaViewSet)
 router.register(r'agendas', AgendaViewSet)
 
 urlpatterns = [

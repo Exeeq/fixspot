@@ -44,11 +44,6 @@ class VehiculoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Serializadores para modelos relacionados a la agenda
-class TipoAgendaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TipoAgenda
-        fields = '__all__'
-
 class AgendaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agenda

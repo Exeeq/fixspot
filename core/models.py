@@ -110,13 +110,6 @@ class Vehiculo(models.Model):
         return self.patente
 
 #MODELOS RELACIONADOS A LA AGENDA:
-class TipoAgenda(models.Model):
-    idTipo= models.AutoField(primary_key=True)
-    nombreTipo = models.CharField(max_length=32, blank=False, null=False)
-
-    def __str__(self):
-        return self.nombreTipo
-    
 class EstadoAgenda(models.Model):
     idEstado = models.AutoField(primary_key=True)
     nombreEstado = models.CharField(max_length=50, blank=False, null=False)
@@ -128,14 +121,16 @@ class Agenda(models.Model):
     idAgenda = models.AutoField(primary_key=True)
     fechaAtencion = models.DateField(null=False, blank=False)
     horaAtencion = models.TimeField(blank=False, null=False)
-    idTipoAgenda = models.ForeignKey(TipoAgenda, on_delete=models.CASCADE, blank=False, null=False)
-    idTaller = models.ForeignKey(Taller, on_delete=models.CASCADE, blank=False, null=False) 
+    
+    idServicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, blank=False, null=False)
+    
+    idTaller = models.ForeignKey(Taller, on_delete=models.CASCADE, blank=False, null=False)
     idVehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, blank=False, null=False)
     cliente = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=False, null=False)
     estado = models.ForeignKey(EstadoAgenda, on_delete=models.CASCADE, blank=True, null=True, default=1) 
 
     def __str__(self):
-        return self.idAgenda
+        return f"{self.idTaller} - {self.fechaAtencion} {self.horaAtencion}"
 
     
 class ReportePago(models.Model):

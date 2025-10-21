@@ -65,10 +65,6 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
 
-class TipoAgendaViewSet(viewsets.ModelViewSet):
-    queryset = TipoAgenda.objects.all()
-    serializer_class = TipoAgendaSerializer
-
 class AgendaViewSet(viewsets.ModelViewSet):
     queryset = Agenda.objects.all()
     serializer_class = AgendaSerializer
@@ -81,7 +77,6 @@ def administrar_talleres(request):
     talleres = Taller.objects.all()
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
 
-@role_required(["Administrador"])
 @role_required(["Administrador"])
 def crear_taller(request):
     form = TallerForm()
@@ -103,9 +98,12 @@ def crear_taller(request):
                     taller.longitud = float(longitud)
                 if direccion:
                     taller.direccion = direccion
-
                 taller.save()
-                form.save_m2m()
+
+                servicios_seleccionados = form.cleaned_data.get('servicios', [])
+                for servicio in servicios_seleccionados:
+                    TallerServicio.objects.create(idTaller=taller, idServicio=servicio)
+
                 messages.success(request, "Taller creado correctamente.")
                 return redirect('administrar_talleres')
             else:
@@ -118,9 +116,7 @@ def crear_taller(request):
                 return JsonResponse({'success': False, 'error': 'No se ingresó dirección.'})
 
             try:
-                # Codificar dirección para evitar errores con acentos y comas
                 encoded_address = quote_plus(address)
-
                 url = f'https://nominatim.openstreetmap.org/search?q={encoded_address}&format=json&addressdetails=1&limit=1'
                 headers = {'User-Agent': 'FixSpotApp (contacto: soporte@fixspot.cl)'}
                 response = requests.get(url, headers=headers, timeout=10)
@@ -150,13 +146,12 @@ def crear_taller(request):
     return render(request, 'core/crear_taller.html', {'form': form})
 
 
-
-
 @role_required(["Administrador"])
 def modificar_taller(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
 
     if request.method == 'POST':
+        # ----- Modificar taller -----
         if 'modificar_taller' in request.POST:
             form = TallerForm(request.POST, request.FILES, instance=taller)
             if form.is_valid():
@@ -164,24 +159,28 @@ def modificar_taller(request, id_taller):
                 if 'direccion' in request.POST:
                     taller_modificado.direccion = request.POST['direccion']
                 taller_modificado.save()
-                form.save_m2m()
+
+                TallerServicio.objects.filter(idTaller=taller_modificado).delete()
+                servicios_seleccionados = form.cleaned_data.get('servicios', [])
+                for servicio in servicios_seleccionados:
+                    TallerServicio.objects.create(idTaller=taller_modificado, idServicio=servicio)
+
                 messages.success(request, "Taller modificado correctamente.")
                 return redirect('administrar_talleres')
             else:
                 messages.error(request, "Error al modificar el taller. Revisa los campos.")
+
+        # ----- Obtener ubicación -----
         elif 'obtener_ubicacion' in request.POST:
             address = request.POST.get('address', '').strip()
             if not address:
                 return JsonResponse({'success': False, 'error': 'No se ingresó dirección.'})
 
             try:
-                #Codificamos la dirección para evitar errores con comas o acentos
                 encoded_address = quote_plus(address)
-
                 url = f'https://nominatim.openstreetmap.org/search?q={encoded_address}&format=json&addressdetails=1&limit=1'
                 headers = {'User-Agent': 'FixSpotApp (contacto: soporte@fixspot.cl)'}
                 response = requests.get(url, headers=headers, timeout=10)
-
                 response.raise_for_status()
                 data = response.json()
 
@@ -195,7 +194,6 @@ def modificar_taller(request, id_taller):
                 if not lat or not lon:
                     return JsonResponse({'success': False, 'error': 'No se pudieron obtener coordenadas.'})
 
-                # Guardamos la dirección y coordenadas
                 taller.direccion = address
                 taller.save()
 
@@ -213,6 +211,7 @@ def modificar_taller(request, id_taller):
         form = TallerForm(instance=taller)
 
     return render(request, 'core/modificar_taller.html', {'form': form, 'taller': taller})
+
 
 
 
@@ -454,7 +453,7 @@ def agendar_hora(request, id_taller):
     taller = get_object_or_404(Taller, idTaller=id_taller)
 
     if request.method == 'POST':
-        form = AgendaForm(request.POST, user=request.user, taller=taller)
+        form = AgendaForm(request.POST or None, user=request.user, taller=taller)
         if form.is_valid():
             agenda = form.save(commit=False)
             agenda.idTaller = taller

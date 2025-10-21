@@ -114,11 +114,11 @@ class TallerForm(forms.ModelForm):
 class AgendaForm(forms.ModelForm):
     class Meta:
         model = Agenda
-        fields = ['fechaAtencion', 'horaAtencion', 'idTipoAgenda', 'idVehiculo']
+        fields = ['fechaAtencion', 'horaAtencion', 'idServicio', 'idVehiculo']
         labels = {
             'fechaAtencion': 'Fecha de Atención (Solo de lunes a viernes)',
             'horaAtencion': 'Hora de Atención',
-            'idTipoAgenda': 'Tipo de Agenda',
+            'idServicio': 'Servicio disponible',
             'idVehiculo': 'Vehículo',
         }
 
@@ -127,12 +127,23 @@ class AgendaForm(forms.ModelForm):
         self.taller = kwargs.pop('taller', None)
         super(AgendaForm, self).__init__(*args, **kwargs)
 
-        self.fields['fechaAtencion'].widget = forms.DateInput(attrs={'type': 'date', 'min': datetime.today().date()})
+        self.fields['fechaAtencion'].widget = forms.DateInput(
+            attrs={'type': 'date', 'min': datetime.today().date()}
+        )
         self.fields['horaAtencion'].widget = forms.Select(choices=self.get_available_hours())
 
+        # Mostrar solo vehículos del usuario logueado
         if user:
             self.fields['idVehiculo'].queryset = Vehiculo.objects.filter(idUsuario=user)
-        
+
+        # Mostrar solo servicios del taller actual
+        if self.taller:
+            self.fields['idServicio'].queryset = Servicio.objects.filter(
+                tallerservicio__idTaller=self.taller
+            )
+        else:
+            self.fields['idServicio'].queryset = Servicio.objects.none()
+
     def get_available_hours(self):
         available_hours = [(time(hour=h), f"{h:02}:00") for h in range(9, 19)]
         if self.is_bound and 'fechaAtencion' in self.data:

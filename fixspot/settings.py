@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'fixspot.wsgi.application'
 DATABASES = {
     'default' : {
         'ENGINE' : 'django.db.backends.mysql',
-        'NAME' : 'db_fixspot',
+        'NAME' : 'fixspot-bd',
         'HOST' : 'localhost',
         'PORT' : '3306',
         'USER' : 'root',

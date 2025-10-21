@@ -287,7 +287,7 @@ def generar_documento_word(request, id_agenda):
     doc.add_heading('Detalle de la Reserva', level=1)
     doc.add_paragraph(f'Fecha de Atención: {agenda.fechaAtencion}')
     doc.add_paragraph(f'Hora de Atención: {agenda.horaAtencion}')
-    doc.add_paragraph(f'Tipo de Agenda: {agenda.idTipoAgenda}')
+    doc.add_paragraph(f'Tipo de Agenda: {agenda.idServicio}')
     doc.add_paragraph(f'Taller: {agenda.idTaller}')
     doc.add_paragraph(f'Patente Vehículo: {agenda.idVehiculo}')
 

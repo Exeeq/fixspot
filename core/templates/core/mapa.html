@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% load static %}
+{% load static %} {# MUY IMPORTANTE para poder usar {% static %} #}
 
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -7,125 +7,83 @@
 
 <style>
   :root{
-    /* Colores base de tu sitio (ajusta si tu base.html expone variables propias) */
-    --fixspot-bg: #1f2429;         /* fondo oscuro header/footer */
-    --fixspot-card: #2a3036;       /* tarjetas sobre el mapa */
-    --fixspot-primary: #7c5cff;    /* acento (morado/azulado de tu logo) */
-    --fixspot-text: #e7ecef;       /* textos claros */
-    --fixspot-muted: #a7b0b7;
+    --fixspot-bg:#1f2429;
+    --fixspot-card:#2a3036;
+    --fixspot-primary:#7c5cff;
+    --fixspot-text:#e7ecef;
+    --fixspot-muted:#a7b0b7;
   }
 
   html, body { height: 100%; margin: 0; padding: 0; }
-  /* Evita que el footer tape el mapa (ajusta 180px si tu header+footer es más alto) */
-  #map-wrap{ position: relative; height: calc(100vh - 180px); background: #0f1113; }
-  #map{ height: 100%; width: 100%; border-radius: 14px; overflow: hidden; }
 
-  /* Barra superior sobre el mapa */
+  /* MÁS ALTO y con espacio al footer */
+  #map-wrap{
+    position: relative;
+    min-height: 84vh;            /* alarga el mapa en la página */
+    padding-bottom: 32px;        /* separa del footer */
+    background:#0f1113;
+  }
+  #map{
+    height: 100%;
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  /* Toolbar */
   .map-toolbar{
     position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 16px; left: 50%; transform: translateX(-50%);
     z-index: 1001;
-    display: flex;
-    gap: 12px;
-    align-items: center;
+    display: flex; gap: 12px; align-items: center;
     background: rgba(32,37,43,.86);
     backdrop-filter: blur(6px);
     border: 1px solid rgba(255,255,255,.06);
     box-shadow: 0 8px 24px rgba(0,0,0,.35);
-    border-radius: 14px;
-    padding: 10px 12px;
+    border-radius: 14px; padding: 10px 12px;
     color: var(--fixspot-text);
   }
-  .map-title{
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing:.2px;
-    margin-right: 6px;
-    display:flex; align-items:center; gap:8px;
-  }
-  .map-title .dot{ width:8px; height:8px; border-radius:50%; background: var(--fixspot-primary); display:inline-block; }
+  .map-title{ font-weight:700; font-size:16px; letter-spacing:.2px; margin-right:6px; display:flex; gap:8px; align-items:center; }
+  .map-title .dot{ width:8px; height:8px; border-radius:50%; background:var(--fixspot-primary); display:inline-block; }
 
-  .map-search{
-    display:flex; align-items:center; gap:8px; background: var(--fixspot-card);
-    border:1px solid rgba(255,255,255,.06); border-radius: 10px; padding:6px 10px;
-  }
-  .map-search input{
-    background: transparent; border:0; outline: none; color: var(--fixspot-text);
-    min-width: 240px;
-  }
+  .map-search{ display:flex; align-items:center; gap:8px; background:var(--fixspot-card);
+    border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:6px 10px; }
+  .map-search input{ background:transparent; border:0; outline:none; color:var(--fixspot-text); min-width:240px; }
 
-  /* Botones flotantes (ubicación y encuadre) */
-  .map-fab{
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    display: flex; flex-direction: column; gap: 10px;
-    z-index: 1002;
-  }
-  .fab-btn{
-    border: none; cursor: pointer; color: #fff; background: var(--fixspot-primary);
-    padding: 10px 12px; border-radius: 12px; box-shadow: 0 10px 24px rgba(124,92,255,.35);
-    display:flex; align-items:center; gap:8px; font-weight:600;
-  }
-  .fab-btn.secondary{
-    background: var(--fixspot-card);
-    color: var(--fixspot-text);
-    box-shadow: 0 10px 24px rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.06);
-  }
+  .map-fab{ position:absolute; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:1002; }
+  .fab-btn{ border:none; cursor:pointer; color:#fff; background:var(--fixspot-primary);
+    padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(124,92,255,.35); display:flex; gap:8px; align-items:center; font-weight:600; }
+  .fab-btn.secondary{ background:var(--fixspot-card); color:var(--fixspot-text); box-shadow:0 10px 24px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.06); }
 
-  /* Tarjeta inferior con leyenda/sugerencias */
-  .map-legend{
-    position: absolute;
-    left: 16px; bottom: 16px; z-index: 1001;
-    background: rgba(32,37,43,.86);
-    border:1px solid rgba(255,255,255,.06);
-    backdrop-filter: blur(6px);
-    color: var(--fixspot-text);
-    padding: 10px 12px; border-radius: 12px;
-    box-shadow: 0 10px 24px rgba(0,0,0,.35);
-    font-size: 13px;
-  }
-  .legend-row{ display:flex; align-items:center; gap:8px; margin:4px 0; color: var(--fixspot-muted); }
-  .legend-dot{
-    width: 18px; height: 18px; border-radius: 6px;
-    background: url("{% static 'core/img/icono-mapa-taller.jpg' %}") center/cover no-repeat;
-    border:1px solid rgba(255,255,255,.08);
-  }
+  .map-legend{ position:absolute; left:16px; bottom:16px; z-index:1001;
+    background:rgba(32,37,43,.86); border:1px solid rgba(255,255,255,.06); backdrop-filter:blur(6px);
+    color:var(--fixspot-text); padding:10px 12px; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.35); font-size:13px; }
+  .legend-row{ display:flex; align-items:center; gap:8px; margin:4px 0; color:var(--fixspot-muted); }
+  .legend-dot{ width:18px; height:18px; border-radius:6px; background:url("{% static 'core/img/icono-mapa-taller.jpg' %}") center/cover no-repeat; border:1px solid rgba(255,255,255,.08); }
 
-  /* Ajustes Leaflet */
-  .leaflet-control-attribution{ background: rgba(32,37,43,.86) !important; color: var(--fixspot-muted) !important; border-radius: 8px; padding: 2px 8px !important; }
-  .leaflet-popup-content-wrapper{ border-radius: 12px; }
-  .leaflet-popup-content b{ color: var(--fixspot-primary); }
+  .leaflet-control-attribution{ background:rgba(32,37,43,.86)!important; color:var(--fixspot-muted)!important; border-radius:8px; padding:2px 8px!important; }
+  .leaflet-popup-content-wrapper{ border-radius:12px; }
+  .leaflet-popup-content b{ color:var(--fixspot-primary); }
 
-    /* Pin del usuario con pulso */
-  .user-pin-wrap { position: relative; width: 18px; height: 18px; }
-  .user-pin {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: #22c55e; /* verde visible con tu paleta */
-    border: 3px solid #fff;
-    box-shadow: 0 0 0 2px rgba(34,197,94,.25), 0 8px 20px rgba(0,0,0,.35);
+  /* Pin usuario con pulso */
+  .user-pin-wrap{ position:relative; width:18px; height:18px; }
+  .user-pin{
+    width:12px; height:12px; border-radius:50%; background:#22c55e; border:3px solid #fff;
+    box-shadow:0 0 0 2px rgba(34,197,94,.25), 0 8px 20px rgba(0,0,0,.35);
   }
   .user-pin::after{
-    content:""; position:absolute; left: 50%; top: 50%;
-    width: 14px; height: 14px; border-radius: 999px;
-    border: 2px solid #22c55e;
-    transform: translate(-50%,-50%);
-    animation: pulse 1.6s ease-out infinite;
-    opacity: .7;
+    content:""; position:absolute; left:50%; top:50%; width:14px; height:14px; border-radius:999px;
+    border:2px solid #22c55e; transform:translate(-50%,-50%); animation:pulse 1.6s ease-out infinite; opacity:.7;
   }
-  @keyframes pulse{
-    0%   { transform: translate(-50%,-50%) scale(1);   opacity: .7; }
-    100% { transform: translate(-50%,-50%) scale(2.2); opacity: 0;  }
-  }
+  @keyframes pulse{ 0%{ transform:translate(-50%,-50%) scale(1); opacity:.7; } 100%{ transform:translate(-50%,-50%) scale(2.2); opacity:0; } }
+
+  /* EXTRA: un pequeño margen inferior global por si el footer viene muy encima */
+  .footer-gap{ height: 32px; }
 </style>
 {% endblock %}
 
 {% block contenido %}
 <section id="map-wrap" class="container-fluid px-3">
-  <!-- Toolbar -->
   <div class="map-toolbar">
     <div class="map-title"><span class="dot"></span> Talleres cercanos</div>
     <div class="map-search" title="Filtra por nombre de taller">
@@ -134,29 +92,27 @@
     </div>
   </div>
 
-  <!-- Mapa -->
   <div id="map"></div>
 
-  <!-- Botones flotantes -->
   <div class="map-fab">
     <button id="btn-geo" class="fab-btn" type="button" title="Usar mi ubicación">
-      <!-- ícono ubicación -->
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
       Usar mi ubicación
     </button>
     <button id="btn-fit" class="fab-btn secondary" type="button" title="Ver todos los talleres">
-      <!-- ícono encuadre -->
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9V5a2 2 0 0 1 2-2h4M21 9V5a2 2 0 0 0-2-2h-4M21 15v4a2 2 0 0 1-2 2h-4M3 15v4a2 2 0 0 0 2 2h4" stroke="#e7ecef" stroke-width="2" stroke-linecap="round"/></svg>
       Ver talleres
     </button>
   </div>
 
-  <!-- Leyenda -->
   <div class="map-legend">
     <div class="legend-row"><span class="legend-dot"></span> Taller FixSpot</div>
     <div class="legend-row">Permite ubicación desde el candado del navegador si no aparece el diálogo.</div>
   </div>
 </section>
+
+<!-- Margen de seguridad antes del footer -->
+<div class="footer-gap"></div>
 {% endblock %}
 
 {% block js %}
@@ -167,6 +123,9 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
+  // URL del icono desde Django (sin usar el tag dentro del objeto)
+  const ICON_URL = "{% static 'core/img/icono-mapa-taller.jpg' %}";
+
   // ----- MAPA -----
   const map = L.map('map');
   L.control.scale().addTo(map);
@@ -176,96 +135,95 @@
   const FALLBACK_CENTER = [-33.45, -70.66];
   map.setView(FALLBACK_CENTER, 12);
 
+  // ----- UTIL: normalizar texto -----
+  const norm = (s) => (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
   // ----- TALLERES -----
   const talleres = JSON.parse('{{ talleres_json|escapejs }}');
   const group = L.featureGroup().addTo(map);
-  const tallerIcon = L.icon({
-    iconUrl: '{% static "core/img/icono-mapa-taller.jpg" %}',
-    iconSize:[38,38], iconAnchor:[19,38], popupAnchor:[0,-38]
-  });
+  const tallerIcon = L.icon({ iconUrl: ICON_URL, iconSize:[38,38], iconAnchor:[19,38], popupAnchor:[0,-38] });
+
+  const markerRefs = []; // { marker, nombreNorm }
+
   talleres.forEach(t => {
     const f = t.fields || {};
     if (f.latitud != null && f.longitud != null) {
       const lat = typeof f.latitud==='string'? parseFloat(f.latitud.replace(',','.')): Number(f.latitud);
       const lng = typeof f.longitud==='string'? parseFloat(f.longitud.replace(',','.')): Number(f.longitud);
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-      L.marker([lat,lng],{icon:tallerIcon})
+
+      const marker = L.marker([lat,lng], {icon:tallerIcon})
         .bindPopup(`<b>${f.nombreTaller||'Taller'}</b><br>${f.direccion||''}<br>
           <a href="/agendar_hora/${t.pk}" class="btn btn-light btn-sm mt-2">Agendar Hora</a>`)
         .addTo(group);
+
+      markerRefs.push({ marker, nombreNorm: norm(f.nombreTaller) });
     }
   });
+
   function fitAll(){ if (group.getLayers().length) map.fitBounds(group.getBounds().pad(0.15)); }
   setTimeout(fitAll, 600);
 
-  // ----- ÍCONO DE USUARIO -----
-  const userIcon = L.divIcon({
-    className: "",
-    html: `<div class="user-pin-wrap"><div class="user-pin"></div></div>`,
-    iconSize: [18,18],
-    iconAnchor: [9,9]
+  // ----- BUSCADOR -----
+  const input = document.getElementById('filter-input');
+  function applyFilter(q){
+    const query = norm(q); let anyVisible = false;
+    markerRefs.forEach(ref => {
+      const visible = query === '' || ref.nombreNorm.includes(query);
+      if (visible) { if (!group.hasLayer(ref.marker)) group.addLayer(ref.marker); anyVisible = true; }
+      else { if (group.hasLayer(ref.marker)) group.removeLayer(ref.marker); }
+    });
+    if (anyVisible) { try { map.fitBounds(group.getBounds().pad(0.15)); } catch(_) {} }
+  }
+  input?.addEventListener('input', e => applyFilter(e.target.value));
+  input?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const query = norm(input.value);
+      const first = markerRefs.find(r => query === '' || r.nombreNorm.includes(query));
+      if (first) { const ll = first.marker.getLatLng(); map.setView(ll, 16); first.marker.openPopup(); }
+    }
   });
+
+  // ----- ÍCONO USUARIO -----
+  const userIcon = L.divIcon({ className:"", html:`<div class="user-pin-wrap"><div class="user-pin"></div></div>`, iconSize:[18,18], iconAnchor:[9,9] });
   let userMarker, userAccuracy;
 
   function paintUser(lat, lng, acc){
     const ll = L.latLng(lat, lng);
     if (userMarker) map.removeLayer(userMarker);
     if (userAccuracy) map.removeLayer(userAccuracy);
-
     userMarker = L.marker(ll, { icon: userIcon }).addTo(map).bindPopup('Estás aquí');
     userAccuracy = L.circle(ll, { radius: acc || 0, color:'#22c55e', weight:1, fillOpacity:.08 }).addTo(map);
-    userMarker.openPopup();
-    map.setView(ll, 16);
+    userMarker.openPopup(); map.setView(ll, 16);
   }
 
-  // ----- GEO: pedir permiso y mostrar pin -----
+  // ----- GEO -----
   function requestGeoWithPrompt(){
-    if (!('geolocation' in navigator)) {
-      alert('Tu navegador no soporta geolocalización.');
-      return;
-    }
-    // Esta llamada dispara el PROMPT del navegador si el estado es "prompt"
+    if (!('geolocation' in navigator)) { alert('Tu navegador no soporta geolocalización.'); return; }
     navigator.geolocation.getCurrentPosition(
       pos => paintUser(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
       err => {
         console.warn('Geoloc error', err);
-        if (err.code === err.PERMISSION_DENIED) {
-          alert('Ubicación denegada. En el candado del navegador cambia “Ubicación” a “Permitir” y vuelve a intentarlo.');
-        } else if (err.code === err.POSITION_UNAVAILABLE) {
-          alert('No se pudo obtener tu ubicación (no disponible). Si usas Brave, activa "Use Google services for location".');
-        } else if (err.code === err.TIMEOUT) {
-          alert('Tiempo de espera agotado al obtener ubicación.');
-        } else {
-          alert('Error de geolocalización.');
-        }
+        if (err.code === err.PERMISSION_DENIED) alert('Ubicación denegada. Cambia el permiso en el candado y reintenta.');
+        else if (err.code === err.POSITION_UNAVAILABLE) alert('No se pudo obtener tu ubicación (no disponible). En Brave activa "Use Google services for location".');
+        else if (err.code === err.TIMEOUT) alert('Tiempo de espera agotado al obtener ubicación.');
+        else alert('Error de geolocalización.');
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
     );
   }
 
-  // 1) PREGUNTAR APENAS CARGA (dispara el prompt)
   (function askOnLoad(){
     const isSecure = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
     if (!isSecure) console.warn('Geo requiere https o localhost/127.0.0.1');
-    // Si Permissions API está disponible, actuamos según estado, pero igual forzamos la solicitud
     if (navigator.permissions?.query) {
       navigator.permissions.query({ name:'geolocation' })
-        .then(status => {
-          // Si está denegado, no se mostrará prompt; dejamos botón para reintento guiado.
-          if (status.state === 'granted' || status.state === 'prompt') requestGeoWithPrompt();
-        })
+        .then(status => { if (status.state === 'granted' || status.state === 'prompt') requestGeoWithPrompt(); })
         .catch(() => requestGeoWithPrompt());
-    } else {
-      requestGeoWithPrompt();
-    }
+    } else { requestGeoWithPrompt(); }
   })();
 
-  // 2) BOTÓN REINTENTO (si lo tienes en el DOM con id="btn-geo")
   document.getElementById('btn-geo')?.addEventListener('click', requestGeoWithPrompt);
-
-  // 3) Botón encuadre (si existe)
   document.getElementById('btn-fit')?.addEventListener('click', fitAll);
 </script>
-
-
 {% endblock %}

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-10-2025 a las 00:40:40
+-- Tiempo de generación: 22-10-2025 a las 17:44:46
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -178,7 +178,11 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (96, 'Can add Token', 24, 'add_tokenproxy'),
 (97, 'Can change Token', 24, 'change_tokenproxy'),
 (98, 'Can delete Token', 24, 'delete_tokenproxy'),
-(99, 'Can view Token', 24, 'view_tokenproxy');
+(99, 'Can view Token', 24, 'view_tokenproxy'),
+(100, 'Can add calificacion taller', 25, 'add_calificaciontaller'),
+(101, 'Can change calificacion taller', 25, 'change_calificaciontaller'),
+(102, 'Can delete calificacion taller', 25, 'delete_calificaciontaller'),
+(103, 'Can view calificacion taller', 25, 'view_calificaciontaller');
 
 -- --------------------------------------------------------
 
@@ -197,6 +201,44 @@ CREATE TABLE `core_agenda` (
   `idVehiculo_id` int(11) NOT NULL,
   `idServicio_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_agenda`
+--
+
+INSERT INTO `core_agenda` (`idAgenda`, `fechaAtencion`, `horaAtencion`, `cliente_id`, `estado_id`, `idTaller_id`, `idVehiculo_id`, `idServicio_id`) VALUES
+(1, '2025-10-23', '09:00:00.000000', 3, 3, 1, 3, 3),
+(2, '2025-10-24', '13:00:00.000000', 4, 3, 1, 4, 1),
+(3, '2025-10-27', '15:00:00.000000', 3, 3, 2, 3, 4),
+(4, '2025-10-27', '09:00:00.000000', 1, 3, 2, 2, 4),
+(5, '2025-10-28', '12:00:00.000000', 1, 3, 1, 2, 18),
+(6, '2025-10-30', '16:00:00.000000', 3, 3, 3, 3, 6),
+(7, '2025-10-28', '10:00:00.000000', 4, 1, 3, 4, 8);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `core_calificaciontaller`
+--
+
+DROP TABLE IF EXISTS `core_calificaciontaller`;
+CREATE TABLE `core_calificaciontaller` (
+  `idCalificacion` int(11) NOT NULL,
+  `calificacion` int(11) NOT NULL,
+  `fecha` datetime(6) NOT NULL,
+  `idTaller_id` int(11) NOT NULL,
+  `idUsuario_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_calificaciontaller`
+--
+
+INSERT INTO `core_calificaciontaller` (`idCalificacion`, `calificacion`, `fecha`, `idTaller_id`, `idUsuario_id`) VALUES
+(1, 1, '2025-10-22 01:53:33.031959', 2, 3),
+(2, 3, '2025-10-22 14:26:59.182261', 2, 1),
+(3, 2, '2025-10-22 14:29:36.633532', 1, 1),
+(5, 4, '2025-10-22 15:15:30.050098', 3, 3);
 
 -- --------------------------------------------------------
 
@@ -285,6 +327,15 @@ CREATE TABLE `core_estadoagenda` (
   `idEstado` int(11) NOT NULL,
   `nombreEstado` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_estadoagenda`
+--
+
+INSERT INTO `core_estadoagenda` (`idEstado`, `nombreEstado`) VALUES
+(1, 'En proceso'),
+(2, 'Por pagar'),
+(3, 'Pagado');
 
 -- --------------------------------------------------------
 
@@ -393,6 +444,18 @@ CREATE TABLE `core_reportepago` (
   `idFormaPago_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `core_reportepago`
+--
+
+INSERT INTO `core_reportepago` (`idReporte`, `comentario`, `monto`, `reserva_id`, `idFormaPago_id`) VALUES
+(1, 'Se realizo alineación a las ruedas delanteras del vehículo, posterior se realizo un balanceo general.', 15000.00, 1, NULL),
+(2, 'Se realiza cambio de aceite al vehículo, con un aceite de máxima calidad.', 14000.00, 2, NULL),
+(3, 'Cambio de neumáticos a dos ruedas.', 12000.00, 3, NULL),
+(4, 'Cambio de llantas trasera, por unas provisionales.', 5000.00, 4, NULL),
+(5, 'Se realiza todo', 3000.00, 5, NULL),
+(6, 'N/A', 2000.00, 6, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -411,7 +474,7 @@ CREATE TABLE `core_rolusuario` (
 
 INSERT INTO `core_rolusuario` (`idRol`, `nombreRol`) VALUES
 (1, 'Cliente'),
-(2, 'Encargado de Taller'),
+(2, 'Encargado taller'),
 (3, 'Administrador');
 
 -- --------------------------------------------------------
@@ -484,7 +547,9 @@ CREATE TABLE `core_taller` (
 --
 
 INSERT INTO `core_taller` (`idTaller`, `nombreTaller`, `descripcion`, `direccion`, `telefono`, `imagen`, `latitud`, `longitud`, `idComuna_id`, `idUsuario_id`) VALUES
-(1, 'EL ZAPATO', 'Taller especializado en alineación, balanceo, cambios de aceite de motor, asegurando gran calidad y buena atención.', '342, Avenida Sargento Menadier, Población Nueva Esperanza, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 9480000, Chile', '+56933333333', 'taller_imagenes/9031943c6d5353510bc611c6be779b2c-zapatos-rojos-zapatillas-ropa.webp', -33.615714, -70.5710851, 4, 2);
+(1, 'EL ZAPATO', 'Taller especializado en alineación, balanceo, cambios de aceite de motor, asegurando gran calidad y buena atención.', '342, Avenida Sargento Menadier, Población Nueva Esperanza, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 9480000, Chile', '+56933333333', 'taller_imagenes/9031943c6d5353510bc611c6be779b2c-zapatos-rojos-zapatillas-ropa.webp', -33.615714, -70.5710851, 4, 2),
+(2, 'JM Vulcanización', 'Somos una Vulcanización de calidad, garantizamos un servicio premium y materiales de excelente marca.', '1806, Avenida El Peñón, Camilo Henríquez, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 8207897, Chile', '+56966445566', 'taller_imagenes/diseno-icono-logotipo-neumaticos_775854-1753_S7sGoLi.jpg', -33.5797333, -70.5551449, 4, 5),
+(3, 'TALLER ISADACAR', 'Somos un servicio técnico automotriz que surge para cubrir la necesidad de una mecánica transparente, honesta y amigable con la comunidad y el medio ambiente.', '2972, Nonato Coo, Portal Andino, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 8207897, Chile', '+56927597470', 'taller_imagenes/logo4_i8OWFu4.png', -33.5826637, -70.5686826, 4, 6);
 
 -- --------------------------------------------------------
 
@@ -509,7 +574,16 @@ INSERT INTO `core_tallerservicio` (`id`, `precio`, `idServicio_id`, `idTaller_id
 (2, NULL, 1, 1),
 (3, NULL, 19, 1),
 (4, NULL, 18, 1),
-(5, NULL, 5, 1);
+(5, NULL, 5, 1),
+(6, NULL, 4, 2),
+(7, NULL, 3, 3),
+(8, NULL, 1, 3),
+(9, NULL, 9, 3),
+(10, NULL, 6, 3),
+(11, NULL, 20, 3),
+(12, NULL, 11, 3),
+(13, NULL, 8, 3),
+(14, NULL, 18, 3);
 
 -- --------------------------------------------------------
 
@@ -596,9 +670,12 @@ CREATE TABLE `core_usuariocustom` (
 --
 
 INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`, `run`, `correo`, `telefono`, `pnombre`, `ap_paterno`, `direccion`, `idComuna_id`, `idRol_id`) VALUES
-(1, 'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=', '2025-10-21 22:30:07.423596', 1, 'admin', '', '', '', 1, 1, '2025-10-21 22:29:55.930381', '11111111-1', 'admin@fixspot.cl', '', 'Admin', 'Istrador', 'Duoc UC Sede Puente Alto', 4, 3),
-(2, 'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=', NULL, 0, 'Jeffrey', '', '', '', 0, 1, '2025-10-21 22:33:47.743645', '21576345-3', 'jef.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramírez', 'San Francisco 123', 4, 2),
-(3, 'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=', NULL, 0, 'Exequiel', '', '', '', 0, 1, '2025-10-21 22:34:24.210888', '21456345-4', 'ex.albornoz@duocuc.cl', '', 'Exequiel', 'Albornoz', 'San Carlos 123', 4, 1);
+(1, 'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=', '2025-10-22 14:29:11.317474', 1, 'admin', '', '', '', 1, 1, '2025-10-21 22:29:55.930381', '11111111-1', 'admin@fixspot.cl', '', 'Admin', 'Istrador', 'Duoc UC Sede Puente Alto', 4, 3),
+(2, 'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=', '2025-10-22 14:28:05.714152', 0, 'Jeffrey', '', '', '', 0, 1, '2025-10-21 22:33:47.743645', '21576345-3', 'jef.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramírez', 'San Francisco 123', 4, 2),
+(3, 'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=', '2025-10-22 15:20:28.053445', 0, 'Exequiel', '', '', '', 0, 1, '2025-10-21 22:34:24.210888', '21456345-4', 'ex.albornoz@duocuc.cl', '', 'Exequiel', 'Albornoz', 'San Carlos 123', 4, 1),
+(4, 'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=', '2025-10-22 15:16:31.918531', 0, 'Julio', '', '', '', 0, 1, '2025-10-22 00:43:15.700874', '11435376-4', 'jul.tapia@duocuc.cl', '', 'Julio', 'Tapia', 'Duoc UC Sede Puente Alto', 4, 1),
+(5, 'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=', '2025-10-22 13:48:27.424493', 0, 'Renato', '', '', '', 0, 1, '2025-10-22 01:15:28.217426', '19352873-4', 'ren.ato@duocuc.cl', '', 'Renato', 'Cisterna', 'Duoc UC Sede Puente Alto', 4, 2),
+(6, 'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=', '2025-10-22 15:13:54.459983', 0, 'Rodrigo', '', '', '', 0, 1, '2025-10-22 15:06:57.739130', '11568334-K', 'rodr.gonzalez@duocuc.cl', '', 'Rodrigo', 'Ramírez', 'Ernesto alvear puente alto', 4, 2);
 
 -- --------------------------------------------------------
 
@@ -649,7 +726,9 @@ CREATE TABLE `core_vehiculo` (
 --
 
 INSERT INTO `core_vehiculo` (`idVehiculo`, `patente`, `modelo`, `subModelo`, `anno`, `idMarca_id`, `idTipoVehiculo_id`, `idUsuario_id`) VALUES
-(2, 'PRKG97', 'Gol', 'Comfortline', 2021, 15, 4, 1);
+(2, 'PRKG97', 'Gol', 'Comfortline', 2021, 15, 4, 1),
+(3, 'HYRG54', 'Fiesta', 'RS', 2021, 3, 4, 3),
+(4, 'JUVT54', 'Corolla', 'XEI', 2022, 1, 1, 4);
 
 -- --------------------------------------------------------
 
@@ -694,6 +773,7 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (24, 'authtoken', 'tokenproxy'),
 (4, 'contenttypes', 'contenttype'),
 (7, 'core', 'agenda'),
+(25, 'core', 'calificaciontaller'),
 (8, 'core', 'comuna'),
 (19, 'core', 'contacto'),
 (9, 'core', 'estadoagenda'),
@@ -767,7 +847,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (34, 'core', '0013_remove_agenda_idtipoagenda_agenda_idservicio_and_more', '2025-10-21 22:13:36.768963'),
 (35, 'core', '0014_formapago_reportepago_idformapago', '2025-10-21 22:13:36.804500'),
 (36, 'core', '0015_remove_formapago_descripcion', '2025-10-21 22:13:36.810544'),
-(37, 'sessions', '0001_initial', '2025-10-21 22:13:36.836807');
+(37, 'sessions', '0001_initial', '2025-10-21 22:13:36.836807'),
+(38, 'core', '0016_calificaciontaller', '2025-10-22 00:09:55.650351');
 
 -- --------------------------------------------------------
 
@@ -787,7 +868,8 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('p7j7xozdkngaf8l5euae5phtb0vtbqv0', '.eJxVjEEOwiAQRe_C2hAGClSX7nsGAjODVA0kpV0Z765NutDtf-_9lwhxW0vYOi9hJnERIE6_W4r44LoDusd6axJbXZc5yV2RB-1yasTP6-H-HZTYy7fOWiVvNQyObCYmIjwTGptYgeeYnEPFxrDXAyIkHI3LEZTP4EfQPov3Bwa5OIQ:1vBKrn:rV7C89LmtgkhuMP9aVrw_rsp9W-PRfuo1gnjW3IQcQ0', '2025-11-04 22:30:07.424973');
+('hm09cscrffci2w5qt119vgx3dhxpuap8', '.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBadY:02tWGBT2WPmtCRdR9nRMbdKtPjGMoVzeKbzKRuE97Kc', '2025-11-05 15:20:28.055552'),
+('xz5dm6tpvajglacb9uykyxbq7w29998a', '.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBMZF:GA4dZ9P2CSooITACM68j-3rnX3uTUXHFi5_O7Jtt2Ag', '2025-11-05 00:19:05.386284');
 
 --
 -- Índices para tablas volcadas
@@ -832,6 +914,14 @@ ALTER TABLE `core_agenda`
   ADD KEY `core_agenda_estado_id_9b9c4513_fk_core_estadoagenda_idEstado` (`estado_id`),
   ADD KEY `core_agenda_cliente_id_0890f683_fk` (`cliente_id`),
   ADD KEY `core_agenda_idServicio_id_d6625a2d_fk_core_servicio_idServicio` (`idServicio_id`);
+
+--
+-- Indices de la tabla `core_calificaciontaller`
+--
+ALTER TABLE `core_calificaciontaller`
+  ADD PRIMARY KEY (`idCalificacion`),
+  ADD KEY `core_calificaciontal_idTaller_id_92a15206_fk_core_tall` (`idTaller_id`),
+  ADD KEY `core_calificaciontal_idUsuario_id_671bd574_fk_core_usua` (`idUsuario_id`);
 
 --
 -- Indices de la tabla `core_comuna`
@@ -1008,13 +1098,19 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT de la tabla `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT de la tabla `core_agenda`
 --
 ALTER TABLE `core_agenda`
-  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `core_calificaciontaller`
+--
+ALTER TABLE `core_calificaciontaller`
+  MODIFY `idCalificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `core_comuna`
@@ -1032,7 +1128,7 @@ ALTER TABLE `core_contacto`
 -- AUTO_INCREMENT de la tabla `core_estadoagenda`
 --
 ALTER TABLE `core_estadoagenda`
-  MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `core_estadoticket`
@@ -1062,7 +1158,7 @@ ALTER TABLE `core_region`
 -- AUTO_INCREMENT de la tabla `core_reportepago`
 --
 ALTER TABLE `core_reportepago`
-  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `core_rolusuario`
@@ -1080,13 +1176,13 @@ ALTER TABLE `core_servicio`
 -- AUTO_INCREMENT de la tabla `core_taller`
 --
 ALTER TABLE `core_taller`
-  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idTaller` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `core_tallerservicio`
 --
 ALTER TABLE `core_tallerservicio`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `core_ticket`
@@ -1104,7 +1200,7 @@ ALTER TABLE `core_tipovehiculo`
 -- AUTO_INCREMENT de la tabla `core_usuariocustom`
 --
 ALTER TABLE `core_usuariocustom`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `core_usuariocustom_groups`
@@ -1122,7 +1218,7 @@ ALTER TABLE `core_usuariocustom_user_permissions`
 -- AUTO_INCREMENT de la tabla `core_vehiculo`
 --
 ALTER TABLE `core_vehiculo`
-  MODIFY `idVehiculo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idVehiculo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `django_admin_log`
@@ -1134,13 +1230,13 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT de la tabla `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- Restricciones para tablas volcadas
@@ -1174,6 +1270,13 @@ ALTER TABLE `core_agenda`
   ADD CONSTRAINT `core_agenda_idServicio_id_d6625a2d_fk_core_servicio_idServicio` FOREIGN KEY (`idServicio_id`) REFERENCES `core_servicio` (`idServicio`),
   ADD CONSTRAINT `core_agenda_idTaller_id_2025b2c7_fk_core_taller_idTaller` FOREIGN KEY (`idTaller_id`) REFERENCES `core_taller` (`idTaller`),
   ADD CONSTRAINT `core_agenda_idVehiculo_id_9f7a5c22_fk_core_vehiculo_idVehiculo` FOREIGN KEY (`idVehiculo_id`) REFERENCES `core_vehiculo` (`idVehiculo`);
+
+--
+-- Filtros para la tabla `core_calificaciontaller`
+--
+ALTER TABLE `core_calificaciontaller`
+  ADD CONSTRAINT `core_calificaciontal_idTaller_id_92a15206_fk_core_tall` FOREIGN KEY (`idTaller_id`) REFERENCES `core_taller` (`idTaller`),
+  ADD CONSTRAINT `core_calificaciontal_idUsuario_id_671bd574_fk_core_usua` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `core_comuna`

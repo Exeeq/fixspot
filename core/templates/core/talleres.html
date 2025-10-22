@@ -60,6 +60,35 @@
     padding: 0.4rem 0.9rem;
   }
 
+  /* --- Calificación (estrella única) --- */
+  .rating-stars {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start; /* Alinea a la izquierda */
+    align-items: center;
+  }
+
+  .rating-stars i {
+    font-size: 2rem;
+    color: #ffca08;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .rating-stars i:hover {
+    color: #ffb400;
+  }
+
+  .rating-stars .inactive {
+    color: #ccc;
+  }
+
+  .calificacion-texto {
+    margin-left: 10px;
+    color: #bda4f0;
+    font-size: 1rem;
+  }
+
   /* --- Botón destacado --- */
   .btn-agendar {
     background: linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%);
@@ -122,6 +151,18 @@
         <p class="text-muted small mb-3">
           {{ taller.descripcion }}
         </p>
+        {% endif %}
+
+        <!-- Mostrar estrellas (calificación) -->
+        {% if taller.promedio_calificacion %}
+          <div class="rating-stars">
+            <i class="bi bi-star-fill"></i>
+            <span class="calificacion-texto">Promedio de calificaciones: {{ taller.promedio_calificacion|floatformat:1 }}/5</span>
+          </div>
+        {% else %}
+          <div class="rating-stars">
+            <span class="text-muted small">Sin calificaciones aún</span>
+          </div>
         {% endif %}
 
         <!-- Servicios -->

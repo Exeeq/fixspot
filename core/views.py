@@ -25,7 +25,7 @@ from django.shortcuts import get_object_or_404
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-
+from django.db.models import Avg
 
 
 def role_required(roles):
@@ -451,7 +451,7 @@ def sobre_nosotros(request):
 
 @login_required
 def talleres(request):
-    talleres = Taller.objects.all()
+    talleres = Taller.objects.annotate(promedio_calificacion=Avg('calificaciontaller__calificacion'))
     return render(request, 'core/talleres.html', {'talleres': talleres})
 
 @login_required
@@ -549,13 +549,14 @@ def agendar_hora(request, id_taller):
 
     return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
+
 def get_available_hours(request):
-    fecha = request.GET.get('date')
-    id_taller = request.GET.get('id_taller')
+    fecha = request.GET.get('date')  # Fecha seleccionada
+    id_taller = request.GET.get('id_taller')  # Id del taller
     taller = get_object_or_404(Taller, idTaller=id_taller)
 
     # Generar las horas entre 9:00 AM y 7:00 PM, excluyendo las 14:00 PM (2:00 PM)
-    available_hours = [(f"{h:02}:00") for h in range(9, 19) if h != 14]  # Excluyendo las 14:00 PM
+    available_hours = [f"{h:02}:00" for h in range(9, 19) if h != 14]
 
     if fecha:
         # Excluir horas ya reservadas para la fecha seleccionada
@@ -564,13 +565,17 @@ def get_available_hours(request):
             idTaller=taller
         ).values_list('horaAtencion', flat=True)
 
-        # Excluir horas reservadas de la lista de horas disponibles
-        available_hours = [
-            f"{h:02}:00" for h in range(9, 19)
-            if h != 14 and f"{h:02}:00" not in reserved_hours
-        ]
+        # Convertir las horas reservadas a formato de cadena ("HH:MM")
+        reserved_hours = [hour.strftime("%H:%M") for hour in reserved_hours]  # Convertir de `time` a cadena
 
+        print(f"Reserved hours for {fecha}: {reserved_hours}")  # Verificar las horas reservadas
+
+        # Excluir las horas reservadas de la lista de horas disponibles
+        available_hours = [hour for hour in available_hours if hour not in reserved_hours]
+
+    print(f"Available hours after filtering: {available_hours}")  # Verificar las horas disponibles
     return JsonResponse({'available_hours': available_hours})
+
 
 @login_required
 def annadir_vehiculo(request):

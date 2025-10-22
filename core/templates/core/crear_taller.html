@@ -1,387 +1,256 @@
 {% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
 
 {% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <style>
-    .metodo-pago-container h5 {
-    font-weight: 600;
-    color: #3a2a51;
-    letter-spacing: 0.5px;
-    }
-
-    .metodo-card {
-    background: #f8f6fb;
-    border: 2px solid #d3c6e3;
-    border-radius: 1rem;
-    width: 170px;
-    height: 95px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.25s ease-in-out;
-    color: #4b226d;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-    user-select: none;
-    }
-
-    .metodo-card:hover {
-    background: #ece4f5;
-    border-color: #8c6bb1;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .metodo-card.active {
-    background: linear-gradient(135deg, #5a2d82 0%, #8e5ccf 100%);
+  #map { height: 400px; border-radius: 12px; }
+  .map-card { height: 100%; }
+  .form-container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+  }
+  .form-label { font-weight: 600; }
+  .btn-primary {
+    background-color: #7a3cff;
+    border: none;
+  }
+  .btn-primary:hover {
+    background-color: #692eff;
+  }
+  .btn-background {
+    background-color: #7a3cff;
     color: white;
-    border-color: #5a2d82;
-    box-shadow: 0 6px 14px rgba(90, 45, 130, 0.4);
-    }
+  }
+  .btn-background:hover {
+    background-color: #692eff;
+  }
 
-    .metodo-card i {
-    font-size: 2rem;
-    margin-bottom: 0.4rem;
-    }
+  /* 🔹 Campos generales */
+  .form-field {
+    border: 1px solid #dcdcdc;
+    font-size: 15px;
+    padding: 10px 14px;
+  }
 
-    .metodo-card span {
+  .form-field:focus {
+    border-color: #7a3cff;
+    box-shadow: 0 0 0 3px rgba(122, 60, 255, 0.15);
+  }
+
+  /* 🔹 Caja de selección con scroll */
+  .servicios-box {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fafafa;
+    padding: 10px 12px;
+    height: 200px;          /* tamaño fijo visible */
+    overflow-y: auto;       /* scroll interno */
+  }
+
+  .servicios-box label {
+    display: block;
+    margin-bottom: 6px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .servicios-box label:hover {
+    background-color: #f0e8ff;
+    border-color: #7a3cff;
+  }
+
+  .servicios-box input[type="checkbox"] {
+    accent-color: #7a3cff;
+    transform: scale(1.1);
+    margin-right: 8px;
+  }
+
+  .field-servicios {
+    margin-top: 20px;
+  }
+
+  .field-servicios label {
     font-weight: 600;
-    font-size: 0.95rem;
-    }
-
-    #btnEfectivo {
-        background: linear-gradient(135deg, #5a2d82 0%, #8e5ccf 100%);
-        color: #fff;
-        font-weight: 600;
-        border: none;
-        transition: all 0.25s ease-in-out;
-        box-shadow: 0 4px 8px rgba(90, 45, 130, 0.3);
-    }
-
-    #btnEfectivo:hover {
-        background: linear-gradient(135deg, #4d2370 0%, #7a4fba 100%);
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(90, 45, 130, 0.4);
-    }
-
-    #btnEfectivo:active {
-        transform: scale(0.98);
-        box-shadow: 0 2px 6px rgba(90, 45, 130, 0.3);
-    }
+    display: block;
+    margin-bottom: 8px;
+  }
 </style>
-
-{% endblock css %}
+{% endblock %}
 
 {% block contenido %}
-<!-- INICIO ENCABEZADO -->
-<div class="">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 mt-5">
-                <div class="intro-excerpt">
-                    <h1 class="fw-bold text-center">PAGAR RESERVA</h1>
-                </div>
-            </div>
-        </div>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 mt-5">
+      <div class="intro-excerpt">
+        <h1 class="fw-bold text-center text-uppercase">CREAR TALLER</h1>
+      </div>
     </div>
-    <br><br><br>
-</div>
-<!-- FIN ENCABEZADO -->
-
-<div class="bg-page">
-    <br>
-    <div class="container mt-4 shadow-lg">
-        <div class="card">
-            <div class="card-body shadow-lg">
-                <!-- Detalles de la Reserva -->
-                <h2 class="card-title fw-bold text-uppercase shadow-lg bg-purple text-white">Detalle de la Reserva</h2>
-                <div class="table-responsive">
-                    <table class="table table-bordered shadow-lg">
-                        <tbody>
-                            <tr>
-                                <th style="width: 40%;">Fecha de Atención:</th>
-                                <td>{{ agenda.fechaAtencion }}</td>
-                            </tr>
-                            <tr>
-                                <th>Hora de Atención:</th>
-                                <td>{{ agenda.horaAtencion }}</td>
-                            </tr>
-                            <tr>
-                                <th>Tipo de Agenda:</th>
-                                <td>{{ agenda.idServicio }}</td>
-                            </tr>
-                            <tr>
-                                <th>Taller:</th>
-                                <td>{{ agenda.idTaller }}</td>
-                            </tr>
-                            <tr>
-                                <th>Patente Vehículo:</th>
-                                <td>{{ agenda.idVehiculo }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Detalles del Reporte de Pago -->
-                {% if reporte_pago %}
-                    <h2 class="card-title mt-4 fw-bold text-uppercase shadow-lg bg-purple text-white">Detalle del Reporte de Pago</h2>
-                    <div class="table-responsive ">
-                        <table class="table table-bordered shadow-lg">
-                            <tbody>
-                                <tr>
-                                    <th style="width: 40%;">Comentario:</th>
-                                    <td>{{ reporte_pago.comentario }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Monto a pagar (CLP):</th>
-                                    <td>${{ reporte_pago.monto|stringformat:".0f"|floatformat }}</td>
-                                </tr>
-                                {% if monto_dolares %}
-                                <tr>
-                                    <th>Monto a pagar (USD):</th>
-                                    <td>${{ monto_dolares }}</td>
-                                </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% endif %}
-
-                <!-- Selector método de pago (diseño original, centrado) -->
-                <div class="metodo-pago-container text-center mt-4 mb-4">
-                    <h5 class="fw-bold mb-3 text-uppercase text-secondary">Selecciona tu método de pago</h5>
-
-                    <div id="metodosPago" class="d-flex justify-content-center gap-3 flex-wrap">
-                        {% for metodo in formas_pago %}
-                        <div class="metodo-card {% if forloop.first %}active{% endif %}"
-                            data-value="{{ metodo.nombreFormaPago|lower }}"
-                            onclick="seleccionarMetodo(this)">
-                            {% if metodo.nombreFormaPago|lower == 'paypal' %}
-                            <i class="bi bi-paypal"></i>
-                            {% elif metodo.nombreFormaPago|lower == 'efectivo' %}
-                            <i class="bi bi-cash-coin"></i>
-                            {% else %}
-                            <i class="bi bi-credit-card"></i>
-                            {% endif %}
-                            <span>{{ metodo.nombreFormaPago }}</span>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Contenedor de botones (mantenemos estructura original) -->
-            <div class="text-center mt-3 mb-4">
-                <!-- PayPal -->
-                <div id="paypalContainer" class="">
-                    <div id="btnPaypal"></div>
-                </div>
-
-                <!-- Efectivo -->
-                <div id="efectivoContainer" class="d-none">
-                    <button id="btnEfectivo" class="btn rounded-pill px-5 py-2 bg-purple">
-                        PAGAR EN EFECTIVO
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <br><br><br><br><br><br>
+  </div>
 </div>
 
+<div class="bg-page py-5">
+  <div class="container">
+    <div class="row g-4 justify-content-center align-items-start">
+      
+      <!-- Formulario -->
+      <div class="col-lg-6">
+        <div class="form-container">
+          <form method="POST" enctype="multipart/form-data" id="formCrearTaller">
+            {% csrf_token %}
+
+            <div class="mb-3">{{ form.nombreTaller|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.descripcion|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.telefono|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.idComuna|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.idUsuario|as_crispy_field }}</div>
+            <div class="mb-3">{{ form.imagen|as_crispy_field }}</div>
+
+            <!-- Caja de servicios con scroll -->
+            <div class="field-servicios">
+              <label for="id_servicios">Servicios que ofrece el taller</label>
+              <div class="servicios-box">
+                {% for checkbox in form.servicios %}
+                  <label>{{ checkbox.tag }} {{ checkbox.choice_label }}</label>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="mt-4">
+              <label for="id_address" class="form-label">Ingresar Dirección</label>
+              <input type="text" id="id_address" class="form-control" placeholder="Ej: Ernesto Alvear 245, Puente Alto">
+              <button type="button" class="btn btn-primary mt-2 w-100" id="btnObtenerDireccion">Obtener Dirección</button>
+            </div>
+
+            <!-- Coordenadas ocultas -->
+            <input type="hidden" id="latitud" name="latitud">
+            <input type="hidden" id="longitud" name="longitud">
+            <input type="hidden" id="direccion" name="direccion">
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-background px-5 py-2 rounded-pill" id="btnCrearTaller" disabled>Crear taller</button>
+            </div>
+          </form>
+
+          <div id="message" class="mt-3"></div>
+        </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="col-lg-6">
+        <div class="card map-card shadow-lg border-0">
+          <div id="map"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 {% endblock contenido %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 
 <script>
-    // --- Utilidad para obtener CSRF token (tu versión original) ---
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
+$(document).ready(function() {
+  const map = L.map('map').setView([-33.4489, -70.6693], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-    // --- Render de PayPal (una sola vez para evitar bugs de doble render) ---
-    var paypalRendered = false;
-    function renderPaypalOnce() {
-        if (paypalRendered) return;
-        paypal.Button.render({
-            env: 'sandbox',
-            client: {
-                sandbox: 'AUdczilLjDrMGcZtY3F9Xqa4WAmOmJQki8I3sWy9rTnnuxmiPWNOW1RACinASsIaWMDt8QPAbg0JQ1EL',
-                production: 'demo_production_client_id'
-            },
-            locale: 'es_CL',
-            style: {
-                size: 'large',
-                color: 'black',
-                shape: 'rect'
-            },
-            commit: true,
-            payment: function (data, actions) {
-                return actions.payment.create({
-                    transactions: [{
-                        amount: { 
-                            total: '{{ monto_dolares }}', 
-                            currency: 'USD'
-                        }
-                    }]
-                });
-            },
-            onAuthorize: function (data, actions) {
-                return actions.payment.execute().then(function () {
-                    pagoCompletado = true; 
-                    var csrftoken = getCookie('csrftoken');
-                    $.ajaxSetup({
-                        beforeSend: function(xhr, settings) {
-                            xhr.setRequestHeader('X-CSRFToken', csrftoken);
-                        }
-                    });
-                    $.ajax({
-                        type: 'POST',
-                        url: '{% url "generar_boleta_pdf" agenda.idAgenda %}', 
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: '¡EL PAGO SE REALIZÓ CON ÉXITO!',
-                                    text: 'El estado de su agenda ha sido actualizado a "Pagado".',
-                                    icon: 'success',
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'Confirmar'
-                                }).then(function () {
-                                    var link = document.createElement('a');
-                                    link.href = '{% url "generar_documento_word" agenda.idAgenda %}';
-                                    link.download = response.filename;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                    window.location.href = '{% url "mis_reservas" %}';
-                                });
-                            } else {
-                                Swal.fire('Error', 'No se pudo realizar el pago.', 'error');
-                            }
-                        },
-                        error: function () {
-                            Swal.fire('Error', 'ERROR EN LA SOLICITUD!', 'error');
-                        }
-                    });
-                });
-            },
-            onCancel: function(data) {
-                Swal.fire({
-                    title: '¡CANCELADO!',
-                    text: 'Transacción cancelada!',
-                    icon: 'error',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Confirmar'
-                });
-            },
-            onError: function(err) {
-                if (!pagoCompletado) {
-                    console.error(err);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Ha ocurrido un error con el pago',
-                        icon: 'error',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Confirmar'
-                    });
-                }
-            }
-        }, '#btnPaypal');
-        paypalRendered = true;
-    }
+  function validarBotonCrear() {
+    $("#btnCrearTaller").prop("disabled", !($("#latitud").val() && $("#longitud").val()));
+  }
 
-    // --- Selector visual de método de pago ---
-    function seleccionarMetodo(card) {
-        document.querySelectorAll(".metodo-card").forEach(c => c.classList.remove("active"));
-        card.classList.add("active");
-
-        const metodo = card.getAttribute("data-value");
-
-        // mostrar u ocultar secciones según método
-        if (metodo === "efectivo") {
-            $("#paypalContainer").addClass("d-none");
-            $("#efectivoContainer").removeClass("d-none");
+  $("#btnObtenerDireccion").click(function(e) {
+    e.preventDefault();
+    const address = $("#id_address").val();
+    $.ajax({
+      url: "{% url 'crear_taller' %}",
+      type: "POST",
+      data: {
+        address: address,
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        obtener_ubicacion: true
+      },
+      success: function(response) {
+        if (response.success) {
+          const lat = response.coordinates.lat;
+          const lng = response.coordinates.lng;
+          map.setView([lat, lng], 16);
+          L.marker([lat, lng]).addTo(map).bindPopup('Ubicación actual').openPopup();
+          $("#latitud").val(lat);
+          $("#longitud").val(lng);
+          $("#direccion").val(address);
+          $("#message").html('<div class="alert alert-success">Dirección válida.</div>');
         } else {
-            $("#efectivoContainer").addClass("d-none");
-            $("#paypalContainer").removeClass("d-none");
-            renderPaypalOnce(); 
+          $("#message").html('<div class="alert alert-danger">' + response.error + '</div>');
         }
-    }
-
-    // --- Inicialización ---
-    $(document).ready(function () {
-        renderPaypalOnce(); 
-
-        const firstCard = document.querySelector(".metodo-card");
-        if (firstCard) firstCard.classList.add("active");
-
-        $('#btnEfectivo').on('click', function () {
-            Swal.fire({
-                title: 'Confirmar pago en efectivo',
-                text: '¿Deseas registrar este pago y generar la boleta en PDF?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#5a2d82',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, generar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var csrftoken = getCookie('csrftoken');
-                    $.ajaxSetup({
-                        beforeSend: function(xhr, settings) {
-                            xhr.setRequestHeader('X-CSRFToken', csrftoken);
-                        }
-                    });
-                    $.ajax({
-                        type: 'POST',
-                        url: '{% url "actualizar_estado_agenda" agenda.idAgenda %}',
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Pago confirmado',
-                                    text: 'Se ha registrado el pago en efectivo.',
-                                    icon: 'success',
-                                    confirmButtonColor: '#5a2d82',
-                                    confirmButtonText: 'Descargar boleta'
-                                }).then(() => {
-                                    // Descargar boleta PDF
-                                    window.location.href = '{% url "generar_boleta_pdf" agenda.idAgenda %}';
-                                    setTimeout(() => {
-                                        window.location.href = '{% url "mis_reservas" %}';
-                                    }, 2000);
-                                });
-                            } else {
-                                Swal.fire('Error', 'No se pudo registrar el pago.', 'error');
-                            }
-                        },
-                        error: function () {
-                            Swal.fire('Error', 'Ocurrió un problema con la solicitud.', 'error');
-                        }
-                    });
-                }
-            });
-        });
+        validarBotonCrear();
+      },
+      error: function() {
+        $("#message").html('<div class="alert alert-danger">Error en la solicitud.</div>');
+      }
     });
-</script>
+  });
 
+  $(function () {
+      $("#id_address").autocomplete({
+        source: function(request, response) {
+          $.ajax({
+            url: "{% url 'autocomplete_address' %}",
+            dataType: "json",
+            data: { term: request.term },
+            success: function(data) { response(data); },
+            error: function(xhr, status, error) {
+              console.log("Error en autocompletado:", error);
+              response([]);
+            }
+          });
+        },
+        minLength: 3
+      });
+
+      $("#id_address").on("autocompleteselect", function (e, ui) {
+        const val = (ui.item && (ui.item.value || ui.item.label)) || ui.item || "";
+        $(this).val((val || "").toString().trim());
+        $(this).trigger("change");
+      });
+    });
+
+  $('#btnCrearTaller').click(function(e) {
+    e.preventDefault();
+    Swal.fire({
+      title: '¿Crear este taller?',
+      text: 'Se registrará con la dirección y servicios seleccionados.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#7a3cff',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $('<input>').attr({
+          type: 'hidden',
+          name: 'crear_taller',
+          value: 'true'
+        }).appendTo('#formCrearTaller');
+        $('#formCrearTaller')[0].submit();
+      }
+    });
+  });
+});
+</script>
 {% endblock js %}

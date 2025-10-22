@@ -222,21 +222,39 @@
     function showCalificacionPopup() {
         Swal.fire({
             title: 'Califica el Taller',
-            text: '¿Cómo calificarías este taller?',
-            icon: 'question',
-            html:
-                '<div class="star-rating">' +
-                '   <input type="radio" id="star5" name="rating" value="5"/>' +
-                '   <label for="star5">★</label>' +
-                '   <input type="radio" id="star4" name="rating" value="4"/>' +
-                '   <label for="star4">★</label>' +
-                '   <input type="radio" id="star3" name="rating" value="3"/>' +
-                '   <label for="star3">★</label>' +
-                '   <input type="radio" id="star2" name="rating" value="2"/>' +
-                '   <label for="star2">★</label>' +
-                '   <input type="radio" id="star1" name="rating" value="1"/>' +
-                '   <label for="star1">★</label>' +
-                '</div>',
+            html: `
+            <style>
+                .star-rating {
+                    display: flex;
+                    justify-content: center;
+                    gap: 8px;
+                    direction: rtl; /* hace que se seleccionen de derecha a izquierda */
+                    font-size: 2.3rem;
+                }
+                .star-rating input {
+                    display: none;
+                }
+                .star-rating label {
+                    color: #ccc;
+                    cursor: pointer;
+                    transition: color 0.2s;
+                }
+                .star-rating label:hover,
+                .star-rating label:hover ~ label {
+                    color: #ffca08;
+                }
+                .star-rating input:checked ~ label {
+                    color: #ffca08;
+                }
+            </style>
+            <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+            </div>
+            `,
             showCancelButton: true,
             confirmButtonText: 'Enviar Calificación',
             cancelButtonText: 'Cancelar',
@@ -320,7 +338,7 @@
                     });
                     $.ajax({
                         type: 'POST',
-                        url: '{% url "generar_boleta_pdf" agenda.idAgenda %}', 
+                        url: '{% url "actualizar_estado_agenda" agenda.idAgenda %}',
                         success: function (response) {
                             if (response.success) {
                                 Swal.fire({
@@ -396,7 +414,7 @@
         $('#btnEfectivo').on('click', function () {
             Swal.fire({
                 title: 'Confirmar pago en efectivo',
-                text: '¿Deseas registrar este pago y generar la boleta en PDF?',
+                text: '¿Deseas registrar este pago y generar la boleta?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#5a2d82',

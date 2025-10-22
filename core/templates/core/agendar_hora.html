@@ -68,27 +68,28 @@
         return false;
     }
 
-    $(document).ready(function() {
-        $('#id_fechaAtencion').change(function() {
-            var selectedDate = $(this).val();
-            var idTaller = "{{ taller.idTaller }}";
+    $('#id_fechaAtencion').change(function() {
+        var selectedDate = $(this).val(); // Obtener la fecha seleccionada
+        var idTaller = "{{ taller.idTaller }}"; // ID del taller
 
-            $.ajax({
-                url: "{% url 'get_available_hours' %}",
-                data: {
-                    'date': selectedDate,
-                    'id_taller': idTaller
-                },
-                success: function(data) {
-                    var $horaAtencion = $('#id_horaAtencion');
-                    $horaAtencion.empty();
+        $.ajax({
+            url: "{% url 'get_available_hours' %}",
+            data: {
+                'date': selectedDate,
+                'id_taller': idTaller
+            },
+            success: function(data) {
+                var $horaAtencion = $('#id_horaAtencion');
+                $horaAtencion.empty();  // Vaciar las opciones actuales
 
-                    // Excluir las 14:00 PM (hora de colación)
-                    $.each(data.available_hours, function(index, value) {
-                        $horaAtencion.append('<option value="' + value + '">' + value + '</option>');
-                    });
-                }
-            });
+                // Agregar las horas disponibles al campo de horaAtencion
+                $.each(data.available_hours, function(index, value) {
+                    $horaAtencion.append('<option value="' + value + '">' + value + '</option>');
+                });
+            },
+            error: function() {
+                alert("Hubo un error al obtener las horas disponibles.");
+            }
         });
     });
 </script>

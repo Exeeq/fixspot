@@ -163,9 +163,8 @@ class AgendaForm(forms.ModelForm):
         Devuelve las horas disponibles para la atención, excluyendo la hora de la colación (2:00 PM).
         """
         # Primero, generamos las horas entre 9:00 AM y 7:00 PM, excluyendo las 14:00 PM (2:00 PM)
-        available_hours = [(time(hour=h), f"{h:02}:00") for h in range(9, 19) if h != 14]  # 14 es 2:00 PM
+        available_hours = [(f"{h:02}:00", f"{h:02}:00") for h in range(9, 19) if h != 14]  # 14 es 2:00 PM
 
-        # Comprobamos si la fecha fue seleccionada
         if self.is_bound and 'fechaAtencion' in self.data:
             selected_date = self.data.get('fechaAtencion')
             if selected_date:
@@ -174,10 +173,14 @@ class AgendaForm(forms.ModelForm):
                     fechaAtencion=selected_date,
                     idTaller=self.taller
                 ).values_list('horaAtencion', flat=True)
-                # Excluir las horas reservadas del listado
+
+                # Convertir las horas reservadas a formato de cadena, si no están en formato texto
+                reserved_hours = [f"{hour:02}:00" for hour in reserved_hours]
+
+                # Filtramos las horas disponibles
                 available_hours = [
-                    (time(hour=h), f"{h:02}:00") for h in range(9, 19)
-                    if h != 14 and time(hour=h) not in reserved_hours
+                    (h, label) for h, label in available_hours
+                    if label not in reserved_hours  # Comparamos cadenas de texto
                 ]
 
         return available_hours
@@ -191,6 +194,7 @@ class AgendaForm(forms.ModelForm):
             if fecha.weekday() >= 5:
                 raise forms.ValidationError("Las reservas solo están disponibles de lunes a viernes.")
 
+            # Validar que la hora no esté ya tomada
             if Agenda.objects.filter(fechaAtencion=fecha, horaAtencion=hora, idTaller=self.taller).exists():
                 raise forms.ValidationError("La hora seleccionada ya está reservada. Por favor, elija otra hora.")
 

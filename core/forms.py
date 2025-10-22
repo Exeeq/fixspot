@@ -127,14 +127,28 @@ class AgendaForm(forms.ModelForm):
         self.taller = kwargs.pop('taller', None)
         super(AgendaForm, self).__init__(*args, **kwargs)
 
+        # Definir el widget de fecha
         self.fields['fechaAtencion'].widget = forms.DateInput(
             attrs={'type': 'date', 'min': datetime.today().date()}
         )
+
+        # Asignar horas disponibles
         self.fields['horaAtencion'].widget = forms.Select(choices=self.get_available_hours())
 
-        # Mostrar solo vehículos del usuario logueado
+        # Filtrar vehículos del usuario logueado
         if user:
+            self.fields['idVehiculo'] = forms.ModelChoiceField(
+                queryset=Vehiculo.objects.filter(idUsuario=user),
+                label='Vehículo',
+                empty_label="Seleccione un vehículo",
+                widget=forms.Select(attrs={'class': 'form-control'})
+            )
+            # Personalizar la representación de los vehículos (Marca, Modelo, Submodelo y Patente)
             self.fields['idVehiculo'].queryset = Vehiculo.objects.filter(idUsuario=user)
+            self.fields['idVehiculo'].widget.choices = [
+                (vehiculo.idVehiculo, f"{vehiculo.idMarca.nombreMarca} {vehiculo.modelo} {vehiculo.subModelo} - {vehiculo.patente}")
+                for vehiculo in self.fields['idVehiculo'].queryset
+            ]
 
         # Mostrar solo servicios del taller actual
         if self.taller:
@@ -145,18 +159,27 @@ class AgendaForm(forms.ModelForm):
             self.fields['idServicio'].queryset = Servicio.objects.none()
 
     def get_available_hours(self):
-        available_hours = [(time(hour=h), f"{h:02}:00") for h in range(9, 19)]
+        """
+        Devuelve las horas disponibles para la atención, excluyendo la hora de la colación (2:00 PM).
+        """
+        # Primero, generamos las horas entre 9:00 AM y 7:00 PM, excluyendo las 14:00 PM (2:00 PM)
+        available_hours = [(time(hour=h), f"{h:02}:00") for h in range(9, 19) if h != 14]  # 14 es 2:00 PM
+
+        # Comprobamos si la fecha fue seleccionada
         if self.is_bound and 'fechaAtencion' in self.data:
             selected_date = self.data.get('fechaAtencion')
             if selected_date:
+                # Excluir las horas reservadas de esa fecha
                 reserved_hours = Agenda.objects.filter(
                     fechaAtencion=selected_date,
                     idTaller=self.taller
                 ).values_list('horaAtencion', flat=True)
+                # Excluir las horas reservadas del listado
                 available_hours = [
                     (time(hour=h), f"{h:02}:00") for h in range(9, 19)
-                    if time(hour=h) not in reserved_hours
+                    if h != 14 and time(hour=h) not in reserved_hours
                 ]
+
         return available_hours
 
     def clean(self):
@@ -173,20 +196,21 @@ class AgendaForm(forms.ModelForm):
 
         return cleaned_data
 
+
 class VehiculoForm(forms.ModelForm):
     class Meta:
         model = Vehiculo
         exclude = ['idUsuario']
         labels = {
             'patente': 'Patente del Vehículo',
+            'idMarca': 'Marca',
             'modelo': 'Modelo',
             'subModelo': 'Sub-Modelo',
             'anno': 'Año',
-            'idMarca': 'Marca',
             'idTipoVehiculo': 'Tipo de Vehículo',
         }
         widgets = {
-            'anno': forms.NumberInput(attrs={'min': 1950, 'max': 2024}),
+            'anno': forms.NumberInput(attrs={'min': 1950, 'max': 2025}),
         }
 
     anno = forms.IntegerField(

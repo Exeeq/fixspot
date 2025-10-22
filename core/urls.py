@@ -78,4 +78,6 @@ urlpatterns = [
 
     path('mensajes/', mensajes, name='mensajes'),
     path('eliminar_mensaje/<int:id_mensaje>/', eliminar_mensaje, name='eliminar_mensaje'),
+
+    path('calificar_taller/<int:agenda_id>/', guardar_calificacion, name='guardar_calificacion'),
 ]

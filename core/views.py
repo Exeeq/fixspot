@@ -520,7 +520,6 @@ def autocomplete_address(request):
             for s in suggestions:
                 display = s.get('display_name', '')
                 if display:
-                    # jQuery UI friendly
                     results.append({'label': display, 'value': display})
             return JsonResponse(results, safe=False)
         except requests.RequestException as e:
@@ -551,18 +550,25 @@ def agendar_hora(request, id_taller):
     return render(request, 'core/agendar_hora.html', {'form': form, 'taller': taller})
 
 def get_available_hours(request):
-    date = request.GET.get('date')
+    fecha = request.GET.get('date')
     id_taller = request.GET.get('id_taller')
     taller = get_object_or_404(Taller, idTaller=id_taller)
 
-    if date:
-        reserved_hours = Agenda.objects.filter(fechaAtencion=date, idTaller=taller).values_list('horaAtencion', flat=True)
+    # Generar las horas entre 9:00 AM y 7:00 PM, excluyendo las 14:00 PM (2:00 PM)
+    available_hours = [(f"{h:02}:00") for h in range(9, 19) if h != 14]  # Excluyendo las 14:00 PM
+
+    if fecha:
+        # Excluir horas ya reservadas para la fecha seleccionada
+        reserved_hours = Agenda.objects.filter(
+            fechaAtencion=fecha,
+            idTaller=taller
+        ).values_list('horaAtencion', flat=True)
+
+        # Excluir horas reservadas de la lista de horas disponibles
         available_hours = [
             f"{h:02}:00" for h in range(9, 19)
-            if time(hour=h) not in reserved_hours
+            if h != 14 and f"{h:02}:00" not in reserved_hours
         ]
-    else:
-        available_hours = [f"{h:02}:00" for h in range(9, 19)]
 
     return JsonResponse({'available_hours': available_hours})
 
@@ -603,11 +609,13 @@ def eliminar_vehiculo(request, vehiculo_id):
     return redirect('mis_vehiculos')
    
 @login_required
+@role_required(["Administrador"])
 def administrar_usuarios(request):
     usuarios = UsuarioCustom.objects.all()
     return render(request, 'core/administrar_usuarios.html', {'usuarios': usuarios})
 
 @login_required
+@role_required(["Administrador"])
 def modificar_usuario(request, id):
     usuario = get_object_or_404(UsuarioCustom, id=id)
     if request.method == 'POST':
@@ -736,5 +744,20 @@ def eliminar_mensaje(request, id_mensaje):
     mensaje = get_object_or_404(Contacto, idContacto=id_mensaje)
     mensaje.delete()
     return redirect('mensajes')
+
+def guardar_calificacion(request, agenda_id):
+    if request.method == 'POST':
+        calificacion = request.POST.get('calificacion')
+        agenda = get_object_or_404(Agenda, idAgenda=agenda_id)
+
+        # Crear la calificación
+        CalificacionTaller.objects.create(
+            idTaller=agenda.idTaller,
+            idUsuario=agenda.cliente,
+            calificacion=calificacion
+        )
+
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
 
 

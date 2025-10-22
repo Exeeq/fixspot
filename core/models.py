@@ -99,15 +99,25 @@ class TipoVehiculo(models.Model):
 class Vehiculo(models.Model):
     idVehiculo = models.AutoField(primary_key=True)
     patente = models.CharField(blank=False, null=False, max_length=6)
+    idMarca = models.ForeignKey(Marca, on_delete=models.CASCADE, blank=False, null=False)
     modelo = models.CharField(blank=False, null=False, max_length=20)
     subModelo = models.CharField(blank=True, null=True, max_length=20)
     anno = models.IntegerField(blank=False, null=False)
     idUsuario = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE, blank=True, null=True)
-    idMarca = models.ForeignKey(Marca, on_delete=models.CASCADE, blank=False, null=False)
     idTipoVehiculo = models.ForeignKey(TipoVehiculo, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
         return self.patente
+    
+class CalificacionTaller(models.Model):
+    idCalificacion = models.AutoField(primary_key=True)
+    idTaller = models.ForeignKey(Taller, on_delete=models.CASCADE)
+    idUsuario = models.ForeignKey(UsuarioCustom, on_delete=models.CASCADE)
+    calificacion = models.IntegerField(choices=[(1, 'Mala'), (2, 'Regular'), (3, 'Buena'), (4, 'Muy Buena'), (5, 'Excelente')])
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Calificación de {self.idTaller.nombreTaller} por {self.idUsuario.username}"
 
 #MODELOS RELACIONADOS A LA AGENDA:
 class EstadoAgenda(models.Model):

@@ -82,6 +82,8 @@
                 success: function(data) {
                     var $horaAtencion = $('#id_horaAtencion');
                     $horaAtencion.empty();
+
+                    // Excluir las 14:00 PM (hora de colación)
                     $.each(data.available_hours, function(index, value) {
                         $horaAtencion.append('<option value="' + value + '">' + value + '</option>');
                     });

@@ -236,29 +236,44 @@ class VehiculoForm(forms.ModelForm):
     )
 
 
-class UsuarioCustomForm(forms.ModelForm):
+class UsuarioCustomPerfilForm(forms.ModelForm):
+    username = forms.CharField(
+        label='Nombre de usuario',
+        help_text='Solo letras y números',
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Za-z0-9]+$',
+                message='Solo se permiten letras y números (sin espacios ni símbolos).',
+                code='invalid_username'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'pattern': '^[A-Za-z0-9]+$',
+            'title': 'Solo letras y números (sin espacios ni símbolos)'
+        }),
+    )
+
     class Meta:
         model = UsuarioCustom
-        fields = ['username','run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'idRol', 'idComuna']
-        labels = {
-            'username': 'Nombre de usuario',
-            'run': 'RUN',
-            'correo': 'Correo Electrónico',
-            'pnombre': 'Primer Nombre',
-            'ap_paterno': 'Apellido Paterno',
-            'direccion': 'Dirección',
-            'idRol': 'Rol',
-            'idComuna': 'Comuna',
-        }
+        fields = ['username','run','correo','pnombre','ap_paterno','direccion','idComuna']
+        help_texts = {'username': 'Solo letras y números'}  
+
         widgets = {
             'run': forms.TextInput(attrs={'class': 'form-control'}),
             'correo': forms.EmailInput(attrs={'class': 'form-control'}),
             'pnombre': forms.TextInput(attrs={'class': 'form-control'}),
             'ap_paterno': forms.TextInput(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
-            'idRol': forms.Select(attrs={'class': 'form-control'}),
-            'idComuna': forms.Select(attrs={'class': 'form-control'}),
+            'idComuna': forms.Select(attrs={'class': 'form-select'}),
         }
+
+    def clean_username(self):
+        u = self.cleaned_data.get('username', '')
+        u = re.sub(r'[^A-Za-z0-9]', '', u) 
+        if not u:
+            raise forms.ValidationError('Ingresa un nombre de usuario válido (solo letras y números).')
+        return u
 
 class UsuarioCustomCreationForm(UserCreationForm):
     username = forms.CharField(max_length=150, label='Nombre de usuario', widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -286,13 +301,13 @@ class UsuarioCustomCreationForm(UserCreationForm):
 class UsuarioCustomPerfilForm(forms.ModelForm):
     class Meta:
         model = UsuarioCustom
-        fields = ['username','run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'idComuna']
+        fields = ['username','run','correo','pnombre','ap_paterno','direccion','idComuna']
         labels = {
             'username': 'Nombre de usuario',
             'run': 'RUN',
-            'correo': 'Correo Electrónico',
-            'pnombre': 'Primer Nombre',
-            'ap_paterno': 'Apellido Paterno',
+            'correo': 'Correo electrónico',
+            'pnombre': 'Primer nombre',
+            'ap_paterno': 'Apellido paterno',
             'direccion': 'Dirección',
             'idComuna': 'Comuna',
         }
@@ -302,7 +317,7 @@ class UsuarioCustomPerfilForm(forms.ModelForm):
             'pnombre': forms.TextInput(attrs={'class': 'form-control'}),
             'ap_paterno': forms.TextInput(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
-            'idComuna': forms.Select(attrs={'class': 'form-control'}),
+            'idComuna': forms.Select(attrs={'class': 'form-select'}),
         }
 
 class ReportePagoForm(forms.ModelForm):

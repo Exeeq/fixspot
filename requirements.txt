@@ -1,10 +1,10 @@
 django==4.1
-mysqlclient
+PyMySQL
 django-crispy-forms==1.14.0
 django-rest-framework
 djangorestframework
 requests
 Pillow
 python-docx
-djangorestframework-simplejwt==5.2.2
+djangorestframework-simplejwt
 reportlab

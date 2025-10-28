@@ -7,7 +7,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 import re
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-import requests
+from datetime import date
 
 class AddressForm(forms.Form):
     address = forms.CharField(label='Ingrese dirección', max_length=255)
@@ -214,13 +214,15 @@ class VehiculoForm(forms.ModelForm):
             'idTipoVehiculo': 'Tipo de Vehículo',
         }
         widgets = {
-            'anno': forms.NumberInput(attrs={'min': 1950, 'max': 2025}),
+            # el max se ajusta dinámicamente en __init__
+            'anno': forms.NumberInput(),
         }
 
+    # validadores “duros” (se refinan en clean_*)
     anno = forms.IntegerField(
-        validators=[MinValueValidator(1950), MaxValueValidator(2024)],
-        widget=forms.NumberInput(attrs={'min': 1950, 'max': 2024}),
-        label= 'Año'
+        validators=[MinValueValidator(1950), MaxValueValidator(date.today().year)],
+        widget=forms.NumberInput(),
+        label='Año'
     )
 
     patente = forms.CharField(
@@ -228,12 +230,43 @@ class VehiculoForm(forms.ModelForm):
         validators=[
             RegexValidator(
                 regex=r'^[A-Z]{4}\d{2}$',
-                message='La patente debe estar en el formato correcto: 4 letras seguidas de 2 números (ej. HYRG34).',
+                message='Formato de patente permitido para autos/camionetas: 4 letras + 2 números (ej. HYRG34).',
                 code='invalid_patente'
             )
         ],
-        widget=forms.TextInput(attrs={'placeholder': 'HYRG34'})
+        widget=forms.TextInput(attrs={'placeholder': 'HYRG34', 'style': 'text-transform:uppercase;'})
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # 1) Excluir MOTO del selector (por nombre)
+        self.fields['idTipoVehiculo'].queryset = (
+            TipoVehiculo.objects.exclude(nombreTipo__iexact='Moto')
+        )
+
+        # 2) Año dinámico (máximo año actual)
+        current = date.today().year
+        self.fields['anno'].widget.attrs.update({'min': 1950, 'max': current})
+
+    def clean_idTipoVehiculo(self):
+        tv = self.cleaned_data['idTipoVehiculo']
+        # Segundo seguro: si alguien fuerza el POST con “Moto”, rechazamos.
+        if tv and tv.nombreTipo.strip().lower() in ('moto', 'motocicleta', 'motocicletas'):
+            raise ValidationError('No se permiten motocicletas en este formulario.')
+        return tv
+
+    def clean_patente(self):
+        p = (self.cleaned_data.get('patente') or '').upper()
+        # Ya validamos 4L+2N con el RegexValidator. Aseguramos mayúsculas.
+        return p
+
+    def clean_anno(self):
+        y = self.cleaned_data['anno']
+        current = date.today().year
+        if not (1950 <= y <= current):
+            raise ValidationError(f'El año debe estar entre 1950 y {current}.')
+        return y
 
 class UsuarioCustomPerfilForm(forms.ModelForm):
     username = forms.CharField(

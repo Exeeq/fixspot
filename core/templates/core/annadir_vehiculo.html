@@ -74,5 +74,13 @@
             });
         });
     });
+
+    $(document).addEventListener('DOMContentLoaded', () => {
+        const sel = document.getElementById('id_idTipoVehiculo');
+        if (!sel) return;
+        [...sel.options].forEach(opt => {
+        if (/moto/i.test(opt.textContent)) opt.remove();
+        });
+    });
 </script>
 {% endblock js %}

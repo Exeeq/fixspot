@@ -1,21 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 import requests
-from django.shortcuts import render
-from .forms import AddressForm
 from .models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from .forms import *
 from rest_framework import viewsets
 from .serializers import *
-from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.serializers import serialize
-import requests
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 import docx
 from io import BytesIO
 from functools import wraps
@@ -25,8 +20,10 @@ from django.shortcuts import get_object_or_404
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from django.db.models import Avg
-
+from django.db.models import Avg, Exists, OuterRef
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
+from openpyxl.utils import get_column_letter
 
 def role_required(roles):
     def decorator(view_func):
@@ -451,8 +448,17 @@ def sobre_nosotros(request):
 
 @login_required
 def talleres(request):
-    talleres = Taller.objects.annotate(promedio_calificacion=Avg('calificaciontaller__calificacion'))
-    return render(request, 'core/talleres.html', {'talleres': talleres})
+    base = Taller.objects.annotate(
+        promedio_calificacion=Avg('calificaciontaller__calificacion')
+    )
+    if request.user.is_authenticated:
+        fav_sub = FavoritoTaller.objects.filter(
+            usuario=request.user, taller=OuterRef('pk')
+        )
+        base = base.annotate(es_favorito=Exists(fav_sub))
+    else:
+        base = base.annotate(es_favorito=models.Value(False, output_field=models.BooleanField()))
+    return render(request, 'core/talleres.html', {'talleres': base})
 
 @login_required
 @role_required(["Administrador"])
@@ -662,27 +668,46 @@ def administrar_mi_taller(request):
 @login_required
 @role_required(["Encargado taller"])
 def reservas_taller(request, idTaller):
-    taller = Taller.objects.get(pk=idTaller)
-    reservas = Agenda.objects.filter(idTaller=taller)
+    taller = get_object_or_404(Taller, pk=idTaller)
+    reservas = (Agenda.objects
+                .filter(idTaller=taller)
+                .select_related('idServicio', 'cliente', 'idVehiculo__idMarca', 'estado')
+               )
+    hay_pagadas = reservas.filter(estado__idEstado=3).exists()
     data = {
         'taller': taller,
-        'reservas': reservas
+        'reservas': reservas,
+        'hay_pagadas': hay_pagadas,
     }
     return render(request, 'core/reservas_taller.html', data)
 
 @login_required
 def perfil_usuario(request):
     user = request.user
+    pref, _ = PreferenciasUsuario.objects.get_or_create(usuario=user)
+
     if request.method == 'POST':
         form = UsuarioCustomPerfilForm(request.POST, instance=user)
+        # --- guardar primero usuario ---
         if form.is_valid():
             form.save()
+            # --- guardar toggle acepta_promociones ---
+            raw = request.POST.get('acepta_promociones', '') 
+            acepta = str(raw).lower() in ('1', 'true', 'on', 'yes', 'si', 'sí')
+            if pref.acepta_promociones != acepta:
+                pref.acepta_promociones = acepta
+                pref.save()
+
             messages.success(request, 'Perfil actualizado correctamente!')
             return redirect('index')
     else:
         form = UsuarioCustomPerfilForm(instance=user)
-    
-    return render(request, 'core/perfil_usuario.html', {'form': form})
+
+    ctx = {
+        'form': form,
+        'pref_acepta_promos': pref.acepta_promociones,
+    }
+    return render(request, 'core/perfil_usuario.html', ctx)
 
 @role_required(["Encargado taller"])
 def generar_reporte_pago(request, idReserva):
@@ -765,4 +790,145 @@ def guardar_calificacion(request, agenda_id):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
+
+#VISTAS TALLERES FAVORITOS
+@login_required
+def favoritos_list(request):
+    favoritos = (FavoritoTaller.objects
+                 .filter(usuario=request.user)
+                 .select_related('taller'))
+    return render(request, 'core/favoritos_list.html', {'favoritos': favoritos})
+
+@login_required
+def toggle_favorito(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Método no permitido')
+    taller_id = request.POST.get('taller_id')
+    if not taller_id:
+        return HttpResponseBadRequest('Falta taller_id')
+
+    taller = get_object_or_404(Taller, pk=taller_id)
+    fav_qs = FavoritoTaller.objects.filter(usuario=request.user, taller=taller)
+
+    # si existe → quitar
+    if fav_qs.exists():
+        fav_qs.delete()
+        return JsonResponse({'ok': True, 'favorito': False})
+
+    # validar límite 5
+    if FavoritoTaller.objects.filter(usuario=request.user).count() >= 5:
+        return JsonResponse({'ok': False, 'error': 'max', 'msg': 'Máximo 5 talleres favoritos'}, status=400)
+
+    FavoritoTaller.objects.create(usuario=request.user, taller=taller)
+    return JsonResponse({'ok': True, 'favorito': True})
+
+
+def _fmt_clp(v):
+    if v is None:
+        return ""
+    try:
+        return f"${int(round(float(v))):,}".replace(",", ".")
+    except Exception:
+        return f"${v}"
+
+@login_required
+def export_taller_pagadas_excel(request, idTaller):
+    """
+    Exporta un Excel con TODAS las reservas PAGADAS (estado id=3) del taller,
+    usando el monto real desde ReportePago.monto. Sin IVA, solo 'Precio total'.
+    """
+    taller = get_object_or_404(Taller, pk=idTaller)
+
+    # Trae reservas pagadas y su ReportePago (OneToOne reverse: 'reportepago')
+    reservas = (Agenda.objects
+                .filter(idTaller=taller, estado__idEstado=3)
+                .select_related('idServicio', 'cliente', 'idVehiculo__idMarca', 'estado', 'reportepago')
+                .order_by('fechaAtencion', 'horaAtencion', 'idAgenda'))
+
+    if not reservas.exists():
+        return HttpResponseForbidden("No hay reservas pagadas para exportar.")
+
+    # ===== Excel =====
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Pagadas"
+
+    # Estilos
+    thin = Side(style="thin", color="CCCCCC")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+    title_font = Font(size=16, bold=True, color="2E2E2E")
+    header_font = Font(size=11, bold=True, color="1F1F1F")
+    fill_header = PatternFill("solid", fgColor="F2F2F2")
+
+    # Anchos de columnas: ID, Fecha, Hora, Servicio, Cliente, Patente, Vehículo, Precio total
+    widths = [7, 14, 8, 28, 26, 16, 28, 16]
+    for i, w in enumerate(widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+
+    # Título
+    ws.merge_cells("A1:H1")
+    ws["A1"] = f"Reservas Pagadas — {taller.nombreTaller.upper()}"
+    ws["A1"].font = title_font
+    ws["A1"].alignment = Alignment(horizontal="center", vertical="center")
+    ws.row_dimensions[1].height = 28
+
+    # Encabezados
+    headers = ["ID", "Fecha", "Hora", "Servicio", "Cliente", "Patente", "Vehículo", "Precio total"]
+    row = 3
+    for col, h in enumerate(headers, start=1):
+        c = ws.cell(row=row, column=col, value=h)
+        c.font = header_font
+        c.fill = fill_header
+        c.alignment = Alignment(horizontal="center")
+        c.border = border
+
+    # Filas
+    total_general = 0.0
+    row += 1
+    for r in reservas:
+        # monto desde ReportePago (si por cualquier razón no existe, 0)
+        monto = float(getattr(getattr(r, "reportepago", None), "monto", 0) or 0)
+        total_general += monto
+
+        veh_marca = getattr(r.idVehiculo.idMarca, 'nombreMarca', '')
+        veh_modelo = r.idVehiculo.modelo or ''
+        veh_sub = f" {r.idVehiculo.subModelo}" if r.idVehiculo.subModelo else ''
+        veh_text = f"{veh_marca} {veh_modelo}{veh_sub}".strip()
+
+        ws.cell(row=row, column=1, value=f"#{r.idAgenda}").alignment = Alignment(horizontal="center")
+        ws.cell(row=row, column=2, value=str(r.fechaAtencion)).alignment = Alignment(horizontal="center")
+        ws.cell(row=row, column=3, value=str(r.horaAtencion)).alignment = Alignment(horizontal="center")
+        ws.cell(row=row, column=4, value=str(r.idServicio)).alignment = Alignment(horizontal="left")
+        ws.cell(row=row, column=5, value=f"{r.cliente.pnombre} {r.cliente.ap_paterno}").alignment = Alignment(horizontal="left")
+        ws.cell(row=row, column=6, value=r.idVehiculo.patente).alignment = Alignment(horizontal="center")
+        ws.cell(row=row, column=7, value=veh_text).alignment = Alignment(horizontal="left")
+        ws.cell(row=row, column=8, value=_fmt_clp(monto)).alignment = Alignment(horizontal="right")
+
+        for c in range(1, 9):
+            ws.cell(row=row, column=c).border = border
+
+        row += 1
+
+    # Total general
+    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=7)
+    lbl = ws.cell(row=row, column=1, value="Total general")
+    lbl.font = Font(bold=True)
+    lbl.alignment = Alignment(horizontal="right")
+    tot_cell = ws.cell(row=row, column=8, value=_fmt_clp(total_general))
+    tot_cell.alignment = Alignment(horizontal="right")
+    tot_cell.font = Font(bold=True, color="1B5E20")
+    for c in range(1, 9):
+        ws.cell(row=row, column=c).border = border
+
+    # Respuesta
+    bio = BytesIO()
+    wb.save(bio)
+    bio.seek(0)
+    fname = f"reservas_pagadas_{taller.nombreTaller.replace(' ', '_')}.xlsx"
+    resp = HttpResponse(
+        bio.getvalue(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    resp["Content-Disposition"] = f'attachment; filename=\"{fname}\"'
+    return resp
 

@@ -63,6 +63,8 @@
                                 {% endif %}
                                 <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'mis_vehiculos' %}"><i class="fa-solid fa-car"></i> MIS VEHÍCULOS </a></li>
                                 <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'mis_reservas' %}"><i class="fa-solid fa-book"></i> MIS RESERVAS </a></li>
+                                <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'favoritos_list' %}"><i class="fa-solid bi bi-star-fill"></i> MIS TALLERES FAVORITOS</a></li>
+                                
                                 {% if user.idRol_id == 2 %}
                                     <li><a class="dropdown-item custom-dropdown-item fw-bold" href="{% url 'administrar_mi_taller' %}"><i class="fa-solid fa-gear"></i> MI TALLER </a></li>
                                 {% endif %}

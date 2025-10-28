@@ -235,30 +235,25 @@ class VehiculoForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'HYRG34'})
     )
 
-
 class UsuarioCustomPerfilForm(forms.ModelForm):
     username = forms.CharField(
         label='Nombre de usuario',
         help_text='Solo letras y números',
-        validators=[
-            RegexValidator(
-                regex=r'^[A-Za-z0-9]+$',
-                message='Solo se permiten letras y números (sin espacios ni símbolos).',
-                code='invalid_username'
-            )
-        ],
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'pattern': '^[A-Za-z0-9]+$',
-            'title': 'Solo letras y números (sin espacios ni símbolos)'
-        }),
+        validators=[RegexValidator(regex=r'^[A-Za-z0-9]+$', message='Solo se permiten letras y números (sin espacios ni símbolos).')],
+        widget=forms.TextInput(attrs={'class': 'form-control','pattern': '^[A-Za-z0-9]+$','title': 'Solo letras y números (sin espacios ni símbolos)'}),
+    )
+
+    # === Toggle promociones ===
+    acepta_promociones = forms.BooleanField(
+        required=False,
+        label='Quiero recibir promociones por correo',
+        widget=forms.CheckboxInput(attrs={"class":"form-check-input","role":"switch"})
     )
 
     class Meta:
         model = UsuarioCustom
-        fields = ['username','run','correo','pnombre','ap_paterno','direccion','idComuna']
-        help_texts = {'username': 'Solo letras y números'}  
-
+        fields = ['username','run','correo','pnombre','ap_paterno','direccion','idComuna', 'acepta_promociones']
+        help_texts = {'username': 'Solo letras y números'}
         widgets = {
             'run': forms.TextInput(attrs={'class': 'form-control'}),
             'correo': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -268,12 +263,28 @@ class UsuarioCustomPerfilForm(forms.ModelForm):
             'idComuna': forms.Select(attrs={'class': 'form-select'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Inicializa el toggle desde PreferenciasUsuario
+        if self.instance and self.instance.pk:
+            pref, _ = PreferenciasUsuario.objects.get_or_create(usuario=self.instance)
+            self.fields['acepta_promociones'].initial = bool(pref.acepta_promociones)
+
     def clean_username(self):
         u = self.cleaned_data.get('username', '')
-        u = re.sub(r'[^A-Za-z0-9]', '', u) 
+        u = re.sub(r'[^A-Za-z0-9]', '', u)
         if not u:
             raise forms.ValidationError('Ingresa un nombre de usuario válido (solo letras y números).')
         return u
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        acepta = self.cleaned_data.get('acepta_promociones', False)
+        pref, _ = PreferenciasUsuario.objects.get_or_create(usuario=user)
+        if pref.acepta_promociones != acepta:
+            pref.acepta_promociones = acepta
+            pref.save()
+        return user
 
 class UsuarioCustomCreationForm(UserCreationForm):
     username = forms.CharField(max_length=150, label='Nombre de usuario', widget=forms.TextInput(attrs={'class': 'form-control'}))

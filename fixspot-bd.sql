@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-10-2025 a las 17:44:46
+-- Tiempo de generación: 28-10-2025 a las 03:53:10
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -182,7 +182,15 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (100, 'Can add calificacion taller', 25, 'add_calificaciontaller'),
 (101, 'Can change calificacion taller', 25, 'change_calificaciontaller'),
 (102, 'Can delete calificacion taller', 25, 'delete_calificaciontaller'),
-(103, 'Can view calificacion taller', 25, 'view_calificaciontaller');
+(103, 'Can view calificacion taller', 25, 'view_calificaciontaller'),
+(104, 'Can add favorito taller', 26, 'add_favoritotaller'),
+(105, 'Can change favorito taller', 26, 'change_favoritotaller'),
+(106, 'Can delete favorito taller', 26, 'delete_favoritotaller'),
+(107, 'Can view favorito taller', 26, 'view_favoritotaller'),
+(108, 'Can add preferencias usuario', 27, 'add_preferenciasusuario'),
+(109, 'Can change preferencias usuario', 27, 'change_preferenciasusuario'),
+(110, 'Can delete preferencias usuario', 27, 'delete_preferenciasusuario'),
+(111, 'Can view preferencias usuario', 27, 'view_preferenciasusuario');
 
 -- --------------------------------------------------------
 
@@ -213,7 +221,9 @@ INSERT INTO `core_agenda` (`idAgenda`, `fechaAtencion`, `horaAtencion`, `cliente
 (4, '2025-10-27', '09:00:00.000000', 1, 3, 2, 2, 4),
 (5, '2025-10-28', '12:00:00.000000', 1, 3, 1, 2, 18),
 (6, '2025-10-30', '16:00:00.000000', 3, 3, 3, 3, 6),
-(7, '2025-10-28', '10:00:00.000000', 4, 1, 3, 4, 8);
+(7, '2025-10-28', '10:00:00.000000', 4, 3, 3, 4, 8),
+(8, '2025-10-31', '13:00:00.000000', 3, 3, 2, 3, 4),
+(9, '2025-11-04', '17:00:00.000000', 4, 2, 1, 4, 3);
 
 -- --------------------------------------------------------
 
@@ -238,7 +248,9 @@ INSERT INTO `core_calificaciontaller` (`idCalificacion`, `calificacion`, `fecha`
 (1, 1, '2025-10-22 01:53:33.031959', 2, 3),
 (2, 3, '2025-10-22 14:26:59.182261', 2, 1),
 (3, 2, '2025-10-22 14:29:36.633532', 1, 1),
-(5, 4, '2025-10-22 15:15:30.050098', 3, 3);
+(5, 4, '2025-10-22 15:15:30.050098', 3, 3),
+(6, 5, '2025-10-22 16:02:27.093131', 3, 4),
+(7, 4, '2025-10-22 18:42:39.824320', 2, 3);
 
 -- --------------------------------------------------------
 
@@ -349,6 +361,35 @@ CREATE TABLE `core_estadoticket` (
   `NombreEstado` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `core_estadoticket`
+--
+
+INSERT INTO `core_estadoticket` (`idEstado`, `NombreEstado`) VALUES
+(1, 'Pendiente'),
+(2, 'Aceptado'),
+(3, 'Rechazado');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `core_favoritotaller`
+--
+
+DROP TABLE IF EXISTS `core_favoritotaller`;
+CREATE TABLE `core_favoritotaller` (
+  `idFav` int(11) NOT NULL,
+  `taller_id` int(11) NOT NULL,
+  `usuario_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_favoritotaller`
+--
+
+INSERT INTO `core_favoritotaller` (`idFav`, `taller_id`, `usuario_id`) VALUES
+(2, 3, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -413,6 +454,26 @@ INSERT INTO `core_marca` (`idMarca`, `nombreMarca`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `core_preferenciasusuario`
+--
+
+DROP TABLE IF EXISTS `core_preferenciasusuario`;
+CREATE TABLE `core_preferenciasusuario` (
+  `usuario_id` bigint(20) NOT NULL,
+  `acepta_promociones` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `core_preferenciasusuario`
+--
+
+INSERT INTO `core_preferenciasusuario` (`usuario_id`, `acepta_promociones`) VALUES
+(1, 1),
+(3, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `core_region`
 --
 
@@ -454,7 +515,10 @@ INSERT INTO `core_reportepago` (`idReporte`, `comentario`, `monto`, `reserva_id`
 (3, 'Cambio de neumáticos a dos ruedas.', 12000.00, 3, NULL),
 (4, 'Cambio de llantas trasera, por unas provisionales.', 5000.00, 4, NULL),
 (5, 'Se realiza todo', 3000.00, 5, NULL),
-(6, 'N/A', 2000.00, 6, NULL);
+(6, 'N/A', 2000.00, 6, NULL),
+(7, 'n/a', 1000.00, 7, NULL),
+(8, 'N/A', 2000.00, 8, NULL),
+(9, 'aaaaaaaaaaaaaaa', 200.00, 9, NULL);
 
 -- --------------------------------------------------------
 
@@ -599,6 +663,13 @@ CREATE TABLE `core_ticket` (
   `solicitante_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `core_ticket`
+--
+
+INSERT INTO `core_ticket` (`idTicket`, `asunto`, `EstadoTicket_id`, `solicitante_id`) VALUES
+(1, 'sfsfsf', 2, 5);
+
 -- --------------------------------------------------------
 
 --
@@ -670,12 +741,12 @@ CREATE TABLE `core_usuariocustom` (
 --
 
 INSERT INTO `core_usuariocustom` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`, `run`, `correo`, `telefono`, `pnombre`, `ap_paterno`, `direccion`, `idComuna_id`, `idRol_id`) VALUES
-(1, 'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=', '2025-10-22 14:29:11.317474', 1, 'admin', '', '', '', 1, 1, '2025-10-21 22:29:55.930381', '11111111-1', 'admin@fixspot.cl', '', 'Admin', 'Istrador', 'Duoc UC Sede Puente Alto', 4, 3),
-(2, 'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=', '2025-10-22 14:28:05.714152', 0, 'Jeffrey', '', '', '', 0, 1, '2025-10-21 22:33:47.743645', '21576345-3', 'jef.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramírez', 'San Francisco 123', 4, 2),
-(3, 'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=', '2025-10-22 15:20:28.053445', 0, 'Exequiel', '', '', '', 0, 1, '2025-10-21 22:34:24.210888', '21456345-4', 'ex.albornoz@duocuc.cl', '', 'Exequiel', 'Albornoz', 'San Carlos 123', 4, 1),
-(4, 'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=', '2025-10-22 15:16:31.918531', 0, 'Julio', '', '', '', 0, 1, '2025-10-22 00:43:15.700874', '11435376-4', 'jul.tapia@duocuc.cl', '', 'Julio', 'Tapia', 'Duoc UC Sede Puente Alto', 4, 1),
-(5, 'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=', '2025-10-22 13:48:27.424493', 0, 'Renato', '', '', '', 0, 1, '2025-10-22 01:15:28.217426', '19352873-4', 'ren.ato@duocuc.cl', '', 'Renato', 'Cisterna', 'Duoc UC Sede Puente Alto', 4, 2),
-(6, 'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=', '2025-10-22 15:13:54.459983', 0, 'Rodrigo', '', '', '', 0, 1, '2025-10-22 15:06:57.739130', '11568334-K', 'rodr.gonzalez@duocuc.cl', '', 'Rodrigo', 'Ramírez', 'Ernesto alvear puente alto', 4, 2);
+(1, 'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=', '2025-10-28 02:50:04.284376', 1, 'admin', '', '', '', 1, 1, '2025-10-21 22:29:55.930381', '11111111-1', 'admin@fixspot.cl', '', 'Admin', 'Istrador', 'Duoc UC Sede Puente Alto', 4, 3),
+(2, 'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=', '2025-10-28 02:14:29.011838', 0, 'Jeffrey', '', '', '', 0, 1, '2025-10-21 22:33:47.743645', '21576345-3', 'jef.ramirez@duocuc.cl', '', 'Jeffrey', 'Ramírez', 'San Francisco 123', 4, 2),
+(3, 'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=', '2025-10-28 01:32:29.807138', 0, 'Exequiel', '', '', '', 0, 1, '2025-10-21 22:34:24.210888', '21456345-4', 'ex.albornoz@duocuc.cl', '', 'Exequiel', 'Albornoz', 'San Carlos 123', 4, 1),
+(4, 'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=', '2025-10-28 02:14:06.494686', 0, 'Julio', '', '', '', 0, 1, '2025-10-22 00:43:15.700874', '11435376-4', 'jul.tapia@duocuc.cl', '', 'Julio', 'Tapia', 'Duoc UC Sede Puente Alto', 4, 1),
+(5, 'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=', '2025-10-28 02:44:20.128090', 0, 'Renato', '', '', '', 0, 1, '2025-10-22 01:15:28.217426', '19352873-4', 'ren.ato@duocuc.cl', '', 'Renato', 'Cisterna', 'Duoc UC Sede Puente Alto', 4, 2),
+(6, 'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=', '2025-10-22 16:00:35.633039', 0, 'Rodrigo', '', '', '', 0, 1, '2025-10-22 15:06:57.739130', '11568334-K', 'rodr.gonzalez@duocuc.cl', '', 'Rodrigo', 'Ramírez', 'Ernesto alvear puente alto', 4, 2);
 
 -- --------------------------------------------------------
 
@@ -778,8 +849,10 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (19, 'core', 'contacto'),
 (9, 'core', 'estadoagenda'),
 (17, 'core', 'estadoticket'),
+(26, 'core', 'favoritotaller'),
 (22, 'core', 'formapago'),
 (10, 'core', 'marca'),
+(27, 'core', 'preferenciasusuario'),
 (11, 'core', 'region'),
 (16, 'core', 'reportepago'),
 (12, 'core', 'rolusuario'),
@@ -848,7 +921,9 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (35, 'core', '0014_formapago_reportepago_idformapago', '2025-10-21 22:13:36.804500'),
 (36, 'core', '0015_remove_formapago_descripcion', '2025-10-21 22:13:36.810544'),
 (37, 'sessions', '0001_initial', '2025-10-21 22:13:36.836807'),
-(38, 'core', '0016_calificaciontaller', '2025-10-22 00:09:55.650351');
+(38, 'core', '0016_calificaciontaller', '2025-10-22 00:09:55.650351'),
+(39, 'core', '0017_favoritotaller', '2025-10-27 17:42:39.111824'),
+(40, 'core', '0018_preferenciasusuario', '2025-10-27 17:45:45.717175');
 
 -- --------------------------------------------------------
 
@@ -868,7 +943,7 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('hm09cscrffci2w5qt119vgx3dhxpuap8', '.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBadY:02tWGBT2WPmtCRdR9nRMbdKtPjGMoVzeKbzKRuE97Kc', '2025-11-05 15:20:28.055552'),
+('vg0vy81x4gky4376bem6ayp8b5k7acld', '.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vDZme:k6-kV8DtlwZCmtbPWfhapjf5DAi8xFOJJqFSXkTCCgw', '2025-11-11 02:50:04.286308'),
 ('xz5dm6tpvajglacb9uykyxbq7w29998a', '.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBMZF:GA4dZ9P2CSooITACM68j-3rnX3uTUXHFi5_O7Jtt2Ag', '2025-11-05 00:19:05.386284');
 
 --
@@ -949,6 +1024,14 @@ ALTER TABLE `core_estadoticket`
   ADD PRIMARY KEY (`idEstado`);
 
 --
+-- Indices de la tabla `core_favoritotaller`
+--
+ALTER TABLE `core_favoritotaller`
+  ADD PRIMARY KEY (`idFav`),
+  ADD UNIQUE KEY `core_favoritotaller_usuario_id_taller_id_3b22ad4a_uniq` (`usuario_id`,`taller_id`),
+  ADD KEY `core_favoritotaller_taller_id_0fe60bc2_fk_core_taller_idTaller` (`taller_id`);
+
+--
 -- Indices de la tabla `core_formapago`
 --
 ALTER TABLE `core_formapago`
@@ -959,6 +1042,12 @@ ALTER TABLE `core_formapago`
 --
 ALTER TABLE `core_marca`
   ADD PRIMARY KEY (`idMarca`);
+
+--
+-- Indices de la tabla `core_preferenciasusuario`
+--
+ALTER TABLE `core_preferenciasusuario`
+  ADD PRIMARY KEY (`usuario_id`);
 
 --
 -- Indices de la tabla `core_region`
@@ -1098,19 +1187,19 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT de la tabla `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT de la tabla `core_agenda`
 --
 ALTER TABLE `core_agenda`
-  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `idAgenda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `core_calificaciontaller`
 --
 ALTER TABLE `core_calificaciontaller`
-  MODIFY `idCalificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idCalificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `core_comuna`
@@ -1122,7 +1211,7 @@ ALTER TABLE `core_comuna`
 -- AUTO_INCREMENT de la tabla `core_contacto`
 --
 ALTER TABLE `core_contacto`
-  MODIFY `idContacto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idContacto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `core_estadoagenda`
@@ -1134,7 +1223,13 @@ ALTER TABLE `core_estadoagenda`
 -- AUTO_INCREMENT de la tabla `core_estadoticket`
 --
 ALTER TABLE `core_estadoticket`
-  MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `core_favoritotaller`
+--
+ALTER TABLE `core_favoritotaller`
+  MODIFY `idFav` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `core_formapago`
@@ -1158,7 +1253,7 @@ ALTER TABLE `core_region`
 -- AUTO_INCREMENT de la tabla `core_reportepago`
 --
 ALTER TABLE `core_reportepago`
-  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idReporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `core_rolusuario`
@@ -1188,7 +1283,7 @@ ALTER TABLE `core_tallerservicio`
 -- AUTO_INCREMENT de la tabla `core_ticket`
 --
 ALTER TABLE `core_ticket`
-  MODIFY `idTicket` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idTicket` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `core_tipovehiculo`
@@ -1230,13 +1325,13 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT de la tabla `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- Restricciones para tablas volcadas
@@ -1283,6 +1378,19 @@ ALTER TABLE `core_calificaciontaller`
 --
 ALTER TABLE `core_comuna`
   ADD CONSTRAINT `core_comuna_idRegion_id_8eb1d498_fk_core_region_idRegion` FOREIGN KEY (`idRegion_id`) REFERENCES `core_region` (`idRegion`);
+
+--
+-- Filtros para la tabla `core_favoritotaller`
+--
+ALTER TABLE `core_favoritotaller`
+  ADD CONSTRAINT `core_favoritotaller_taller_id_0fe60bc2_fk_core_taller_idTaller` FOREIGN KEY (`taller_id`) REFERENCES `core_taller` (`idTaller`),
+  ADD CONSTRAINT `core_favoritotaller_usuario_id_ec38caed_fk_core_usuariocustom_id` FOREIGN KEY (`usuario_id`) REFERENCES `core_usuariocustom` (`id`);
+
+--
+-- Filtros para la tabla `core_preferenciasusuario`
+--
+ALTER TABLE `core_preferenciasusuario`
+  ADD CONSTRAINT `core_preferenciasusu_usuario_id_e01ac886_fk_core_usua` FOREIGN KEY (`usuario_id`) REFERENCES `core_usuariocustom` (`id`);
 
 --
 -- Filtros para la tabla `core_reportepago`

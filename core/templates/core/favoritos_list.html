@@ -1,0 +1,181 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+  .page-title{ text-align:center; padding:3rem 0 1rem; }
+  .fav-card{
+    background:#fff; border-radius:1.2rem; overflow:hidden;
+    box-shadow:0 0.6rem 1.2rem rgba(0,0,0,.08);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .fav-card:hover{ transform:translateY(-4px); box-shadow:0 1rem 1.8rem rgba(0,0,0,.12); }
+  .fav-card .img-wrap{ position:relative; height:220px; }
+  .fav-card .img-wrap img{ width:100%; height:100%; object-fit:cover; }
+  .fav-btn{
+    position:absolute; top:12px; right:12px; z-index:2;
+    width:42px; height:42px; border-radius:999px; border:0;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.45); color:#ffd54d; cursor:pointer; transition:.2s;
+  }
+  .fav-btn:hover{ transform:translateY(-1px); background:rgba(0,0,0,.6); }
+  .fav-btn .bi{ font-size:1.25rem; }
+
+  .card-body-dark{ background:#2c2c2c; color:#f2f2f2; padding:1.25rem 1.25rem 1.5rem; }
+  .card-body-dark h3{ color:#bda4f0; font-weight:700; font-size:1.1rem; margin-bottom:.5rem; }
+  .meta{ font-size:.95rem; margin-bottom:.25rem; }
+  .meta strong{ color:#fff; }
+
+  .btn-agendar{
+    background:linear-gradient(90deg,#8b5cf6 0%,#c084fc 100%);
+    border:none; color:#fff; font-weight:600; letter-spacing:.3px;
+    box-shadow:0 4px 10px rgba(139,92,246,.4);
+  }
+  .btn-agendar:hover{ background:linear-gradient(90deg,#9f7aea 0%,#d6bcfa 100%); }
+
+  /* Empty state */
+  .empty{
+    max-width:760px; margin:3rem auto; padding:2rem; text-align:center;
+    background:#fff; border-radius:1rem; box-shadow:0 0.6rem 1.2rem rgba(0,0,0,.08);
+  }
+  .empty .icon{
+    width:90px; height:90px; border-radius:999px;
+    display:flex; align-items:center; justify-content:center;
+    background:#f2ecff; color:#6f42c1; margin:0 auto 1rem;
+  }
+  .empty .icon .bi{ font-size:2rem; }
+</style>
+{% endblock css %}
+
+{% block contenido %}
+
+<!-- INICIO ENCABEZADO -->
+<div class="">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 mt-5 mb-5">
+                <div class="intro-excerpt">
+                    <h1 class="fw-bold text-center">MIS TALLERES FAVORITOS</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIN ENCABEZADO -->
+
+<div class="bg-light py-5">
+  <br><br>
+  <div class="container">
+    {% if favoritos %}
+      <div class="row g-4">
+        {% for f in favoritos %}
+          {% with t=f.taller %}
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="fav-card h-100">
+
+              <div class="img-wrap">
+                <img src="{{ t.imagen.url }}" alt="{{ t.nombreTaller }}">
+                <!-- Quitar de favoritos -->
+                <button class="fav-btn js-remove-fav" data-taller="{{ t.idTaller }}" title="Quitar de favoritos">
+                  <i class="bi bi-star-fill"></i>
+                </button>
+              </div>
+
+              <div class="card-body-dark">
+                <h3 class="text-truncate" title="{{ t.nombreTaller }}">{{ t.nombreTaller }}</h3>
+                <div class="meta"><strong>Teléfono:</strong> {{ t.telefono }}</div>
+                <div class="meta"><strong>Dirección:</strong> {{ t.direccion }} {{ t.idComuna.nombreComuna }}</div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <a href="{% url 'agendar_hora' t.idTaller %}" class="btn btn-agendar rounded-pill px-3 py-2">
+                    Agendar ahora <i class="bi bi-calendar-check ms-1"></i>
+                  </a>
+                  <a href="{% url 'talleres' %}" class="btn btn-outline-secondary btn-sm">Ver más talleres</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- Estado vacío -->
+      <div class="empty">
+        <div class="icon"><i class="bi bi-star"></i></div>
+        <h2 class="fw-bold mb-2">Aún no tienes talleres favoritos</h2>
+        <p class="text-muted mb-3">
+          Aquí aparecerán los talleres que guardes como favoritos. 
+          Ve al listado y marca la estrella del taller que quieras.
+        </p>
+        <a href="{% url 'talleres' %}" class="btn btn-primary">
+          Explorar talleres
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+  <br><br><br><br><br><br>
+</div>
+
+
+{% endblock contenido %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  // CSRF helper
+  function getCookie(name){
+    let v=null; if(document.cookie) for(const c of document.cookie.split(';')){
+      const cc=c.trim(); if(cc.startsWith(name+'=')){ v=decodeURIComponent(cc.slice(name.length+1)); break; }
+    } return v;
+  }
+  const csrftoken=getCookie('csrftoken');
+
+  // Quitar de favoritos desde esta página
+  document.addEventListener('click', async (e)=>{
+    const btn = e.target.closest('.js-remove-fav');
+    if(!btn) return;
+
+    const tallerId = btn.dataset.taller;
+
+    const ask = await Swal.fire({
+      title:'¿Quitar de favoritos?',
+      text:'Se eliminará este taller de tu lista.',
+      icon:'question', showCancelButton:true,
+      confirmButtonText:'Sí, quitar', cancelButtonText:'Cancelar', reverseButtons:true
+    });
+    if(!ask.isConfirmed) return;
+
+    try{
+      const r = await fetch("{% url 'toggle_favorito' %}",{
+        method:'POST',
+        headers:{'X-CSRFToken':csrftoken},
+        body:new URLSearchParams({taller_id:tallerId})
+      });
+      const data = await r.json();
+
+      if(!r.ok || !data.ok){
+        Swal.fire('Ups', (data && data.msg) || 'No se pudo actualizar.', 'warning');
+        return;
+      }
+
+      // Remover tarjeta del DOM
+      const col = btn.closest('.col-12, .col-md-6, .col-lg-4');
+      if(col) col.remove();
+
+      // Si quedó vacío, recargar para mostrar estado "sin favoritos"
+      if(document.querySelectorAll('.fav-card').length === 0){
+        location.reload();
+      }else{
+        Swal.fire({toast:true, position:'top-end', timer:1600, showConfirmButton:false,
+                   icon:'success', title:'Eliminado de favoritos'});
+      }
+    }catch(e){
+      Swal.fire('Error','Ocurrió un problema, intenta nuevamente.','error');
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+{% endblock js %}

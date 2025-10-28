@@ -45,6 +45,10 @@ class UsuarioCustom(AbstractUser):
     def __str__(self):
         return self.username
     
+class PreferenciasUsuario(models.Model):
+    usuario = models.OneToOneField('UsuarioCustom', on_delete=models.CASCADE, primary_key=True)
+    acepta_promociones = models.BooleanField(default=False)
+    
 class Taller(models.Model):
     idTaller = models.AutoField(primary_key=True)
     nombreTaller = models.CharField(max_length=46, blank=False, null=False)
@@ -80,6 +84,14 @@ class TallerServicio(models.Model):
 
     def __str__(self):
         return f"{self.idTaller.nombreTaller} - {self.idServicio.nombreServicio}"
+    
+class FavoritoTaller(models.Model):
+    idFav = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey('UsuarioCustom', on_delete=models.CASCADE)
+    taller = models.ForeignKey('Taller', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('usuario', 'taller')
 
 #MODELOS RELACIONADOS AL VEHÍCULO:
 class Marca(models.Model):

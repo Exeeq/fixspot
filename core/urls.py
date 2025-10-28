@@ -80,4 +80,10 @@ urlpatterns = [
     path('eliminar_mensaje/<int:id_mensaje>/', eliminar_mensaje, name='eliminar_mensaje'),
 
     path('calificar_taller/<int:agenda_id>/', guardar_calificacion, name='guardar_calificacion'),
+
+    #URLS Talleres favoritos:
+    path('favoritos/', favoritos_list, name='favoritos_list'),
+    path('favoritos/toggle/', toggle_favorito, name='toggle_favorito'),
+
+    path('taller/<int:idTaller>/reservas/excel-pagadas/', export_taller_pagadas_excel, name='export_taller_pagadas_excel'),
 ]

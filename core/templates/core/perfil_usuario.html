@@ -2,6 +2,27 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
+{% block css %}
+<style>
+  .form-check.form-switch .form-check-input { transform: scale(1.1); }
+  .form-check.form-switch { padding-left: 2.5rem; }
+
+  .form-switch .form-check-input{
+    width: 3rem; height: 1.5rem;
+  }
+  .form-switch .form-check-input:focus{
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+  }
+  .section-title { display:flex; align-items:center; }
+  .divider { opacity:.12; }
+  .bg-primary-subtle{ background:rgba(13,110,253,.08); }
+  .bg-light-subtle{ background:rgba(0,0,0,.03); }
+
+  /* Switch bonito */
+  .form-check-input{ width:3rem; height:1.5rem; cursor:pointer }
+  .form-check-input:checked{ background-color:#0d6efd; border-color:#0d6efd }
+</style>
+{% endblock css %}
 {% block contenido %}
 
 <!-- INICIO ENCABEZADO -->
@@ -22,7 +43,7 @@
   <br><br>
   <div class="container">
     <!-- Encabezado -->
-    <div class="row justify-content-center mb-4">
+    <div class="row justify-content-center mb-4 mt-4">
       <div class="col-lg-8">
         <div class="d-flex align-items-center gap-3">
           <img src="{% static 'core/img/avatar-placeholder.png' %}" alt="avatar" class="rounded-circle border" style="width:72px;height:72px;object-fit:cover;">
@@ -34,59 +55,123 @@
       </div>
     </div>
 
-    <!-- Tarjeta Perfil -->
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card shadow-sm border-0">
-          <div class="card-header bg-white border-0 pt-4">
+    {# --- Tarjeta Perfil --- #}
+    <div class="row justify-content-center mb-5">
+      <div class="col-lg-8 ">
+        <div class="card shadow-sm rounded-start">
+
+          <div class="card-header bg-white border-0 pt-4 pb-2">
             <h2 class="h4 mb-0 fw-bold">DATOS PERSONALES</h2>
           </div>
 
-          <div class="card-body">
+          <div class="card-body pt-0">
             <form id="perfilForm" method="POST" novalidate>
               {% csrf_token %}
 
-              <div class="row g-3">
-                <div class="col-md-6">
-                  {{ form.username|as_crispy_field }}
+              {# ===== Sección: Cuenta ===== #}
+              <div class="mb-3">
+                <div class="section-title">
+                  <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold me-2">Cuenta</span>
+                  <span class="text-muted small">Información de acceso</span>
                 </div>
-                <div class="col-md-6">
-                  {{ form.run|as_crispy_field }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.correo|as_crispy_field }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.pnombre|as_crispy_field }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.ap_paterno|as_crispy_field }}
-                </div>
-                <div class="col-md-6">
-                  {{ form.idComuna|as_crispy_field }}
-                </div>
-                <div class="col-12">
-                  {{ form.direccion|as_crispy_field }}
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6">
+                    {{ form.username|as_crispy_field }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ form.correo|as_crispy_field }}
+                  </div>
                 </div>
               </div>
 
+              <hr class="divider my-4">
+
+              {# ===== Sección: Identificación ===== #}
+              <div class="mb-3">
+                <div class="section-title">
+                  <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold me-2">Identificación</span>
+                  <span class="text-muted small">Datos básicos</span>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6">
+                    {{ form.run|as_crispy_field }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ form.pnombre|as_crispy_field }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ form.ap_paterno|as_crispy_field }}
+                  </div>
+                </div>
+              </div>
+
+              <hr class="divider my-4">
+
+              {# ===== Sección: Ubicación ===== #}
+              <div class="mb-3">
+                <div class="section-title">
+                  <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold me-2">Ubicación</span>
+                  <span class="text-muted small">Comuna y dirección</span>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6">
+                    {{ form.idComuna|as_crispy_field }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ form.direccion|as_crispy_field }}
+                  </div>
+                </div>
+              </div>
+
+              <hr class="divider my-4">
+
+              {# ===== Sección: Preferencias ===== #}
+              <div class="mb-2">
+                <div class="section-title">
+                  <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold me-2">Preferencias</span>
+                  <span class="text-muted small">Comunicaciones</span>
+                </div>
+
+                <div class="row g-2 mt-2">
+                  <div class="col-12">
+                    <div class="d-flex align-items-center p-3 rounded-3 border bg-light-subtle">
+                      <div class="form-check form-switch m-0">
+                        <input
+                          type="checkbox"
+                          name="acepta_promociones"
+                          id="id_acepta_promociones"
+                          class="form-check-input"
+                          value="1"
+                          {% if pref_acepta_promos %}checked{% endif %}/>
+                      </div>
+                      <label class="ms-3 mb-0 fw-semibold" for="id_acepta_promociones">
+                        ¿Aceptas promociones por correo?
+                      </label>
+                    </div>
+                    <div class="form-text ms-1 mt-1">
+                      Te enviaremos ofertas al correo: {{ request.user.correo|default:request.user.email }}.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {# ===== Botonera ===== #}
               <div class="d-flex justify-content-end gap-2 mt-4">
-                <a href="{% url 'index' %}" class="btn btn-secondary fw-semibold text-white">Cancelar</a>
-                <button type="submit" id="btnGuardar" class="btn btn-primary">
+                <a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" id="btnGuardar" class="btn btn-primary px-4">
                   Guardar cambios
                 </button>
               </div>
+
             </form>
           </div>
 
           <div class="card-footer bg-white text-muted small">
-            Último ingreso: {{ request.user.last_login|date:"d/m/Y H:i" }} · Fecha de registro: {{ request.user.date_joined|date:"d/m/Y" }}
+            Último ingreso: {{ request.user.last_login|date:"d/m/Y H:i" }}
+            · Fecha de registro: {{ request.user.date_joined|date:"d/m/Y" }}
           </div>
         </div>
       </div>
-    </div>
-    <br><br>
-  </div>
 </section>
 
 {% endblock contenido %}

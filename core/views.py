@@ -35,7 +35,7 @@ def role_required(roles):
         return _wrapped_view
     return decorator
 
-#SERIALIZERS (API):
+# ViewSets para modelos relacionados al usuario
 class RolUsuarioViewSet(viewsets.ModelViewSet):
     queryset = rolUsuario.objects.all()
     serializer_class = RolUsuarioSerializer
@@ -52,10 +52,24 @@ class UsuarioCustomViewSet(viewsets.ModelViewSet):
     queryset = UsuarioCustom.objects.all()
     serializer_class = UsuarioCustomSerializer
 
+class PreferenciasUsuarioViewSet(viewsets.ModelViewSet):
+    queryset = PreferenciasUsuario.objects.all()
+    serializer_class = PreferenciasUsuarioSerializer
+
+# ViewSets para modelos relacionados al taller
 class TallerViewSet(viewsets.ModelViewSet):
     queryset = Taller.objects.all()
     serializer_class = TallerSerializer
 
+class TallerServicioViewSet(viewsets.ModelViewSet):
+    queryset = TallerServicio.objects.all()
+    serializer_class = TallerServicioSerializer
+
+class FavoritoTallerViewSet(viewsets.ModelViewSet):
+    queryset = FavoritoTaller.objects.all()
+    serializer_class = FavoritoTallerSerializer
+
+# ViewSets para modelos relacionados al vehículo
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = Marca.objects.all()
     serializer_class = MarcaSerializer
@@ -68,9 +82,37 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     queryset = Vehiculo.objects.all()
     serializer_class = VehiculoSerializer
 
+# ViewSets para modelos relacionados a la agenda
+class EstadoAgendaViewSet(viewsets.ModelViewSet):
+    queryset = EstadoAgenda.objects.all()
+    serializer_class = EstadoAgendaSerializer
+
 class AgendaViewSet(viewsets.ModelViewSet):
     queryset = Agenda.objects.all()
     serializer_class = AgendaSerializer
+
+# ViewSets para modelos relacionados a los pagos
+class FormaPagoViewSet(viewsets.ModelViewSet):
+    queryset = FormaPago.objects.all()
+    serializer_class = FormaPagoSerializer
+
+class ReportePagoViewSet(viewsets.ModelViewSet):
+    queryset = ReportePago.objects.all()
+    serializer_class = ReportePagoSerializer
+
+# ViewSets para modelos relacionados a los tickets
+class EstadoTicketViewSet(viewsets.ModelViewSet):
+    queryset = EstadoTicket.objects.all()
+    serializer_class = EstadoTicketSerializer
+
+class TicketViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+
+# ViewSets para el modelo de contacto
+class ContactoViewSet(viewsets.ModelViewSet):
+    queryset = Contacto.objects.all()
+    serializer_class = ContactoSerializer
 
 def index(request):
 	return render(request, 'core/index.html')

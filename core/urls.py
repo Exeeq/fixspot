@@ -7,12 +7,20 @@ router.register(r'roles', RolUsuarioViewSet)
 router.register(r'regiones', RegionViewSet)
 router.register(r'comunas', ComunaViewSet)
 router.register(r'usuarios', UsuarioCustomViewSet)
+router.register(r'preferencias-usuario', PreferenciasUsuarioViewSet)
 router.register(r'talleres', TallerViewSet)
+router.register(r'taller-servicio', TallerServicioViewSet)
+router.register(r'favoritos', FavoritoTallerViewSet)
 router.register(r'marcas', MarcaViewSet)
 router.register(r'tipos-vehiculo', TipoVehiculoViewSet)
 router.register(r'vehiculos', VehiculoViewSet)
+router.register(r'estados-agenda', EstadoAgendaViewSet)
 router.register(r'agendas', AgendaViewSet)
-
+router.register(r'formas-pago', FormaPagoViewSet)
+router.register(r'reportes-pago', ReportePagoViewSet)
+router.register(r'estados-tickets', EstadoTicketViewSet)
+router.register(r'tickets', TicketViewSet)
+router.register(r'contactos', ContactoViewSet)
 urlpatterns = [
     path('api/', include(router.urls)),
     

@@ -319,6 +319,30 @@ class UsuarioCustomPerfilForm(forms.ModelForm):
             pref.save()
         return user
 
+class UsuarioCustomForm(forms.ModelForm):
+    class Meta:
+        model = UsuarioCustom
+        fields = ['username','run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'idRol', 'idComuna']
+        labels = {
+            'username': 'Nombre de usuario',
+            'run': 'RUN',
+            'correo': 'Correo Electrónico',
+            'pnombre': 'Primer Nombre',
+            'ap_paterno': 'Apellido Paterno',
+            'direccion': 'Dirección',
+            'idRol': 'Rol',
+            'idComuna': 'Comuna',
+        }
+        widgets = {
+            'run': forms.TextInput(attrs={'class': 'form-control'}),
+            'correo': forms.EmailInput(attrs={'class': 'form-control'}),
+            'pnombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'ap_paterno': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'idRol': forms.Select(attrs={'class': 'form-control'}),
+            'idComuna': forms.Select(attrs={'class': 'form-control'}),
+        }
+
 class UsuarioCustomCreationForm(UserCreationForm):
     username = forms.CharField(max_length=150, label='Nombre de usuario', widget=forms.TextInput(attrs={'class': 'form-control'}))
     run = forms.CharField(max_length=12, label='RUN', widget=forms.TextInput(attrs={'class': 'form-control'}))

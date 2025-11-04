@@ -25,6 +25,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
+
 def role_required(roles):
     def decorator(view_func):
         @wraps(view_func)

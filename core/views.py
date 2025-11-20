@@ -62,6 +62,10 @@ class TallerViewSet(viewsets.ModelViewSet):
     queryset = Taller.objects.all()
     serializer_class = TallerSerializer
 
+class ServicioViewSet(viewsets.ModelViewSet):
+    queryset = Servicio.objects.all()
+    serializer_class = ServicioSerializer
+
 class TallerServicioViewSet(viewsets.ModelViewSet):
     queryset = TallerServicio.objects.all()
     serializer_class = TallerServicioSerializer

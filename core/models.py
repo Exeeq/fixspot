@@ -35,7 +35,7 @@ class Comuna(models.Model):
 class UsuarioCustom(AbstractUser):
     run = models.CharField(max_length=12, blank=False, null=False)
     correo = models.EmailField(blank=False, null=False)
-    telefono = models.CharField(max_length=15, blank=False, null=False)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
     pnombre = models.CharField(max_length=20, blank=False, null=False)
     ap_paterno = models.CharField(max_length=24, blank=False, null=False)
     direccion = models.CharField(blank=False, null=False, max_length=100)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.hashers import make_password
 
 # Serializadores para modelos relacionados al usuario
 class RolUsuarioSerializer(serializers.ModelSerializer):
@@ -18,9 +19,31 @@ class ComunaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UsuarioCustomSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = UsuarioCustom
         fields = '__all__'
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }
+
+    def create(self, validated_data):
+        password = validated_data.pop("password", None)
+
+        # Hashear password si viene en el POST
+        if password:
+            validated_data["password"] = make_password(password)
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Si el usuario envía password, la hasheamos
+        password = validated_data.pop("password", None)
+        
+        if password:
+            instance.password = make_password(password)
+
+        return super().update(instance, validated_data)
 
 class PreferenciasUsuarioSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,6 +2,40 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import make_password
 
+# Validar rut del usuario
+def validar_rut_chileno(rut: str) -> bool:
+    if not rut:
+        return False
+
+    rut = rut.replace(".", "").replace(" ", "").upper()
+    if "-" not in rut:
+        return False
+
+    cuerpo, dv = rut.split("-", 1)
+    if not cuerpo.isdigit():
+        return False
+
+    # Algoritmo de verificación
+    reversed_digits = map(int, reversed(cuerpo))
+    factores = [2, 3, 4, 5, 6, 7]
+
+    suma = 0
+    i = 0
+    for d in reversed_digits:
+        suma += d * factores[i]
+        i = (i + 1) % len(factores)
+
+    resto = suma % 11
+    dv_calc = 11 - resto
+    if dv_calc == 11:
+        dv_esperado = "0"
+    elif dv_calc == 10:
+        dv_esperado = "K"
+    else:
+        dv_esperado = str(dv_calc)
+
+    return dv == dv_esperado
+
 # Serializadores para modelos relacionados al usuario
 class RolUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,22 +61,54 @@ class UsuarioCustomSerializer(serializers.ModelSerializer):
             "password": {"write_only": True}
         }
 
+    def validate(self, data):
+        username = data.get("username") or (self.instance.username if self.instance else None)
+        correo   = data.get("correo")   or (self.instance.correo   if self.instance else None)
+        run      = data.get("run")      or (self.instance.run      if self.instance else None)
+
+        user_id = self.instance.id if self.instance else None
+
+        if not validar_rut_chileno(run):
+            raise serializers.ValidationError({
+                "run": "El RUN ingresado no es válido. Debe ser como 12345678-9."
+            })
+
+        if run and UsuarioCustom.objects.filter(run=run)\
+                                        .exclude(id=user_id).exists():
+            raise serializers.ValidationError({
+                "run": "Este RUN ya está registrado en otro usuario."
+            })
+
+        if username and UsuarioCustom.objects.filter(username=username)\
+                                             .exclude(id=user_id).exists():
+            raise serializers.ValidationError({
+                "username": "Este nombre de usuario ya está registrado."
+            })
+
+        if correo and UsuarioCustom.objects.filter(correo=correo)\
+                                           .exclude(id=user_id).exists():
+            raise serializers.ValidationError({
+                "correo": "Este correo ya está registrado."
+            })
+
+        if run and UsuarioCustom.objects.filter(run=run)\
+                                        .exclude(id=user_id).exists():
+            raise serializers.ValidationError({
+                "run": "Este RUN ya está registrado en otro usuario."
+            })
+
+        return data
+
     def create(self, validated_data):
         password = validated_data.pop("password", None)
-
-        # Hashear password si viene en el POST
         if password:
             validated_data["password"] = make_password(password)
-
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        # Si el usuario envía password, la hasheamos
         password = validated_data.pop("password", None)
-        
         if password:
             instance.password = make_password(password)
-
         return super().update(instance, validated_data)
 
 class PreferenciasUsuarioSerializer(serializers.ModelSerializer):

@@ -121,6 +121,15 @@ class TallerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Taller
         fields = '__all__'
+        extra_kwargs = {
+            'imagen': {'required': False}  
+        }
+
+        def update(self, instance, validated_data):
+            # Si no viene una nueva imagen, mantener la actual
+            if 'imagen' not in validated_data:
+                validated_data['imagen'] = instance.imagen
+            return super().update(instance, validated_data)
 
 # Serializadores para modelos relacionados a los servicios
 class ServicioSerializer(serializers.ModelSerializer):

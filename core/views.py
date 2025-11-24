@@ -24,6 +24,9 @@ from django.db.models import Avg, Exists, OuterRef
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
 from openpyxl.utils import get_column_letter
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
 
 
 def role_required(roles):
@@ -119,6 +122,27 @@ class ContactoViewSet(viewsets.ModelViewSet):
     queryset = Contacto.objects.all()
     serializer_class = ContactoSerializer
 
+# Eliminar servicios del taller desde la api
+@api_view(['DELETE'])
+def eliminar_servicios_de_taller(request, idTaller):
+    try:
+        qs = TallerServicio.objects.filter(idTaller=idTaller)
+
+        if not qs.exists():
+            return Response(
+                {"detail": "El taller no tiene servicios."},
+                status=status.HTTP_200_OK
+            )
+
+        qs.delete()
+
+        return Response(
+            {"detail": "Servicios eliminados correctamente."},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 def index(request):
 	return render(request, 'core/index.html')
 
@@ -126,6 +150,7 @@ def index(request):
 def administrar_talleres(request):
     talleres = Taller.objects.all()
     return render(request, 'core/administrar_talleres.html', {'talleres': talleres})
+    
 
 @role_required(["Administrador"])
 def crear_taller(request):

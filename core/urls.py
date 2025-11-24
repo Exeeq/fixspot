@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views import *
 from rest_framework import routers
+from django.urls import get_resolver
 
 router = routers.DefaultRouter()
 router.register(r'roles', RolUsuarioViewSet)
@@ -22,6 +23,7 @@ router.register(r'reportes-pago', ReportePagoViewSet)
 router.register(r'estados-tickets', EstadoTicketViewSet)
 router.register(r'tickets', TicketViewSet)
 router.register(r'contactos', ContactoViewSet)
+
 urlpatterns = [
     path('api/', include(router.urls)),
     
@@ -95,4 +97,8 @@ urlpatterns = [
     path('favoritos/toggle/', toggle_favorito, name='toggle_favorito'),
 
     path('taller/<int:idTaller>/reservas/excel-pagadas/', export_taller_pagadas_excel, name='export_taller_pagadas_excel'),
+
+    path('api/taller-servicio/eliminar/<int:idTaller>/', eliminar_servicios_de_taller),
+
+    
 ]

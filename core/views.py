@@ -27,6 +27,9 @@ from openpyxl.utils import get_column_letter
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.views import LogoutView 
 
 
 def role_required(roles):
@@ -316,7 +319,50 @@ def contactanos(request):
     return render(request, 'core/contactanos.html', {'form': form})
 
 def login(request):
-	return render(request, 'core/login.html')
+    form = LoginForm()
+
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data["username"].strip()
+            password = form.cleaned_data["password"]
+
+            if username == "" or password == "":
+                messages.error(request, "Debes completar todos los campos.")
+                return render(request, "registration/login.html", {"form": form})
+
+            try:
+                user = UsuarioCustom.objects.get(username=username)
+            except UsuarioCustom.DoesNotExist:
+                messages.error(request, "El usuario no existe.")
+                return render(request, "registration/login.html", {"form": form})
+
+            if not check_password(password, user.password):
+                messages.error(request, "Contraseña incorrecta.")
+                return render(request, "registration/login.html", {"form": form})
+
+            user = authenticate(username=username, password=password)
+
+            if user is None:
+                messages.error(request, "Error al autenticar usuario.")
+                return render(request, "registration/login.html", {"form": form})
+
+            auth_login(request, user)
+
+            # Mensaje de éxito SweetAlert2
+            messages.success(request, "Sesión iniciada correctamente.")
+
+            return redirect("index")
+
+    return render(request, "registration/login.html", {"form": form})
+
+class CustomLogoutView(LogoutView):
+    next_page = 'index'  
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request, "Sesión cerrada correctamente.")
+        return super().dispatch(request, *args, **kwargs)
 
 @login_required
 def mapa(request):
@@ -511,6 +557,8 @@ def register(request):
             user.email = user.email
             
             user.save()
+            messages.success(request, '¡Te has registrado con éxito!')
+
             return redirect("index")
 
     return render(request, 'registration/register.html', {'form': form})

@@ -522,7 +522,7 @@ CREATE TABLE `core_taller` (
   KEY `core_taller_idUsuario_id_d1356fab_fk` (`idUsuario_id`),
   CONSTRAINT `core_taller_idComuna_id_4af1bf31_fk_core_comuna_idComuna` FOREIGN KEY (`idComuna_id`) REFERENCES `core_comuna` (`idComuna`),
   CONSTRAINT `core_taller_idUsuario_id_d1356fab_fk` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -552,7 +552,7 @@ CREATE TABLE `core_tallerservicio` (
   KEY `core_tallerservicio_idServicio_id_9497ce81_fk_core_serv` (`idServicio_id`),
   CONSTRAINT `core_tallerservicio_idServicio_id_9497ce81_fk_core_serv` FOREIGN KEY (`idServicio_id`) REFERENCES `core_servicio` (`idServicio`),
   CONSTRAINT `core_tallerservicio_idTaller_id_d88e724c_fk_core_taller_idTaller` FOREIGN KEY (`idTaller_id`) REFERENCES `core_taller` (`idTaller`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -561,7 +561,7 @@ CREATE TABLE `core_tallerservicio` (
 
 LOCK TABLES `core_tallerservicio` WRITE;
 /*!40000 ALTER TABLE `core_tallerservicio` DISABLE KEYS */;
-INSERT INTO `core_tallerservicio` VALUES (1,NULL,3,1),(2,NULL,1,1),(3,NULL,19,1),(4,NULL,18,1),(5,NULL,5,1),(6,NULL,4,2),(7,NULL,3,3),(8,NULL,1,3),(9,NULL,9,3),(10,NULL,6,3),(11,NULL,20,3),(12,NULL,11,3),(13,NULL,8,3),(14,NULL,18,3);
+INSERT INTO `core_tallerservicio` VALUES (6,NULL,4,2),(244,NULL,1,1),(245,NULL,3,1),(246,NULL,4,1),(247,NULL,5,1),(248,NULL,6,1),(249,NULL,7,1),(250,NULL,8,1),(251,NULL,9,1),(252,NULL,10,1),(253,NULL,11,1),(254,NULL,18,1),(255,NULL,19,1),(256,NULL,20,1),(257,NULL,21,1),(273,NULL,1,3),(274,NULL,3,3),(275,NULL,4,3),(276,NULL,5,3),(277,NULL,6,3),(278,NULL,7,3),(279,NULL,8,3),(280,NULL,9,3),(281,NULL,10,3),(282,NULL,11,3),(283,NULL,18,3),(284,NULL,19,3),(285,NULL,20,3),(286,NULL,21,3);
 /*!40000 ALTER TABLE `core_tallerservicio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -582,7 +582,7 @@ CREATE TABLE `core_ticket` (
   KEY `core_ticket_solicitante_id_e52f4ee7_fk` (`solicitante_id`),
   CONSTRAINT `core_ticket_EstadoTicket_id_3d9bd6f1_fk_core_esta` FOREIGN KEY (`EstadoTicket_id`) REFERENCES `core_estadoticket` (`idEstado`),
   CONSTRAINT `core_ticket_solicitante_id_e52f4ee7_fk` FOREIGN KEY (`solicitante_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -591,7 +591,7 @@ CREATE TABLE `core_ticket` (
 
 LOCK TABLES `core_ticket` WRITE;
 /*!40000 ALTER TABLE `core_ticket` DISABLE KEYS */;
-INSERT INTO `core_ticket` VALUES (1,'sfsfsf',2,5);
+INSERT INTO `core_ticket` VALUES (1,'sfsfsf',2,5),(2,'HOLA QUIERO CAMBIO DE UBICACIÓN',3,2),(3,'aaaaaaaaaaaaaaa',2,2),(4,'sdfojhuwrhuiopfgwji hola hola',2,2),(5,'aaaaaaaaaaaa',3,2);
 /*!40000 ALTER TABLE `core_ticket` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -652,7 +652,7 @@ CREATE TABLE `core_usuariocustom` (
   KEY `core_usuariocustom_idRol_id_a682a0ba_fk_core_rolusuario_idRol` (`idRol_id`),
   CONSTRAINT `core_usuariocustom_idComuna_id_79fd03a4_fk_core_comuna_idComuna` FOREIGN KEY (`idComuna_id`) REFERENCES `core_comuna` (`idComuna`),
   CONSTRAINT `core_usuariocustom_idRol_id_a682a0ba_fk_core_rolusuario_idRol` FOREIGN KEY (`idRol_id`) REFERENCES `core_rolusuario` (`idRol`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -661,7 +661,7 @@ CREATE TABLE `core_usuariocustom` (
 
 LOCK TABLES `core_usuariocustom` WRITE;
 /*!40000 ALTER TABLE `core_usuariocustom` DISABLE KEYS */;
-INSERT INTO `core_usuariocustom` VALUES (1,'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=','2025-11-13 18:11:51.250977',1,'admin','','','',1,1,'2025-10-21 22:29:55.930381','11111111-1','admin@fixspot.cl','','Admin','Istrador','Duoc UC Sede Puente Alto',4,3),(2,'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=','2025-10-28 02:14:29.011838',0,'Jeffrey','','','',0,1,'2025-10-21 22:33:47.743645','21576345-3','jef.ramirez@duocuc.cl','','Jeffrey','Ramírez','San Francisco 123',4,2),(3,'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=','2025-10-28 01:32:29.807138',0,'Exequiel','','','',0,1,'2025-10-21 22:34:24.210888','21456345-4','ex.albornoz@duocuc.cl','','Exequiel','Albornoz','San Carlos 123',4,1),(4,'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=','2025-10-28 02:14:06.494686',0,'Julio','','','',0,1,'2025-10-22 00:43:15.700874','11435376-4','jul.tapia@duocuc.cl','','Julio','Tapia','Duoc UC Sede Puente Alto',4,1),(5,'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=','2025-10-28 02:44:20.128090',0,'Renato','','','',0,1,'2025-10-22 01:15:28.217426','19352873-4','ren.ato@duocuc.cl','','Renato','Cisterna','Duoc UC Sede Puente Alto',4,2),(6,'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=','2025-10-22 16:00:35.633039',0,'Rodrigo','','','',0,1,'2025-10-22 15:06:57.739130','11568334-K','rodr.gonzalez@duocuc.cl','','Rodrigo','Ramírez','Ernesto alvear puente alto',4,2),(9,'pbkdf2_sha256$390000$m6K0Oe7Lid4cmG0dQjedfB$VG+yvFcyCPbTiJDk8nfd6cFebS+ct3iinVxo9m4+7a4=',NULL,0,'admina','','','',0,1,'2025-11-20 18:28:08.333455','22222222-2','admina@fixspot.cl',NULL,'admin','istradora','duoc uc',4,3);
+INSERT INTO `core_usuariocustom` VALUES (1,'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=','2025-11-24 22:54:45.933787',1,'admin','','','',1,1,'2025-10-21 22:29:55.930381','11111111-1','admin@fixspot.cl','','Admin','Istrador','Duoc UC Sede Puente Alto',4,3),(2,'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=','2025-11-24 23:07:12.016003',0,'Jeffrey','','','',0,1,'2025-10-21 22:33:47.743645','21576345-3','jef.ramirez@duocuc.cl','','Jeffrey','Ramírez','San Francisco 123',4,2),(3,'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=','2025-10-28 01:32:29.807138',0,'Exequiel','','','',0,1,'2025-10-21 22:34:24.210888','21456345-4','ex.albornoz@duocuc.cl','','Exequiel','Albornoz','San Carlos 123',4,1),(4,'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=','2025-10-28 02:14:06.494686',0,'Julio','','','',0,1,'2025-10-22 00:43:15.700874','11435376-4','jul.tapia@duocuc.cl','','Julio','Tapia','Duoc UC Sede Puente Alto',4,1),(5,'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=','2025-10-28 02:44:20.128090',0,'Renato','','','',0,1,'2025-10-22 01:15:28.217426','19352873-4','ren.ato@duocuc.cl','','Renato','Cisterna','Duoc UC Sede Puente Alto',4,2),(6,'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=','2025-10-22 16:00:35.633039',0,'Rodrigo','','','',0,1,'2025-10-22 15:06:57.739130','11568334-K','rodr.gonzalez@duocuc.cl','','Rodrigo','Ramírez','Ernesto alvear puente alto',4,2),(9,'pbkdf2_sha256$390000$m6K0Oe7Lid4cmG0dQjedfB$VG+yvFcyCPbTiJDk8nfd6cFebS+ct3iinVxo9m4+7a4=',NULL,0,'admina','','','',0,1,'2025-11-20 18:28:08.333455','22222222-2','admina@fixspot.cl',NULL,'admin','istradora','duoc uc',4,3);
 /*!40000 ALTER TABLE `core_usuariocustom` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -865,7 +865,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('jtinbcdf901uihhvtoin85kxs68vxbuo','.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vJbnT:lRm8Dgwghx5Bsvd2UbYCQ9SBsV6_dJ3IFT6yBnDoWDQ','2025-11-27 18:11:51.253238'),('vg0vy81x4gky4376bem6ayp8b5k7acld','.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vDZme:k6-kV8DtlwZCmtbPWfhapjf5DAi8xFOJJqFSXkTCCgw','2025-11-11 02:50:04.286308'),('xz5dm6tpvajglacb9uykyxbq7w29998a','.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBMZF:GA4dZ9P2CSooITACM68j-3rnX3uTUXHFi5_O7Jtt2Ag','2025-11-05 00:19:05.386284');
+INSERT INTO `django_session` VALUES ('vg0vy81x4gky4376bem6ayp8b5k7acld','.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vDZme:k6-kV8DtlwZCmtbPWfhapjf5DAi8xFOJJqFSXkTCCgw','2025-11-11 02:50:04.286308'),('wop6xq70p4r4l3oyxct4u22q35lfo2bp','.eJxVjDEOgzAMAP_iuYoIDoEwdu8bkB07DW0VJAJT1b9XSAztene6N0y0b3naq67TLDBCC5dfxhSfWg4hDyr3xcSlbOvM5kjMaau5LaKv69n-DTLVDCMEz6iBVW0ipr7zLYvvLEVWbmIYXHLBIlGyfmARhx0hIveNRyfcE3y-EAU4tA:1vNfeK:i0KXzk3Gab85hYqaQoffotCO86k3MMaVUzfRO3T7xIg','2025-12-08 23:07:12.018127'),('xz5dm6tpvajglacb9uykyxbq7w29998a','.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBMZF:GA4dZ9P2CSooITACM68j-3rnX3uTUXHFi5_O7Jtt2Ag','2025-11-05 00:19:05.386284');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -878,4 +878,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-20 18:58:21
+-- Dump completed on 2025-11-25 13:14:27

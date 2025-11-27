@@ -26,9 +26,11 @@
             <form method="POST" class="p-4 rounded shadow-lg">
               {% csrf_token %}
               <div class="form-group">
-                {{ form | crispy }}
+                {{ form|crispy }}
               </div>
-              <input type="submit" class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto" value="Iniciar sesión">
+              <input type="submit"
+                     class="btn rounded-pill btn-background btn-lg mt-5 d-flex text-center mx-auto"
+                     value="Iniciar sesión">
             </form>
           </div>
         </div>

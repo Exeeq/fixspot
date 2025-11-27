@@ -51,8 +51,7 @@
 {% endblock contenido %}
 
 {% block js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{ block.super }}
 <script>
     $(document).ready(function () {
         // Función para mostrar la alerta antes de eliminar el mensaje
@@ -70,7 +69,6 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Redirigir a la URL de eliminación
                     window.location.href = url;
                 }
             });

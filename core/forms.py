@@ -12,20 +12,168 @@ from datetime import date
 class AddressForm(forms.Form):
     address = forms.CharField(label='Ingrese dirección', max_length=255)
 
+def validar_run_chileno(run: str) -> bool:
+    run = run.replace('.', '').replace('-', '').upper()
+
+    if not re.match(r'^\d{7,8}[0-9K]$', run):
+        return False
+
+    cuerpo = run[:-1]
+    dv = run[-1]
+
+    suma = 0
+    multiplo = 2
+
+    for d in reversed(cuerpo):
+        suma += int(d) * multiplo
+        multiplo += 1
+        if multiplo == 8:
+            multiplo = 2
+
+    resto = suma % 11
+    dv_calc = 11 - resto
+
+    if dv_calc == 11:
+        dv_calc = '0'
+    elif dv_calc == 10:
+        dv_calc = 'K'
+    else:
+        dv_calc = str(dv_calc)
+
+    return dv_calc == dv
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        label="Nombre de usuario",
+        max_length=150,
+        widget=forms.TextInput(attrs={"placeholder": "Ingresa tu usuario"})
+    )
+    password = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={"placeholder": "Ingresa tu contraseña"})
+    )
 
 #REGISTRAR USUARIO:
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(label='Nombre de usuario', help_text='Mínimo 6 caracteres')
-    run = forms.CharField(label='RUN (Rol Único Nacional)', help_text='Ejemplo: 12345678-9')
-    correo = forms.EmailField(label='Correo electrónico', help_text='Ejemplo: ejemplo@gmail.com')
-    pnombre = forms.CharField(label='Primer Nombre', help_text='Ejemplo: Fabian')
-    ap_paterno = forms.CharField(label='Apellido Paterno', help_text='Ejemplo: Ruiz')
-    direccion = forms.CharField(label='Dirección', widget=forms.TextInput(attrs={'placeholder': 'Calle, número'}))
-    comuna = forms.ModelChoiceField(queryset=Comuna.objects.all(), label='Comuna')
+    username = forms.CharField(
+        label='Nombre de usuario',
+        help_text='Mínimo 3 caracteres, solo letras y números',
+        max_length=150,
+    )
+    run = forms.CharField(
+        label='RUN (Rol Único Nacional)',
+        help_text='Ejemplo: 12345678-9',
+        max_length=12,
+    )
+    correo = forms.EmailField(
+        label='Correo electrónico',
+        help_text='Debe contener @, ej: ejemplo@gmail.com',
+    )
+    pnombre = forms.CharField(
+        label='Primer Nombre',
+        help_text='Mínimo 3 letras, sin caracteres especiales',
+        max_length=50,
+    )
+    ap_paterno = forms.CharField(
+        label='Apellido Paterno',
+        help_text='Mínimo 3 letras, sin caracteres especiales',
+        max_length=50,
+    )
+    direccion = forms.CharField(
+        label='Dirección',
+        widget=forms.TextInput(attrs={'placeholder': 'Calle, número'}),
+        help_text='Ej: Av. Siempre Viva 742',
+        max_length=200,
+    )
+    comuna = forms.ModelChoiceField(
+        queryset=Comuna.objects.all(),
+        label='Comuna',
+        empty_label='Seleccione una comuna',
+    )
 
     class Meta:
         model = UsuarioCustom
         fields = ['username', 'run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'comuna']
+
+    # ---- Validaciones de campos ----
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username', '')
+
+        # mínimo 3 caracteres
+        if len(username) < 3:
+            raise ValidationError('El nombre de usuario debe tener al menos 3 caracteres.')
+
+        # solo letras y números
+        if not re.match(r'^[A-Za-z0-9]+$', username):
+            raise ValidationError('El nombre de usuario solo puede contener letras y números (sin espacios ni símbolos).')
+
+        # opcional: verificar que no exista ya
+        if UsuarioCustom.objects.filter(username=username).exists():
+            raise ValidationError('Este nombre de usuario ya está en uso.')
+
+        return username
+
+    def clean_run(self):
+        run = self.cleaned_data.get('run', '')
+
+        if not validar_run_chileno(run):
+            raise ValidationError('El RUN ingresado no es válido.')
+
+        run_limpio = run.replace('.', '').upper()
+        if '-' not in run_limpio:
+            run_limpio = f"{run_limpio[:-1]}-{run_limpio[-1]}"
+
+        return run_limpio
+
+    def clean_pnombre(self):
+        pnombre = self.cleaned_data.get('pnombre', '').strip()
+
+        if len(pnombre) < 3:
+            raise ValidationError('El primer nombre debe tener al menos 3 letras.')
+
+        # solo letras (permitimos acentos y ñ)
+        if not re.match(r'^[A-Za-zÁÉÍÓÚÑáéíóúñ]+$', pnombre):
+            raise ValidationError('El primer nombre solo puede contener letras (sin números ni símbolos).')
+
+        return pnombre
+
+    def clean_ap_paterno(self):
+        ap_paterno = self.cleaned_data.get('ap_paterno', '').strip()
+
+        if len(ap_paterno) < 3:
+            raise ValidationError('El apellido paterno debe tener al menos 3 letras.')
+
+        if not re.match(r'^[A-Za-zÁÉÍÓÚÑáéíóúñ]+$', ap_paterno):
+            raise ValidationError('El apellido paterno solo puede contener letras (sin números ni símbolos).')
+
+        return ap_paterno
+
+    def clean_direccion(self):
+        direccion = self.cleaned_data.get('direccion', '').strip()
+
+        if not direccion:
+            raise ValidationError('La dirección no puede estar vacía.')
+
+        if len(direccion) < 5:
+            raise ValidationError('La dirección parece demasiado corta.')
+
+        if not re.search(r'\d', direccion):
+            raise ValidationError('La dirección debe incluir un número (ej. número de casa/departamento).')
+
+        # solo caracteres típicos de direcciones en Chile
+        if not re.match(r'^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9\s\.\#\-]+$', direccion):
+            raise ValidationError('La dirección contiene caracteres no válidos.')
+
+        return direccion
+
+    def clean_comuna(self):
+        comuna = self.cleaned_data.get('comuna')
+
+        if comuna is None:
+            raise ValidationError('Debe seleccionar una comuna.')
+
+        return comuna
 
 #FORMULARIO TALLER:
 from django import forms

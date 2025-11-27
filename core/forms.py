@@ -362,11 +362,10 @@ class VehiculoForm(forms.ModelForm):
             'idTipoVehiculo': 'Tipo de Vehículo',
         }
         widgets = {
-            # el max se ajusta dinámicamente en __init__
             'anno': forms.NumberInput(),
         }
 
-    # validadores “duros” (se refinan en clean_*)
+    # validadores
     anno = forms.IntegerField(
         validators=[MinValueValidator(1950), MaxValueValidator(date.today().year)],
         widget=forms.NumberInput(),

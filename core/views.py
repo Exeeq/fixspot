@@ -182,10 +182,9 @@ def crear_taller(request):
                 for servicio in servicios_seleccionados:
                     TallerServicio.objects.create(idTaller=taller, idServicio=servicio)
 
-                messages.success(request, "Taller creado correctamente.")
                 return redirect('administrar_talleres')
             else:
-                messages.error(request, "Error al crear el taller. Revisa los campos.")
+                print("hola soy un error en la vista de crear_taller :D")
 
         # ----- Obtener ubicación -----
         elif 'obtener_ubicacion' in request.POST:
@@ -243,10 +242,9 @@ def modificar_taller(request, id_taller):
                 for servicio in servicios_seleccionados:
                     TallerServicio.objects.create(idTaller=taller_modificado, idServicio=servicio)
 
-                messages.success(request, "Taller modificado correctamente.")
                 return redirect('administrar_talleres')
             else:
-                messages.error(request, "Error al modificar el taller. Revisa los campos.")
+                print("Error al modificar el taller. Revisa los campos.")
 
         # ----- Obtener ubicación -----
         elif 'obtener_ubicacion' in request.POST:
@@ -310,10 +308,9 @@ def contactanos(request):
         form = ContactoForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Mensaje enviado correctamente.')
             return redirect('contactanos')
         else:
-            messages.error(request, 'Hay algún problema con los datos ingresados, revise nuevamente.')
+           pass
     else:
         form = ContactoForm()
     return render(request, 'core/contactanos.html', {'form': form})

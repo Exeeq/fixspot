@@ -62,7 +62,7 @@ class RegisterForm(UserCreationForm):
     )
     run = forms.CharField(
         label='RUN (Rol Único Nacional)',
-        help_text='Ejemplo: 12345678-9',
+        help_text='Ejemplo: 12.345.678-9',
         max_length=12,
     )
     correo = forms.EmailField(
@@ -93,12 +93,20 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = UsuarioCustom
-        fields = ['username', 'run', 'correo', 'pnombre', 'ap_paterno', 'direccion', 'comuna']
+        fields = [
+            'username',
+            'run',
+            'correo',
+            'pnombre',
+            'ap_paterno',
+            'direccion',
+            'comuna',
+        ]
 
     # ---- Validaciones de campos ----
 
     def clean_username(self):
-        username = self.cleaned_data.get('username', '')
+        username = (self.cleaned_data.get('username') or '').strip()
 
         # mínimo 3 caracteres
         if len(username) < 3:
@@ -108,26 +116,40 @@ class RegisterForm(UserCreationForm):
         if not re.match(r'^[A-Za-z0-9]+$', username):
             raise ValidationError('El nombre de usuario solo puede contener letras y números (sin espacios ni símbolos).')
 
-        # opcional: verificar que no exista ya
+        # verificar que no exista ya
         if UsuarioCustom.objects.filter(username=username).exists():
             raise ValidationError('Este nombre de usuario ya está en uso.')
 
         return username
 
     def clean_run(self):
-        run = self.cleaned_data.get('run', '')
+        run = (self.cleaned_data.get('run') or '').strip()
 
+        # Usa tu función para validar sintaxis y dígito verificador
         if not validar_run_chileno(run):
             raise ValidationError('El RUN ingresado no es válido.')
 
-        run_limpio = run.replace('.', '').upper()
-        if '-' not in run_limpio:
-            run_limpio = f"{run_limpio[:-1]}-{run_limpio[-1]}"
+        # Normalizar: quitar puntos y guiones y dejar formato XXXXXXXX-X
+        run_sin_fmt = re.sub(r'[.\-]', '', run).upper()  # solo números + DV
+        run_formateado = f'{run_sin_fmt[:-1]}-{run_sin_fmt[-1]}'
 
-        return run_limpio
+        # Asegurar que no esté repetido
+        if UsuarioCustom.objects.filter(run=run_formateado).exists():
+            raise ValidationError('Este RUN ya está registrado en el sistema.')
+
+        return run_formateado
+
+    def clean_correo(self):
+        correo = (self.cleaned_data.get('correo') or '').strip().lower()
+
+        # Opcional: evitar correos duplicados
+        if UsuarioCustom.objects.filter(correo=correo).exists():
+            raise ValidationError('Este correo ya está registrado en el sistema.')
+
+        return correo
 
     def clean_pnombre(self):
-        pnombre = self.cleaned_data.get('pnombre', '').strip()
+        pnombre = (self.cleaned_data.get('pnombre') or '').strip()
 
         if len(pnombre) < 3:
             raise ValidationError('El primer nombre debe tener al menos 3 letras.')
@@ -139,7 +161,7 @@ class RegisterForm(UserCreationForm):
         return pnombre
 
     def clean_ap_paterno(self):
-        ap_paterno = self.cleaned_data.get('ap_paterno', '').strip()
+        ap_paterno = (self.cleaned_data.get('ap_paterno') or '').strip()
 
         if len(ap_paterno) < 3:
             raise ValidationError('El apellido paterno debe tener al menos 3 letras.')
@@ -150,7 +172,7 @@ class RegisterForm(UserCreationForm):
         return ap_paterno
 
     def clean_direccion(self):
-        direccion = self.cleaned_data.get('direccion', '').strip()
+        direccion = (self.cleaned_data.get('direccion') or '').strip()
 
         if not direccion:
             raise ValidationError('La dirección no puede estar vacía.')
@@ -158,6 +180,7 @@ class RegisterForm(UserCreationForm):
         if len(direccion) < 5:
             raise ValidationError('La dirección parece demasiado corta.')
 
+        # Debe contener al menos un número (ej. número de casa/depto)
         if not re.search(r'\d', direccion):
             raise ValidationError('La dirección debe incluir un número (ej. número de casa/departamento).')
 

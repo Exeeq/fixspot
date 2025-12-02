@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `auth_group`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `auth_group` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -76,9 +76,9 @@ DROP TABLE IF EXISTS `auth_permission`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `auth_permission` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `content_type_id` int NOT NULL,
-  `codename` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `codename` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
@@ -103,7 +103,7 @@ DROP TABLE IF EXISTS `authtoken_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `authtoken_token` (
-  `key` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `key` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created` datetime(6) NOT NULL,
   `user_id` bigint NOT NULL,
   PRIMARY KEY (`key`),
@@ -148,7 +148,7 @@ CREATE TABLE `core_agenda` (
   CONSTRAINT `core_agenda_idServicio_id_d6625a2d_fk_core_servicio_idServicio` FOREIGN KEY (`idServicio_id`) REFERENCES `core_servicio` (`idServicio`),
   CONSTRAINT `core_agenda_idTaller_id_2025b2c7_fk_core_taller_idTaller` FOREIGN KEY (`idTaller_id`) REFERENCES `core_taller` (`idTaller`),
   CONSTRAINT `core_agenda_idVehiculo_id_9f7a5c22_fk_core_vehiculo_idVehiculo` FOREIGN KEY (`idVehiculo_id`) REFERENCES `core_vehiculo` (`idVehiculo`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +157,7 @@ CREATE TABLE `core_agenda` (
 
 LOCK TABLES `core_agenda` WRITE;
 /*!40000 ALTER TABLE `core_agenda` DISABLE KEYS */;
-INSERT INTO `core_agenda` VALUES (1,'2025-10-23','09:00:00.000000',3,3,1,3,3),(2,'2025-10-24','13:00:00.000000',4,3,1,4,1),(3,'2025-10-27','15:00:00.000000',3,3,2,3,4),(4,'2025-10-27','09:00:00.000000',1,3,2,2,4),(5,'2025-10-28','12:00:00.000000',1,3,1,2,18),(6,'2025-10-30','16:00:00.000000',3,3,3,3,6),(7,'2025-10-28','10:00:00.000000',4,3,3,4,8),(8,'2025-10-31','13:00:00.000000',3,3,2,3,4),(9,'2025-11-04','17:00:00.000000',4,2,1,4,3);
+INSERT INTO `core_agenda` VALUES (2,'2025-10-24','13:00:00.000000',4,3,1,4,1),(4,'2025-10-27','09:00:00.000000',1,3,2,2,4),(5,'2025-10-28','12:00:00.000000',1,3,1,2,18),(7,'2025-10-28','10:00:00.000000',4,3,3,4,8),(9,'2025-11-04','17:00:00.000000',4,2,1,4,3),(11,'2025-12-04','11:00:00.000000',3,3,1,6,19);
 /*!40000 ALTER TABLE `core_agenda` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,7 +179,7 @@ CREATE TABLE `core_calificaciontaller` (
   KEY `core_calificaciontal_idUsuario_id_671bd574_fk_core_usua` (`idUsuario_id`),
   CONSTRAINT `core_calificaciontal_idTaller_id_92a15206_fk_core_tall` FOREIGN KEY (`idTaller_id`) REFERENCES `core_taller` (`idTaller`),
   CONSTRAINT `core_calificaciontal_idUsuario_id_671bd574_fk_core_usua` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,7 +188,7 @@ CREATE TABLE `core_calificaciontaller` (
 
 LOCK TABLES `core_calificaciontaller` WRITE;
 /*!40000 ALTER TABLE `core_calificaciontaller` DISABLE KEYS */;
-INSERT INTO `core_calificaciontaller` VALUES (1,1,'2025-10-22 01:53:33.031959',2,3),(2,3,'2025-10-22 14:26:59.182261',2,1),(3,2,'2025-10-22 14:29:36.633532',1,1),(5,4,'2025-10-22 15:15:30.050098',3,3),(6,5,'2025-10-22 16:02:27.093131',3,4),(7,4,'2025-10-22 18:42:39.824320',2,3);
+INSERT INTO `core_calificaciontaller` VALUES (1,1,'2025-10-22 01:53:33.031959',2,3),(2,3,'2025-10-22 14:26:59.182261',2,1),(3,2,'2025-10-22 14:29:36.633532',1,1),(5,4,'2025-10-22 15:15:30.050098',3,3),(6,5,'2025-10-22 16:02:27.093131',3,4),(7,4,'2025-10-22 18:42:39.824320',2,3),(8,4,'2025-12-01 19:14:19.778944',1,3),(9,5,'2025-12-01 19:19:35.836226',1,3);
 /*!40000 ALTER TABLE `core_calificaciontaller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,7 +201,7 @@ DROP TABLE IF EXISTS `core_comuna`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_comuna` (
   `idComuna` int NOT NULL AUTO_INCREMENT,
-  `nombreComuna` varchar(80) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreComuna` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `idRegion_id` int NOT NULL,
   PRIMARY KEY (`idComuna`),
   KEY `core_comuna_idRegion_id_8eb1d498_fk_core_region_idRegion` (`idRegion_id`),
@@ -228,12 +228,12 @@ DROP TABLE IF EXISTS `core_contacto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_contacto` (
   `idContacto` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `correo` varchar(254) COLLATE utf8mb4_general_ci NOT NULL,
-  `asunto` longtext COLLATE utf8mb4_general_ci NOT NULL,
-  `telefono` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombre` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `correo` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `asunto` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `telefono` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idContacto`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,7 +254,7 @@ DROP TABLE IF EXISTS `core_estadoagenda`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_estadoagenda` (
   `idEstado` int NOT NULL AUTO_INCREMENT,
-  `nombreEstado` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreEstado` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idEstado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -278,7 +278,7 @@ DROP TABLE IF EXISTS `core_estadoticket`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_estadoticket` (
   `idEstado` int NOT NULL AUTO_INCREMENT,
-  `NombreEstado` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `NombreEstado` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idEstado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -309,7 +309,7 @@ CREATE TABLE `core_favoritotaller` (
   KEY `core_favoritotaller_taller_id_0fe60bc2_fk_core_taller_idTaller` (`taller_id`),
   CONSTRAINT `core_favoritotaller_taller_id_0fe60bc2_fk_core_taller_idTaller` FOREIGN KEY (`taller_id`) REFERENCES `core_taller` (`idTaller`),
   CONSTRAINT `core_favoritotaller_usuario_id_ec38caed_fk_core_usuariocustom_id` FOREIGN KEY (`usuario_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,7 +318,7 @@ CREATE TABLE `core_favoritotaller` (
 
 LOCK TABLES `core_favoritotaller` WRITE;
 /*!40000 ALTER TABLE `core_favoritotaller` DISABLE KEYS */;
-INSERT INTO `core_favoritotaller` VALUES (2,3,3);
+INSERT INTO `core_favoritotaller` VALUES (3,1,1),(2,3,3);
 /*!40000 ALTER TABLE `core_favoritotaller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -331,7 +331,7 @@ DROP TABLE IF EXISTS `core_formapago`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_formapago` (
   `idFormaPago` int NOT NULL AUTO_INCREMENT,
-  `nombreFormaPago` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreFormaPago` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idFormaPago`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -355,7 +355,7 @@ DROP TABLE IF EXISTS `core_marca`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_marca` (
   `idMarca` int NOT NULL AUTO_INCREMENT,
-  `nombreMarca` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreMarca` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idMarca`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -391,7 +391,7 @@ CREATE TABLE `core_preferenciasusuario` (
 
 LOCK TABLES `core_preferenciasusuario` WRITE;
 /*!40000 ALTER TABLE `core_preferenciasusuario` DISABLE KEYS */;
-INSERT INTO `core_preferenciasusuario` VALUES (1,1),(3,1),(9,0);
+INSERT INTO `core_preferenciasusuario` VALUES (1,1),(3,1),(9,0),(12,0),(14,0);
 /*!40000 ALTER TABLE `core_preferenciasusuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -404,7 +404,7 @@ DROP TABLE IF EXISTS `core_region`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_region` (
   `idRegion` int NOT NULL AUTO_INCREMENT,
-  `nombreRegion` varchar(80) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreRegion` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idRegion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -428,7 +428,7 @@ DROP TABLE IF EXISTS `core_reportepago`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_reportepago` (
   `idReporte` int NOT NULL AUTO_INCREMENT,
-  `comentario` longtext COLLATE utf8mb4_general_ci,
+  `comentario` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `monto` decimal(10,2) NOT NULL,
   `reserva_id` int NOT NULL,
   `idFormaPago_id` int DEFAULT NULL,
@@ -437,7 +437,7 @@ CREATE TABLE `core_reportepago` (
   KEY `core_reportepago_idFormaPago_id_baba0b93_fk_core_form` (`idFormaPago_id`),
   CONSTRAINT `core_reportepago_idFormaPago_id_baba0b93_fk_core_form` FOREIGN KEY (`idFormaPago_id`) REFERENCES `core_formapago` (`idFormaPago`),
   CONSTRAINT `core_reportepago_reserva_id_e177e290_fk_core_agenda_idAgenda` FOREIGN KEY (`reserva_id`) REFERENCES `core_agenda` (`idAgenda`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -446,7 +446,7 @@ CREATE TABLE `core_reportepago` (
 
 LOCK TABLES `core_reportepago` WRITE;
 /*!40000 ALTER TABLE `core_reportepago` DISABLE KEYS */;
-INSERT INTO `core_reportepago` VALUES (1,'Se realizo alineación a las ruedas delanteras del vehículo, posterior se realizo un balanceo general.',15000.00,1,NULL),(2,'Se realiza cambio de aceite al vehículo, con un aceite de máxima calidad.',14000.00,2,NULL),(3,'Cambio de neumáticos a dos ruedas.',12000.00,3,NULL),(4,'Cambio de llantas trasera, por unas provisionales.',5000.00,4,NULL),(5,'Se realiza todo',3000.00,5,NULL),(6,'N/A',2000.00,6,NULL),(7,'n/a',1000.00,7,NULL),(8,'N/A',2000.00,8,NULL),(9,'aaaaaaaaaaaaaaa',200.00,9,NULL);
+INSERT INTO `core_reportepago` VALUES (2,'Se realiza cambio de aceite al vehículo, con un aceite de máxima calidad.',14000.00,2,NULL),(4,'Cambio de llantas trasera, por unas provisionales.',5000.00,4,NULL),(5,'Se realiza todo',3000.00,5,NULL),(7,'n/a',1000.00,7,NULL),(9,'aaaaaaaaaaaaaaa',200.00,9,NULL),(11,'Se realizó el cambio correspondiente.',2300.00,11,NULL);
 /*!40000 ALTER TABLE `core_reportepago` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -459,7 +459,7 @@ DROP TABLE IF EXISTS `core_rolusuario`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_rolusuario` (
   `idRol` int NOT NULL AUTO_INCREMENT,
-  `nombreRol` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreRol` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idRol`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -483,8 +483,8 @@ DROP TABLE IF EXISTS `core_servicio`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_servicio` (
   `idServicio` int NOT NULL AUTO_INCREMENT,
-  `nombreServicio` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `descripcion` longtext COLLATE utf8mb4_general_ci,
+  `nombreServicio` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `descripcion` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   PRIMARY KEY (`idServicio`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -508,11 +508,11 @@ DROP TABLE IF EXISTS `core_taller`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_taller` (
   `idTaller` int NOT NULL AUTO_INCREMENT,
-  `nombreTaller` varchar(46) COLLATE utf8mb4_general_ci NOT NULL,
-  `descripcion` longtext COLLATE utf8mb4_general_ci,
-  `direccion` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
-  `telefono` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
-  `imagen` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreTaller` varchar(46) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `descripcion` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `direccion` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `telefono` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `imagen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `latitud` double DEFAULT NULL,
   `longitud` double DEFAULT NULL,
   `idComuna_id` int DEFAULT NULL,
@@ -522,7 +522,7 @@ CREATE TABLE `core_taller` (
   KEY `core_taller_idUsuario_id_d1356fab_fk` (`idUsuario_id`),
   CONSTRAINT `core_taller_idComuna_id_4af1bf31_fk_core_comuna_idComuna` FOREIGN KEY (`idComuna_id`) REFERENCES `core_comuna` (`idComuna`),
   CONSTRAINT `core_taller_idUsuario_id_d1356fab_fk` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,7 +531,7 @@ CREATE TABLE `core_taller` (
 
 LOCK TABLES `core_taller` WRITE;
 /*!40000 ALTER TABLE `core_taller` DISABLE KEYS */;
-INSERT INTO `core_taller` VALUES (1,'EL ZAPATO','Taller especializado en alineación, balanceo, cambios de aceite de motor, asegurando gran calidad y buena atención.','342, Avenida Sargento Menadier, Población Nueva Esperanza, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 9480000, Chile','+56933333333','taller_imagenes/9031943c6d5353510bc611c6be779b2c-zapatos-rojos-zapatillas-ropa.webp',-33.615714,-70.5710851,4,2),(2,'JM Vulcanización','Somos una Vulcanización de calidad, garantizamos un servicio premium y materiales de excelente marca.','1806, Avenida El Peñón, Camilo Henríquez, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 8207897, Chile','+56966445566','taller_imagenes/diseno-icono-logotipo-neumaticos_775854-1753_S7sGoLi.jpg',-33.5797333,-70.5551449,4,5),(3,'TALLER ISADACAR','Somos un servicio técnico automotriz que surge para cubrir la necesidad de una mecánica transparente, honesta y amigable con la comunidad y el medio ambiente.','2972, Nonato Coo, Portal Andino, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 8207897, Chile','+56927597470','taller_imagenes/logo4_i8OWFu4.png',-33.5826637,-70.5686826,4,6);
+INSERT INTO `core_taller` VALUES (1,'EL ZAPATO','Taller especializado en alineación, balanceo, cambios de aceite de motor, asegurando gran calidad y buena atención.','342, Avenida Sargento Menadier, Población Nueva Esperanza, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 9480000, Chile','+56933333333','taller_imagenes/9031943c6d5353510bc611c6be779b2c-zapatos-rojos-zapatillas-ropa.webp',-33.615714,-70.5710851,4,2),(2,'JM Vulcanización','Somos una Vulcanización de calidad, garantizamos un servicio premium y materiales de excelente marca.','Calle Pico de Orizaba, Morelos, Lomas del Pedregal 2da Sección, Delegación Félix Osores, Santiago de Querétaro, Municipio de Querétaro, Querétaro, 76118, México','+56966445566','taller_imagenes/diseno-icono-logotipo-neumaticos_775854-1753_S7sGoLi.jpg',-33.5797333,-70.5551449,4,5),(3,'TALLER ISADACAR','Somos un servicio técnico automotriz que surge para cubrir la necesidad de una mecánica transparente, honesta y amigable con la comunidad y el medio ambiente.','2972, Nonato Coo, Portal Andino, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 8207897, Chile','+56927597470','taller_imagenes/logo4_i8OWFu4.png',-33.5826637,-70.5686826,4,6),(9,'HOLA','fdsfsfsfsfsfsfsfsf','Duoc UC Puente Alto, 1340, Avenida Concha y Toro, Condominio Los Otoñales 1, Puente Alto, Provincia de Cordillera, Región Metropolitana de Santiago, 8150000, Chile','+56912345678','taller_imagenes/logo-fixspot.png',-33.598569,-70.5792277,4,14);
 /*!40000 ALTER TABLE `core_taller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -552,7 +552,7 @@ CREATE TABLE `core_tallerservicio` (
   KEY `core_tallerservicio_idServicio_id_9497ce81_fk_core_serv` (`idServicio_id`),
   CONSTRAINT `core_tallerservicio_idServicio_id_9497ce81_fk_core_serv` FOREIGN KEY (`idServicio_id`) REFERENCES `core_servicio` (`idServicio`),
   CONSTRAINT `core_tallerservicio_idTaller_id_d88e724c_fk_core_taller_idTaller` FOREIGN KEY (`idTaller_id`) REFERENCES `core_taller` (`idTaller`)
-) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=374 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -561,7 +561,7 @@ CREATE TABLE `core_tallerservicio` (
 
 LOCK TABLES `core_tallerservicio` WRITE;
 /*!40000 ALTER TABLE `core_tallerservicio` DISABLE KEYS */;
-INSERT INTO `core_tallerservicio` VALUES (6,NULL,4,2),(244,NULL,1,1),(245,NULL,3,1),(246,NULL,4,1),(247,NULL,5,1),(248,NULL,6,1),(249,NULL,7,1),(250,NULL,8,1),(251,NULL,9,1),(252,NULL,10,1),(253,NULL,11,1),(254,NULL,18,1),(255,NULL,19,1),(256,NULL,20,1),(257,NULL,21,1),(273,NULL,1,3),(274,NULL,3,3),(275,NULL,4,3),(276,NULL,5,3),(277,NULL,6,3),(278,NULL,7,3),(279,NULL,8,3),(280,NULL,9,3),(281,NULL,10,3),(282,NULL,11,3),(283,NULL,18,3),(284,NULL,19,3),(285,NULL,20,3),(286,NULL,21,3);
+INSERT INTO `core_tallerservicio` VALUES (244,NULL,1,1),(245,NULL,3,1),(246,NULL,4,1),(247,NULL,5,1),(248,NULL,6,1),(249,NULL,7,1),(250,NULL,8,1),(251,NULL,9,1),(252,NULL,10,1),(253,NULL,11,1),(254,NULL,18,1),(255,NULL,19,1),(256,NULL,20,1),(257,NULL,21,1),(273,NULL,1,3),(274,NULL,3,3),(275,NULL,4,3),(276,NULL,5,3),(277,NULL,6,3),(278,NULL,7,3),(279,NULL,8,3),(280,NULL,9,3),(281,NULL,10,3),(282,NULL,11,3),(283,NULL,18,3),(284,NULL,19,3),(285,NULL,20,3),(286,NULL,21,3),(290,NULL,4,2),(359,NULL,1,9),(360,NULL,3,9),(361,NULL,4,9),(362,NULL,5,9),(363,NULL,6,9),(364,NULL,7,9),(365,NULL,8,9),(366,NULL,9,9),(367,NULL,10,9),(368,NULL,11,9),(369,NULL,13,9),(370,NULL,18,9),(371,NULL,19,9),(372,NULL,20,9),(373,NULL,21,9);
 /*!40000 ALTER TABLE `core_tallerservicio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -574,7 +574,7 @@ DROP TABLE IF EXISTS `core_ticket`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_ticket` (
   `idTicket` int NOT NULL AUTO_INCREMENT,
-  `asunto` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `asunto` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `EstadoTicket_id` int NOT NULL,
   `solicitante_id` bigint NOT NULL,
   PRIMARY KEY (`idTicket`),
@@ -582,7 +582,7 @@ CREATE TABLE `core_ticket` (
   KEY `core_ticket_solicitante_id_e52f4ee7_fk` (`solicitante_id`),
   CONSTRAINT `core_ticket_EstadoTicket_id_3d9bd6f1_fk_core_esta` FOREIGN KEY (`EstadoTicket_id`) REFERENCES `core_estadoticket` (`idEstado`),
   CONSTRAINT `core_ticket_solicitante_id_e52f4ee7_fk` FOREIGN KEY (`solicitante_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -591,7 +591,7 @@ CREATE TABLE `core_ticket` (
 
 LOCK TABLES `core_ticket` WRITE;
 /*!40000 ALTER TABLE `core_ticket` DISABLE KEYS */;
-INSERT INTO `core_ticket` VALUES (1,'sfsfsf',2,5),(2,'HOLA QUIERO CAMBIO DE UBICACIÓN',3,2),(3,'aaaaaaaaaaaaaaa',2,2),(4,'sdfojhuwrhuiopfgwji hola hola',2,2),(5,'aaaaaaaaaaaa',3,2);
+INSERT INTO `core_ticket` VALUES (1,'sfsfsf',2,5),(2,'HOLA QUIERO CAMBIO DE UBICACIÓN',3,2),(3,'aaaaaaaaaaaaaaa',2,2),(4,'sdfojhuwrhuiopfgwji hola hola',2,2),(5,'aaaaaaaaaaaa',3,2),(6,'Necesito cambio de ubicación de mi taller a: Duoc UC Puente Alto',2,5);
 /*!40000 ALTER TABLE `core_ticket` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -604,7 +604,7 @@ DROP TABLE IF EXISTS `core_tipovehiculo`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_tipovehiculo` (
   `idTipo` int NOT NULL AUTO_INCREMENT,
-  `nombreTipo` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombreTipo` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`idTipo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -628,22 +628,22 @@ DROP TABLE IF EXISTS `core_usuariocustom`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_usuariocustom` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `password` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `last_login` datetime(6) DEFAULT NULL,
   `is_superuser` tinyint(1) NOT NULL,
-  `username` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
-  `first_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
-  `last_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(254) COLLATE utf8mb4_general_ci NOT NULL,
+  `username` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `first_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `last_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL,
-  `run` varchar(12) COLLATE utf8mb4_general_ci NOT NULL,
-  `correo` varchar(254) COLLATE utf8mb4_general_ci NOT NULL,
-  `telefono` varchar(15) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `pnombre` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `ap_paterno` varchar(24) COLLATE utf8mb4_general_ci NOT NULL,
-  `direccion` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `run` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `correo` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `telefono` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pnombre` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ap_paterno` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `direccion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `idComuna_id` int DEFAULT NULL,
   `idRol_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -652,7 +652,7 @@ CREATE TABLE `core_usuariocustom` (
   KEY `core_usuariocustom_idRol_id_a682a0ba_fk_core_rolusuario_idRol` (`idRol_id`),
   CONSTRAINT `core_usuariocustom_idComuna_id_79fd03a4_fk_core_comuna_idComuna` FOREIGN KEY (`idComuna_id`) REFERENCES `core_comuna` (`idComuna`),
   CONSTRAINT `core_usuariocustom_idRol_id_a682a0ba_fk_core_rolusuario_idRol` FOREIGN KEY (`idRol_id`) REFERENCES `core_rolusuario` (`idRol`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -661,7 +661,7 @@ CREATE TABLE `core_usuariocustom` (
 
 LOCK TABLES `core_usuariocustom` WRITE;
 /*!40000 ALTER TABLE `core_usuariocustom` DISABLE KEYS */;
-INSERT INTO `core_usuariocustom` VALUES (1,'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=','2025-11-24 22:54:45.933787',1,'admin','','','',1,1,'2025-10-21 22:29:55.930381','11111111-1','admin@fixspot.cl','','Admin','Istrador','Duoc UC Sede Puente Alto',4,3),(2,'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=','2025-11-24 23:07:12.016003',0,'Jeffrey','','','',0,1,'2025-10-21 22:33:47.743645','21576345-3','jef.ramirez@duocuc.cl','','Jeffrey','Ramírez','San Francisco 123',4,2),(3,'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=','2025-10-28 01:32:29.807138',0,'Exequiel','','','',0,1,'2025-10-21 22:34:24.210888','21456345-4','ex.albornoz@duocuc.cl','','Exequiel','Albornoz','San Carlos 123',4,1),(4,'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=','2025-10-28 02:14:06.494686',0,'Julio','','','',0,1,'2025-10-22 00:43:15.700874','11435376-4','jul.tapia@duocuc.cl','','Julio','Tapia','Duoc UC Sede Puente Alto',4,1),(5,'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=','2025-10-28 02:44:20.128090',0,'Renato','','','',0,1,'2025-10-22 01:15:28.217426','19352873-4','ren.ato@duocuc.cl','','Renato','Cisterna','Duoc UC Sede Puente Alto',4,2),(6,'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=','2025-10-22 16:00:35.633039',0,'Rodrigo','','','',0,1,'2025-10-22 15:06:57.739130','11568334-K','rodr.gonzalez@duocuc.cl','','Rodrigo','Ramírez','Ernesto alvear puente alto',4,2),(9,'pbkdf2_sha256$390000$m6K0Oe7Lid4cmG0dQjedfB$VG+yvFcyCPbTiJDk8nfd6cFebS+ct3iinVxo9m4+7a4=',NULL,0,'admina','','','',0,1,'2025-11-20 18:28:08.333455','22222222-2','admina@fixspot.cl',NULL,'admin','istradora','duoc uc',4,3);
+INSERT INTO `core_usuariocustom` VALUES (1,'pbkdf2_sha256$390000$PdQExr2ABGh54HK9RUW3OS$wrhSkRDEDiLcrLClOja9e6GPXkinW+pD5LrkFHnCJ88=','2025-12-02 00:26:55.955686',1,'admin','','','',1,1,'2025-10-21 22:29:55.930381','11111111-1','admin@fixspot.cl','','Admin','Istrador','Duoc UC Sede Puente Alto',13,3),(2,'pbkdf2_sha256$390000$X2RzmvgLpeRpHPifeApeey$J1gVzyXJh6PBdFVWT43YRAeZ9kPXqFIK8ODJ5+AHijs=','2025-12-01 19:19:58.271366',0,'Jeffrey','','','',0,1,'2025-10-21 22:33:47.743645','21576345-3','jef.ramirez@duocuc.cl','','Jeffrey','Ramírez','San Francisco 123',4,2),(3,'pbkdf2_sha256$390000$JqjGGUsWhWm4eYUzczMKZE$Swe9yK4sASAXFyy+uXNw1IX6ywD/Bm1lEGeUD8VYynk=','2025-12-01 19:18:51.382771',0,'Exequiel','','','',0,1,'2025-10-21 22:34:24.210888','21456345-4','ex.albornoz@duocuc.cl','','Exequiel','Albornoz','San Carlos 123',4,1),(4,'pbkdf2_sha256$390000$dtyz1wTzDSDSTRbV5aVnfB$Hp6jr7A2rx/rVPwhJuyzs3kah926JE92w4OadjEU3Vg=','2025-10-28 02:14:06.494686',0,'Julio','','','',0,1,'2025-10-22 00:43:15.700874','11435376-4','jul.tapia@duocuc.cl','','Julio','Tapia','Duoc UC Sede Puente Alto',4,1),(5,'pbkdf2_sha256$390000$TW9Pq4XStwmQUejmYSyg1I$iMqBvOWpm4rPSlQL6hbE4sxAyQb3pKoy6NCmgPbg/Mw=','2025-12-01 19:25:08.962815',0,'Renato','','','',0,1,'2025-10-22 01:15:28.217426','19352873-4','ren.ato@duocuc.cl','','Renato','Cisterna','Duoc UC Sede Puente Alto',4,2),(6,'pbkdf2_sha256$390000$8LdbsBbaKnl7E2WYpmeE8w$FWToRcmILxw8rL3xYYVHlAxn+nec+Kjm+JDziNNdT20=','2025-10-22 16:00:35.633039',0,'Rodrigo','','','',0,1,'2025-10-22 15:06:57.739130','12453662-K','rodr.gonzalez@duocuc.cl','','Rodrigo','Ramírez','Ernesto alvear puente alto',4,2),(9,'pbkdf2_sha256$390000$m6K0Oe7Lid4cmG0dQjedfB$VG+yvFcyCPbTiJDk8nfd6cFebS+ct3iinVxo9m4+7a4=',NULL,0,'admina','','','',0,1,'2025-11-20 18:28:08.333455','22222222-2','admina@fixspot.cl',NULL,'admin','istradora','duoc uc',4,3),(12,'pbkdf2_sha256$390000$gKr3povLtteTCuyJFdwmGn$1NvPibTF17bbsVeoSKQCgz/ybYI3G4sHJ2der5l9jaE=','2025-11-27 00:29:15.948427',0,'Federico','','','',0,1,'2025-11-27 00:29:03.565724','12345678-5','fed.rico@gmail.com',NULL,'Federico','Tapia','Avenida Concha Y Toro 1340',4,1),(14,'pbkdf2_sha256$390000$ARMKAg5A1JIYH2E6VgK8QC$eWs7AvUpbZtTN4RdTcw8ZGu5YUIZmwUhsihv9oYguHI=','2025-12-02 00:15:51.190372',0,'Carmen','','','',0,1,'2025-12-01 19:29:05.808119','13608345-7','carme@duocuc.cl',NULL,'Carmen','Albornoz','Duoc UC Puente Alto',4,2);
 /*!40000 ALTER TABLE `core_usuariocustom` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -730,9 +730,9 @@ DROP TABLE IF EXISTS `core_vehiculo`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `core_vehiculo` (
   `idVehiculo` int NOT NULL AUTO_INCREMENT,
-  `patente` varchar(6) COLLATE utf8mb4_general_ci NOT NULL,
-  `modelo` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `subModelo` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `patente` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `modelo` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `subModelo` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `anno` int NOT NULL,
   `idMarca_id` int NOT NULL,
   `idTipoVehiculo_id` int NOT NULL,
@@ -744,7 +744,7 @@ CREATE TABLE `core_vehiculo` (
   CONSTRAINT `core_vehiculo_idMarca_id_c736a35f_fk_core_marca_idMarca` FOREIGN KEY (`idMarca_id`) REFERENCES `core_marca` (`idMarca`),
   CONSTRAINT `core_vehiculo_idTipoVehiculo_id_69f4a65b_fk_core_tipo` FOREIGN KEY (`idTipoVehiculo_id`) REFERENCES `core_tipovehiculo` (`idTipo`),
   CONSTRAINT `core_vehiculo_idUsuario_id_f26e460a_fk` FOREIGN KEY (`idUsuario_id`) REFERENCES `core_usuariocustom` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -753,7 +753,7 @@ CREATE TABLE `core_vehiculo` (
 
 LOCK TABLES `core_vehiculo` WRITE;
 /*!40000 ALTER TABLE `core_vehiculo` DISABLE KEYS */;
-INSERT INTO `core_vehiculo` VALUES (2,'PRKG97','Gol','Comfortline',2021,15,4,1),(3,'HYRG54','Fiesta','RS',2021,3,4,3),(4,'JUVT54','Corolla','XEI',2022,1,1,4);
+INSERT INTO `core_vehiculo` VALUES (2,'PRKG97','Gol','Comfortline',2021,15,4,1),(4,'JUVT54','Corolla','XEI',2022,1,1,4),(6,'PRKG97','Gol','Highline',2021,15,4,3);
 /*!40000 ALTER TABLE `core_vehiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -767,10 +767,10 @@ DROP TABLE IF EXISTS `django_admin_log`;
 CREATE TABLE `django_admin_log` (
   `id` int NOT NULL AUTO_INCREMENT,
   `action_time` datetime(6) NOT NULL,
-  `object_id` longtext COLLATE utf8mb4_general_ci,
-  `object_repr` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `object_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `object_repr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `action_flag` smallint unsigned NOT NULL,
-  `change_message` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `change_message` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `content_type_id` int DEFAULT NULL,
   `user_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
@@ -800,8 +800,8 @@ DROP TABLE IF EXISTS `django_content_type`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `django_content_type` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `app_label` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `model` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `app_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -826,8 +826,8 @@ DROP TABLE IF EXISTS `django_migrations`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `django_migrations` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `app` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `app` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -851,8 +851,8 @@ DROP TABLE IF EXISTS `django_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `django_session` (
-  `session_key` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
-  `session_data` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `session_key` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `session_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `expire_date` datetime(6) NOT NULL,
   PRIMARY KEY (`session_key`),
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
@@ -865,7 +865,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('vg0vy81x4gky4376bem6ayp8b5k7acld','.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vDZme:k6-kV8DtlwZCmtbPWfhapjf5DAi8xFOJJqFSXkTCCgw','2025-11-11 02:50:04.286308'),('wop6xq70p4r4l3oyxct4u22q35lfo2bp','.eJxVjDEOgzAMAP_iuYoIDoEwdu8bkB07DW0VJAJT1b9XSAztene6N0y0b3naq67TLDBCC5dfxhSfWg4hDyr3xcSlbOvM5kjMaau5LaKv69n-DTLVDCMEz6iBVW0ipr7zLYvvLEVWbmIYXHLBIlGyfmARhx0hIveNRyfcE3y-EAU4tA:1vNfeK:i0KXzk3Gab85hYqaQoffotCO86k3MMaVUzfRO3T7xIg','2025-12-08 23:07:12.018127'),('xz5dm6tpvajglacb9uykyxbq7w29998a','.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBMZF:GA4dZ9P2CSooITACM68j-3rnX3uTUXHFi5_O7Jtt2Ag','2025-11-05 00:19:05.386284');
+INSERT INTO `django_session` VALUES ('izkndio97jddpjr5rsg1vtzi18wx90wp','.eJxVjDEOgzAMAP_iuYoIDoEwdu8bkB07DW0VJAJT1b9XSAztene6N0y0b3naq67TLDBCC5dfxhSfWg4hDyr3xcSlbOvM5kjMaau5LaKv69n-DTLVDCMEz6iBVW0ipr7zLYvvLEVWbmIYXHLBIlGyfmARhx0hIveNRyfcE3y-EAU4tA:1vPNTT:FfHnaxJpve4c7WLpqFy1jmV_GxL2-5pYJKt7dFvdpSg','2025-12-13 16:07:03.536337'),('kj3shbrdvjjq9z7ucrztam8jnl7cun59','.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vQEEJ:2O4VPL9kD0Ns8cl8dZzzSCtGyEAuTWoBXgg4wx44Als','2025-12-16 00:26:55.957611'),('vg0vy81x4gky4376bem6ayp8b5k7acld','.eJxVjMsOwiAQAP9lz4aw0ELt0Xu_gcDuIlUDSR8n47-bJj3odWYybwhx30rYV1nCzDACwuWXpUhPqYfgR6z3pqjVbZmTOhJ12lVNjeV1O9u_QYlrgRGy0cn3BjvHfWZhZroy2T6JRi8xOUdarBVvOiJMNFiXI2qf0Q9ofIbPFwa5OIQ:1vDZme:k6-kV8DtlwZCmtbPWfhapjf5DAi8xFOJJqFSXkTCCgw','2025-11-11 02:50:04.286308'),('xz5dm6tpvajglacb9uykyxbq7w29998a','.eJxVjEEOwiAQRe_C2pDCtHXGpXvPQGAGpGogKe3KeHfbpAvd_vfefyvn1yW7tcXZTaIuCtTpdwuen7HsQB6-3KvmWpZ5CnpX9EGbvlWJr-vh_h1k3_JWd9iZONAZZBjBRO7RegiJ0wgoRCTWAgIL98GgEcbNxyQWKA1MntTnC8zpN4w:1vBMZF:GA4dZ9P2CSooITACM68j-3rnX3uTUXHFi5_O7Jtt2Ag','2025-11-05 00:19:05.386284');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -878,4 +878,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-25 13:14:27
+-- Dump completed on 2025-12-01 21:36:07
